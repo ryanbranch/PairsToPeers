@@ -28,6 +28,7 @@ class Player:
         # playerName - a string of the name of the player
         # playerNum - the integer value denoting the player's number (1 = Player 1, 2 = Player 2, etc.)
         # score - the integer value of the player's score
+        # handArray - array that stores the cards in a player's hand
     
     #Constructor Method
     def __init__(self, name, number, human):
@@ -39,6 +40,15 @@ class Player:
     #This method is used to increase a player's score by a given number of points
     def addPoints(self, pointsToAdd):
         self.score += pointsToAdd
+        
+    def dealAns(self):
+        cardCount = 0
+        while(cardCount < 5):
+            randNum = random.randint(0, totalnumberofcards)
+            if(Answer.beenDealt?? == false){
+                handArray[cardCount] = Answer(randNum)
+                cardCount = cardCount + 1
+                
 
 #This class defines the scenario cards, which players consider when playing their corresponding action card.
 class Scenario:
