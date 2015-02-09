@@ -1,3 +1,5 @@
+#Things marked as important, including those which should potentially be changed down the line, are marked with "#NOTE"
+
 import pygame
 import random
 
@@ -66,6 +68,31 @@ class Scenario:
     def play(self):
         self.beenPlayed = True
 
+class Answer:
+
+      #MEMBER VARIABLES#
+        # ansText - a string describing the scenario
+        # pointVal - an int that will keep track of how many points playing this card will give. Changes based on scenario
+        # beenDealt - a boolean that keeps track of whether or not an answer card has been dealt to a player already
+        # beenPlayed - a boolean that keeps track of whether or not the scenario has already been in play during the current game
+        #NOTE: that beenPlayed may or may not be optional for this since we haven't decided if we want to recycle cards yet
+  
+  #cons      
+  def __init__(self, cardText):
+    self.ansText = cardText
+    self.beenDealt = false
+    self.beenPlayed = false
+  
+  #call this to change the number of points an answer is worth each round
+  def setPoints(self, points):
+    self.pointVal = points
+  
+	#NOTE: Let's add some sort of description for this method.
+  def playCard(self):
+    self.beenPlayed = true
+    #following line incorrect since scoring system hasn't been started yet
+    #pointsOfPlayer = pointsofPlayer + pointVal
+		
 #This function takes a string, a color, and a coordinate as input and displays text on the screen accordingly
 def displayMessage(messageText,messageColor,messageLocation):
     screen_text = FONT.render(messageText, True, messageColor)
