@@ -5,10 +5,6 @@ import pygame
 import random
 
 pygame.init()
-<<<<<<< HEAD
-=======
-#hello123
->>>>>>> b8d3820b525bdc40277ed6d3651a24f7fbfa5d34
 #In the following section, a number of constants are defined.
 #These variables have self explanatory names, and are referred to throughout the rest of the code but never change in value.
 #Editing these values in the code can change various aspects of the gameplay, like the player's speed.
