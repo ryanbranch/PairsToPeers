@@ -5,7 +5,6 @@ import pygame
 import random
 
 pygame.init()
-#hello
 #In the following section, a number of constants are defined.
 #These variables have self explanatory names, and are referred to throughout the rest of the code but never change in value.
 #Editing these values in the code can change various aspects of the gameplay, like the player's speed.
@@ -168,6 +167,8 @@ def gameLoop():
 
 	while gameRun: #Continues to execute until gameRun is set to false
 
+		"""  Commenting this out until beta.
+		#PLAYER SELECTION SCREEN
 		#For some reason it appears that the game is stuck in an unresponsive state during this time.  Definitely need to fix this.
 		while not playersIn: #name, number, human
 
@@ -179,6 +180,7 @@ def gameLoop():
 			pygame.draw.rect(gameDisplay,COLOR_BLUE,(450,500,100,50))
 			pygame.draw.rect(gameDisplay,COLOR_BLUE,(600,500,100,50))
 			pygame.display.update() #Updates the screen every frame
+		"""
 
 		while gameOver: #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
