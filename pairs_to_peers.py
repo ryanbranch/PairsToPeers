@@ -12,6 +12,7 @@ pygame.init()
 COLOR_RED = (255,0,0)
 COLOR_GREEN = (0,255,0)
 COLOR_BLUE = (0,0,255)
+COLOR_LIGHTPINK = (255,228,255)
 COLOR_WHITE = (255,255,255)
 COLOR_BLACK = (0,0,0)
 GAME_WIDTH = 1024
@@ -30,6 +31,8 @@ POS_ANSWER3 = (460,570)
 POS_ANSWER4 = (595,570)
 POS_ANSWER5 = (730,570)
 POS_SCENARIO = (385, 285)
+
+backgroundColor = COLOR_LIGHTPINK
 
 #These two lines create the window in which the game is played, titling it "Pairs to Peers".
 gameDisplay = pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT))
@@ -222,6 +225,8 @@ def gameLoop():
 				   pygame.Rect(POS_ANSWER5[0] + 10, POS_ANSWER5[1] + 10, 108, 150)]
 	scenarioRect = pygame.Rect(POS_SCENARIO[0] + 20, POS_SCENARIO[1] + 20, 300, 216)
 
+	cardSelected = -1
+
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
 	player = Player('Ryan', 1, True)
 	playerArray.append(player)
@@ -250,12 +255,24 @@ def gameLoop():
 				gameRun = False #Ends the game if they user attempts to close the window
 			#Handles events when a key is pressed
 			if event.type == pygame.KEYDOWN:
-
 				#This line is just here as a placeholder for future keyboard events to be added
 				if event.key == pygame.K_RETURN:
 					gameOver = True
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				print('USER HAS CLICKED')
+				# Set the x, y positions of the mouse click
+				x, y = event.pos
+				for card in range(len(answerSpriteArray)):
+					testbool = (answerSpriteArray[card].get_rect().collidepoint(x, y)) #NOTE: For some reason it's not properly detecting collisions right now.  All of the rects for the 5 sprites are effectively being detected in the upper left corner of the screen.
+					print(testbool)
+					if (testbool):
+						print('CLICK DETECTED')
+						if (cardSelected >= 0):
+							answerSpriteArray[cardSelected] = pygame.image.load('img/answerCard_blue.png')
+						answerSpriteArray[card] = pygame.image.load('img/answerCard_green.png')
+						cardSelected = card
 
-		gameDisplay.fill(COLOR_WHITE)
+		gameDisplay.fill(backgroundColor)
 		displayMessage("The game is running.  Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
 		gameDisplay.blit(spr_answerCard1, POS_ANSWER1)
 		gameDisplay.blit(spr_answerCard2, POS_ANSWER2)
@@ -280,12 +297,10 @@ def gameLoop():
 					answerCardRendered = render_textrect(answerArray[cardNum].ansText, ANSWER_CARD_FONT, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
 					if answerCardRendered:
 						gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
-				print('this is a part of the loop.')
 			else: #Executes if the current player is a computer player
 				print('COMPUTER PLAYER TURN')
 
 		pygame.display.update() #Updates the screen every frame
-		print ('this is also part of the loop')
 
 		clock.tick(FRAMES_PER_SECOND)
 
