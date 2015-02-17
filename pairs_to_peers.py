@@ -255,6 +255,7 @@ def gameLoop():
 				   pygame.Rect(POS_ANSWER4[0] + 10, POS_ANSWER4[1] + 10, 108, 150),
 				   pygame.Rect(POS_ANSWER5[0] + 10, POS_ANSWER5[1] + 10, 108, 150)]
 	scenarioRect = pygame.Rect(POS_SCENARIO[0] + 20, POS_SCENARIO[1] + 20, 300, 216)
+	playRect = pygame.Rect(POS_PLAY[0] + 20, POS_PLAY[1] + 20, 200, 100)
 
 	cardSelected = -1
 	canPlay = -1
@@ -317,6 +318,8 @@ def gameLoop():
 		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
 		gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
+		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, COLOR_GREEN)
+		gameDisplay.blit(playCardRendered, playRect.topleft)
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 		if scenarioCardRendered:
 			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
