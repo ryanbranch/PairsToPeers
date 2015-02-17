@@ -34,16 +34,20 @@ POS_SCENARIO = (385, 285)
 
 backgroundColor = COLOR_LIGHTPINK
 
+class Object(pygame.sprite.Sprite):
+	def __init__(self, file_name, position):
+		self.image = pygame.image.load(file_name)
+		self.rect = pygame.Rect(position[0], position[1], self.image.get_size()[0], self.image.get_size()[1])
+
 #These two lines create the window in which the game is played, titling it "Pairs to Peers".
 gameDisplay = pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT))
 pygame.display.set_caption("Pairs to Peers")
-
-spr_answerCard1 = pygame.image.load('img/answerCard_blue.png')
-spr_answerCard2 = pygame.image.load('img/answerCard_blue.png')
-spr_answerCard3 = pygame.image.load('img/answerCard_blue.png')
-spr_answerCard4 = pygame.image.load('img/answerCard_blue.png')
-spr_answerCard5 = pygame.image.load('img/answerCard_blue.png')
-answerSpriteArray = [spr_answerCard1, spr_answerCard2, spr_answerCard3, spr_answerCard4, spr_answerCard5]
+obj_answerCard1 = Object("img/answerCard_blue.png", POS_ANSWER1)
+obj_answerCard2 = Object("img/answerCard_blue.png", POS_ANSWER2)
+obj_answerCard3 = Object("img/answerCard_blue.png", POS_ANSWER3)
+obj_answerCard4 = Object("img/answerCard_blue.png", POS_ANSWER4)
+obj_answerCard5 = Object("img/answerCard_blue.png", POS_ANSWER5)
+answerObjArray = [obj_answerCard1, obj_answerCard2, obj_answerCard3, obj_answerCard4, obj_answerCard5]
 spr_scenarioCard = pygame.image.load('img/scenarioCard_blue.png')
 
 #This class defines the players of the game
@@ -259,28 +263,23 @@ def gameLoop():
 				if event.key == pygame.K_RETURN:
 					gameOver = True
 			if event.type == pygame.MOUSEBUTTONDOWN:
-				print('USER HAS CLICKED')
 				# Set the x, y positions of the mouse click
 				x, y = event.pos
-				for card in range(len(answerSpriteArray)):
-					testbool = (answerSpriteArray[card].get_rect().collidepoint(x, y)) #NOTE: For some reason it's not properly detecting collisions right now.  All of the rects for the 5 sprites are effectively being detected in the upper left corner of the screen.
-					print(testbool)
-					if (testbool):
-						print('CLICK DETECTED')
+				for card in range(len(answerObjArray)):
+					if (answerObjArray[card].rect.collidepoint(x, y)):
 						if (cardSelected >= 0):
-							answerSpriteArray[cardSelected] = pygame.image.load('img/answerCard_blue.png')
-						answerSpriteArray[card] = pygame.image.load('img/answerCard_green.png')
+							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
+						answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
 						cardSelected = card
 
 		gameDisplay.fill(backgroundColor)
 		displayMessage("The game is running.  Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
-		gameDisplay.blit(spr_answerCard1, POS_ANSWER1)
-		gameDisplay.blit(spr_answerCard2, POS_ANSWER2)
-		gameDisplay.blit(spr_answerCard3, POS_ANSWER3)
-		gameDisplay.blit(spr_answerCard4, POS_ANSWER4)
-		gameDisplay.blit(spr_answerCard5, POS_ANSWER5)
+		gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
+		gameDisplay.blit(obj_answerCard2.image, obj_answerCard2.rect)
+		gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
+		gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
+		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
 		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
-
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 		if scenarioCardRendered:
 			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
