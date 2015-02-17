@@ -19,7 +19,9 @@ GAME_HEIGHT = 768
 FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
 FONT = pygame.font.SysFont(None, 25)
-ANSWER_CARD_FONT = pygame.font.Font('fonts/OpenSans-Regular.ttf', 18)
+ANSWER_CARD_FONT = pygame.font.Font('fonts/OpenSans-Regular.ttf', 16)
+SCENARIO_CARD_FONT = pygame.font.Font('fonts/OpenSans-Regular.ttf', 32)
+BIG_BOLD_FONT = pygame.font.Font('fonts/OpenSans-Bold.ttf', 36)
 
 #The rest of these constants relate specifically to the locations of images on the game screen.  Tweaking with these could definitely mess up how everything looks.
 POS_ANSWER1 = (190,570)
@@ -27,6 +29,7 @@ POS_ANSWER2 = (325,570)
 POS_ANSWER3 = (460,570)
 POS_ANSWER4 = (595,570)
 POS_ANSWER5 = (730,570)
+POS_SCENARIO = (385, 285)
 
 #These two lines create the window in which the game is played, titling it "Pairs to Peers".
 gameDisplay = pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT))
@@ -38,6 +41,7 @@ spr_answerCard3 = pygame.image.load('img/answerCard_blue.png')
 spr_answerCard4 = pygame.image.load('img/answerCard_blue.png')
 spr_answerCard5 = pygame.image.load('img/answerCard_blue.png')
 answerSpriteArray = [spr_answerCard1, spr_answerCard2, spr_answerCard3, spr_answerCard4, spr_answerCard5]
+spr_scenarioCard = pygame.image.load('img/scenarioCard_blue.png')
 
 #This class defines the players of the game
 class Player:
@@ -199,12 +203,6 @@ def displayMessage(messageText,messageColor,messageLocation):
 def buttonText(text, color, xPos, yPos, width, height, size):
 	return 0 #Not exactly sure if this is how we want to do it, but if so, add to this later.
 
-#This function is used to handle everything that's going on during a player's turn.
-def doTurn(thePlayer, answerDeck):
-	cardsInHand = len(thePlayer.handArray)
-	for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-		thePlayer.handArray.append(answerDeck.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and palces it in the player's hand
-
 #This is the main function of the program.	It handles everything that's going on at each moment of the game
 def gameLoop():
 	gameRun = True #Boolean that stores whether the game should be running
@@ -222,23 +220,17 @@ def gameLoop():
 				   pygame.Rect(POS_ANSWER3[0] + 10, POS_ANSWER3[1] + 10, 108, 150),
 				   pygame.Rect(POS_ANSWER4[0] + 10, POS_ANSWER4[1] + 10, 108, 150),
 				   pygame.Rect(POS_ANSWER5[0] + 10, POS_ANSWER5[1] + 10, 108, 150)]
+	scenarioRect = pygame.Rect(POS_SCENARIO[0] + 20, POS_SCENARIO[1] + 20, 300, 216)
+
+	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
+	player = Player('Ryan', 1, True)
+	playerArray.append(player)
+	#player = Player('Other Player', 2, True)
+	#playerArray.append(player)
+
+	currentScenario = scenarioArray.pop() #Effectively deals a scenario card to the game from the deck
 
 	while gameRun: #Continues to execute until gameRun is set to false
-
-		"""  Commenting this out until beta.  It will actually be it's own file though most likely.
-		#PLAYER SELECTION SCREEN
-		#For some reason it appears that the game is stuck in an unresponsive state during this time.  Definitely need to fix this.
-		while not playersIn: #name, number, human
-
-			print("caught in a loop.")
-			gameDisplay.fill(COLOR_WHITE) #Creates a white background
-			displayMessage("This will be the player selection screen.",COLOR_BLACK,[32,32]) #Draws some text
-			pygame.draw.rect(gameDisplay,COLOR_BLUE,(150,500,100,50))
-			pygame.draw.rect(gameDisplay,COLOR_BLUE,(300,500,100,50))
-			pygame.draw.rect(gameDisplay,COLOR_BLUE,(450,500,100,50))
-			pygame.draw.rect(gameDisplay,COLOR_BLUE,(600,500,100,50))
-			pygame.display.update() #Updates the screen every frame
-		"""
 
 		while gameOver: #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
@@ -263,18 +255,37 @@ def gameLoop():
 				if event.key == pygame.K_RETURN:
 					gameOver = True
 
-		gameDisplay.fill(COLOR_WHITE) #Creates a white background
+		gameDisplay.fill(COLOR_WHITE)
 		displayMessage("The game is running.  Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
 		gameDisplay.blit(spr_answerCard1, POS_ANSWER1)
 		gameDisplay.blit(spr_answerCard2, POS_ANSWER2)
 		gameDisplay.blit(spr_answerCard3, POS_ANSWER3)
 		gameDisplay.blit(spr_answerCard4, POS_ANSWER4)
 		gameDisplay.blit(spr_answerCard5, POS_ANSWER5)
-		for x in xrange(0,5):
-			cardRendered = render_textrect(answerArray[x].ansText, ANSWER_CARD_FONT, answerRects[x], COLOR_BLACK, COLOR_WHITE)
-			if cardRendered:
-				gameDisplay.blit(cardRendered, answerRects[x].topleft)
+		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
+
+		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
+		if scenarioCardRendered:
+			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
+
+		for p in playerArray:
+			turnGoing = True
+			if (p.isHuman): #Executes if the current player is a human player
+				cardsInHand = len(p.handArray)
+				for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+					p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+
+			#while turnGoing:
+				for cardNum in xrange(0,5): #Shows answer cards on the screen
+					answerCardRendered = render_textrect(answerArray[cardNum].ansText, ANSWER_CARD_FONT, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
+					if answerCardRendered:
+						gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
+				print('this is a part of the loop.')
+			else: #Executes if the current player is a computer player
+				print('COMPUTER PLAYER TURN')
+
 		pygame.display.update() #Updates the screen every frame
+		print ('this is also part of the loop')
 
 		clock.tick(FRAMES_PER_SECOND)
 
