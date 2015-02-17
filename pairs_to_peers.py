@@ -106,7 +106,7 @@ class Scenario:
 	
 	def getGoodCards(self):
 		#initializes a good cards array
-		GoodCards[]
+		GoodCards = []
 		i = 0
 		while(i < len(arrPoints)):
 			if(arrPoints[i] > 6):
@@ -167,12 +167,12 @@ def buildScenarios():
 	scenarios.append(card)
 	card = Scenario("There is a bully, saying mean things, who won't leave you alone.", [0, 8, 10, 0, 5, 0, 0, 4, 4, 4, 0, 0, 5, 0, 0, 9, 0, 0, 8, 5, 0, 0, 0])
 	scenarios.append(card)
-	card = Scenario("You notice that someone in your class has candy and you want some.", [0, 6, 0, 5, 0, 0, 0, 9, 9, 8, 0, 0, 0, 0, 0, 4, 0, 0, 0, 10, 0, 0, 0)
+	card = Scenario("You notice that someone in your class has candy and you want some.", [0, 6, 0, 5, 0, 0, 0, 9, 9, 8, 0, 0, 0, 0, 0, 4, 0, 0, 0, 10, 0, 0, 0])
 	scenarios.append(card)
-	card = Scenario("You are offered candy by a friend.", [0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 8, 7, 0, 0, 0, 0, 5, 0, 0, 9, 10, 0, 0)
+	card = Scenario("You are offered candy by a friend.", [0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 8, 7, 0, 0, 0, 0, 5, 0, 0, 9, 10, 0, 0])
 	scenarios.append(card)
-	card = Scenario("another scenario goes here")
-	scenarios.append(card)
+	#card = Scenario("another scenario goes here")
+	#scenarios.append(card)
 	return scenarios
 
 #This function builds the deck of answer cards.  More lines can be added accordingly whenever more cards are to be added.
@@ -267,8 +267,8 @@ def gameLoop():
 	while gameRun: #Continues to execute until gameRun is set to false
 
 	#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
-	pointVal = currentScenario.getPointVal(Answer.getCardNum())
-	Player.addPoints(pointVal)
+	#pointVal = currentScenario.getPointVal(Answer.getCardNum())
+	#Player.addPoints(pointVal)
 	
 		while gameOver: #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
@@ -321,7 +321,7 @@ def gameLoop():
 				for x in xrange(0, (4 - cardsInHand)): #Iterates until the user's hand is full
 					p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 					
-				p.handArray.append(answerArray[])
+				p.handArray.append(answerArray)
 			#while turnGoing:
 				for cardNum in xrange(0,5): #Shows answer cards on the screen
 					answerCardRendered = render_textrect(answerArray[cardNum].ansText, ANSWER_CARD_FONT, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
