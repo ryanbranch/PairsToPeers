@@ -65,9 +65,6 @@ class Player:
 	def addPoints(self, pointsToAdd):
 		self.score += pointsToAdd
 
-	def getPoints(self):
-		return self.score
-	
 	def dealAns(self):
 		cardCount = 0
 		#NOTE: Commented out these lines for now until more of a framework is built around this functionality
@@ -82,38 +79,32 @@ class Scenario:
 
 	#MEMBER VARIABLES#
 		# scenarioText - a string describing the scenario
-		# arrPoints - array containing answer point vals
 		# beenPlayed - a boolean that keeps track of whether or not the scenario has already been in play during the current game
 
 	#Constructor Method
-	def __init__(self, cardText, arrPoints):
+	def __init__(self, cardText):
 		self.scenarioText = cardText
 		self.beenPlayed = False #Scenario cards are initialized having not been played
-		self.arrPoints = arrPoints
+
 	#This method is used to denote that the scenario card has now been played
 	def play(self):
 		self.beenPlayed = True
 
-	def getPointVal(self, cardNum):
-		return self.arrPoints[cardNum - 1]
-	
 class Answer:
 
 	#MEMBER VARIABLES#
 		# ansText - a string describing the scenario
-		# numCard - number of the action card
 		# pointVal - an int that will keep track of how many points playing this card will give. Changes based on scenario
 		# beenDealt - a boolean that keeps track of whether or not an answer card has been dealt to a player already
 		# beenPlayed - a boolean that keeps track of whether or not the scenario has already been in play during the current game
 		#NOTE: that beenPlayed may or may not be optional for this since we haven't decided if we want to recycle cards yet
 
 	#cons
-	def __init__(self, cardText, cardNum):
+	def __init__(self, cardText):
 		self.ansText = cardText
 		self.beenDealt = False
 		self.beenPlayed = False
-		self.numCard = cardNum
-		
+
 	#call this to change the number of points an answer is worth each round
 	def setPoints(self, points):
 		self.pointVal = points
@@ -123,9 +114,6 @@ class Answer:
 		self.beenPlayed = True
 		#following line incorrect since scoring system hasn't been started yet
 		#pointsOfPlayer = pointsofPlayer + pointVal
-	
-	def getCardNum(self):
-		return self.numCard	
 
 #This function takes in a one-dimensional array and "shuffles" the contents, ordering them randomly.
 #NOTE: I realize that this python's random.shuffle() function makes this an incredibly simple task, but I figure we should have it as a separate function instead of just calling random.shuffle() directly every time, in case there's every any sort of functionality we need to add to shuffling.
@@ -244,10 +232,6 @@ def gameLoop():
 
 	while gameRun: #Continues to execute until gameRun is set to false
 
-	#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
-	pointVal = Scenario.getPointVal(Answer.getCardNum())
-	Player.addPoints(pointVal)
-	
 		while gameOver: #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
 			displayMessage("GAME OVER!	Press ENTER to play again, or SPACE to quit.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
