@@ -72,6 +72,9 @@ class Player:
 	def addPoints(self, pointsToAdd):
 		self.score += pointsToAdd
 
+	def getPoints(self):
+		return self.score
+	
 	def dealAns(self):
 		cardCount = 0
 		#NOTE: Commented out these lines for now until more of a framework is built around this functionality
@@ -86,32 +89,48 @@ class Scenario:
 
 	#MEMBER VARIABLES#
 		# scenarioText - a string describing the scenario
+		# arrPoints - array containing answer point vals
 		# beenPlayed - a boolean that keeps track of whether or not the scenario has already been in play during the current game
 
 	#Constructor Method
-	def __init__(self, cardText):
+	def __init__(self, cardText, arrPoints):
 		self.scenarioText = cardText
 		self.beenPlayed = False #Scenario cards are initialized having not been played
-
+		self.arrPoints = arrPoints
 	#This method is used to denote that the scenario card has now been played
 	def play(self):
 		self.beenPlayed = True
 
+	def getPointVal(self, cardNum):
+		return self.arrPoints[cardNum]
+	
+	def getGoodCards(self):
+		#initializes a good cards array
+		GoodCards[]
+		i = 0
+		while(i < len(arrPoints)):
+			if(arrPoints[i] > 6):
+				GoodCards.append(i)
+			
+		return GoodCards
+	
 class Answer:
 
 	#MEMBER VARIABLES#
 		# ansText - a string describing the scenario
+		# numCard - number of the action card
 		# pointVal - an int that will keep track of how many points playing this card will give. Changes based on scenario
 		# beenDealt - a boolean that keeps track of whether or not an answer card has been dealt to a player already
 		# beenPlayed - a boolean that keeps track of whether or not the scenario has already been in play during the current game
 		#NOTE: that beenPlayed may or may not be optional for this since we haven't decided if we want to recycle cards yet
 
 	#cons
-	def __init__(self, cardText):
+	def __init__(self, cardText, cardNum):
 		self.ansText = cardText
 		self.beenDealt = False
 		self.beenPlayed = False
-
+		self.numCard = cardNum
+		
 	#call this to change the number of points an answer is worth each round
 	def setPoints(self, points):
 		self.pointVal = points
@@ -121,6 +140,12 @@ class Answer:
 		self.beenPlayed = True
 		#following line incorrect since scoring system hasn't been started yet
 		#pointsOfPlayer = pointsofPlayer + pointVal
+	
+	def getCardNum(self):
+		return self.numCard	
+	
+
+		
 
 #This function takes in a one-dimensional array and "shuffles" the contents, ordering them randomly.
 #NOTE: I realize that this python's random.shuffle() function makes this an incredibly simple task, but I figure we should have it as a separate function instead of just calling random.shuffle() directly every time, in case there's every any sort of functionality we need to add to shuffling.
@@ -132,19 +157,19 @@ def shuffle(inArray):
 #This function builds the deck of scenario cards.  More lines can be added accordingly whenever more cards are to be added.
 def buildScenarios():
 	scenarios = []
-	card = Scenario("A person walks up to you on the first day of school and says hello.")
+	card = Scenario("A person walks up to you on the first day of school and says hello.", [0, 6, 0, 0, 0, 0, 0, 10, 10, 9, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0])
 	scenarios.append(card)
-	card = Scenario("Your friend is crying.")
+	card = Scenario("Your friend is crying.", [7, 9, 0, 0, 5, 0, 0, 4, 4, 5, 0, 0, 0, 0, 10, 0, 10, 8, 0, 0, 0, 0, 0])
 	scenarios.append(card)
-	card = Scenario("You are hungry.")
+	card = Scenario("You are hungry.", [0, 8, 0, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 6, 0, 0, 0])
 	scenarios.append(card)
-	card = Scenario("You are looking for a pencil but can't find one")
+	card = Scenario("You are looking for a pencil but can't find one", [0, 8, 0, 0, 9, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 8, 0, 0, 0, 5, 0, 0, 0])
 	scenarios.append(card)
-	card = Scenario("There is a bully, saying mean things, who won't leave you alone.")
+	card = Scenario("There is a bully, saying mean things, who won't leave you alone.", [0, 8, 10, 0, 5, 0, 0, 4, 4, 4, 0, 0, 5, 0, 0, 9, 0, 0, 8, 5, 0, 0, 0])
 	scenarios.append(card)
-	card = Scenario("You notice that someone in your class has candy and you want some.")
+	card = Scenario("You notice that someone in your class has candy and you want some.", [0, 6, 0, 5, 0, 0, 0, 9, 9, 8, 0, 0, 0, 0, 0, 4, 0, 0, 0, 10, 0, 0, 0)
 	scenarios.append(card)
-	card = Scenario("You are offered candy by a friend.")
+	card = Scenario("You are offered candy by a friend.", [0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 8, 7, 0, 0, 0, 0, 5, 0, 0, 9, 10, 0, 0)
 	scenarios.append(card)
 	card = Scenario("another scenario goes here")
 	scenarios.append(card)
@@ -153,51 +178,51 @@ def buildScenarios():
 #This function builds the deck of answer cards.  More lines can be added accordingly whenever more cards are to be added.
 def buildAnswers():
 	answers = []
-	card = Answer("Say you're sorry")
+	card = Answer("Say you're sorry", 0)
 	answers.append(card)
-	card = Answer("Ask for help")
+	card = Answer("Ask for help", 1)
 	answers.append(card)
-	card = Answer("Turn around and walk away")
+	card = Answer("Turn around and walk away", 2)
 	answers.append(card)
-	card = Answer("Eat some food")
+	card = Answer("Eat some food", 3)
 	answers.append(card)
-	card = Answer("Look around")
+	card = Answer("Look around", 4)
 	answers.append(card)
-	card = Answer("Clap your hands")
+	card = Answer("Clap your hands", 5)
 	answers.append(card)
-	card = Answer("Yell at them")
+	card = Answer("Yell at them", 6)
 	answers.append(card)
-	card = Answer("Say hello")
+	card = Answer("Say hello", 7)
 	answers.append(card)
-	card = Answer("Introduce yourself")
+	card = Answer("Introduce yourself", 8)
 	answers.append(card)
-	card = Answer("Ask for their name")
+	card = Answer("Ask for their name", 9)
 	answers.append(card)
-	card = Answer("Nod your head")
+	card = Answer("Nod your head", 10)
 	answers.append(card)
-	card = Answer("Shrug your shoulders")
+	card = Answer("Shrug your shoulders", 11)
 	answers.append(card)
-	card = Answer("Do nothing")
+	card = Answer("Do nothing", 12)
 	answers.append(card)
-	card = Answer("Call 911")
+	card = Answer("Call 911", 13)
 	answers.append(card)
-	card = Answer("Offer to help")
+	card = Answer("Offer to help", 14)
 	answers.append(card)
-	card = Answer("Ask for help")
+	card = Answer("Ask for help", 15)
 	answers.append(card)
-	card = Answer("Give them a hug")
+	card = Answer("Give them a hug", 16)
 	answers.append(card)
-	card = Answer("Offer them tissues")
+	card = Answer("Offer them tissues", 17)
 	answers.append(card)
-	card = Answer("Run away")
+	card = Answer("Run away", 18)
 	answers.append(card)
-	card = Answer("Say please")
+	card = Answer("Say please", 19)
 	answers.append(card)
-	card = Answer("Say thank you")
+	card = Answer("Say thank you", 20)
 	answers.append(card)
-	card = Answer("Congratulate them")
+	card = Answer("Congratulate them", 21)
 	answers.append(card)
-	card = Answer("another answer goes here")
+	card = Answer("another answer goes here", 22)
 	answers.append(card)
 	return answers
 
@@ -241,6 +266,10 @@ def gameLoop():
 
 	while gameRun: #Continues to execute until gameRun is set to false
 
+	#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
+	pointVal = currentScenario.getPointVal(Answer.getCardNum())
+	Player.addPoints(pointVal)
+	
 		while gameOver: #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
 			displayMessage("GAME OVER!	Press ENTER to play again, or SPACE to quit.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
@@ -288,9 +317,11 @@ def gameLoop():
 			turnGoing = True
 			if (p.isHuman): #Executes if the current player is a human player
 				cardsInHand = len(p.handArray)
-				for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+				
+				for x in xrange(0, (4 - cardsInHand)): #Iterates until the user's hand is full
 					p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-
+					
+				p.handArray.append(answerArray[])
 			#while turnGoing:
 				for cardNum in xrange(0,5): #Shows answer cards on the screen
 					answerCardRendered = render_textrect(answerArray[cardNum].ansText, ANSWER_CARD_FONT, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
