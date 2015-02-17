@@ -257,6 +257,7 @@ def gameLoop():
 	scenarioRect = pygame.Rect(POS_SCENARIO[0] + 20, POS_SCENARIO[1] + 20, 300, 216)
 
 	cardSelected = -1
+	canPlay = -1
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
 	player = Player('Ryan', 1, True)
@@ -268,9 +269,7 @@ def gameLoop():
 
 	while gameRun: #Continues to execute until gameRun is set to false
 
-	#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
-	#pointVal = currentScenario.getPointVal(Answer.getCardNum())
-	#Player.addPoints(pointVal)
+
 	
 		while gameOver: #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
@@ -302,6 +301,12 @@ def gameLoop():
 							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 						answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
 						cardSelected = card
+						canPlay = 1
+						
+			#INSERT "PLAY CARD" BUTTON HERE
+			#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
+			#pointVal = currentScenario.getPointVal(Answer.getCardNum())
+			#Player.addPoints(pointVal)
 
 		gameDisplay.fill(backgroundColor)
 		displayMessage("The game is running.  Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
