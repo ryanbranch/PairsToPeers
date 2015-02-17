@@ -30,6 +30,7 @@ POS_ANSWER2 = (325,570)
 POS_ANSWER3 = (460,570)
 POS_ANSWER4 = (595,570)
 POS_ANSWER5 = (730,570)
+POS_PLAY = (740, 365)
 POS_SCENARIO = (385, 285)
 
 backgroundColor = COLOR_LIGHTPINK
@@ -47,6 +48,7 @@ obj_answerCard2 = Object("img/answerCard_blue.png", POS_ANSWER2)
 obj_answerCard3 = Object("img/answerCard_blue.png", POS_ANSWER3)
 obj_answerCard4 = Object("img/answerCard_blue.png", POS_ANSWER4)
 obj_answerCard5 = Object("img/answerCard_blue.png", POS_ANSWER5)
+obj_playCard = Object("img/button_medium_green.png", POS_PLAY)
 answerObjArray = [obj_answerCard1, obj_answerCard2, obj_answerCard3, obj_answerCard4, obj_answerCard5]
 spr_scenarioCard = pygame.image.load('img/scenarioCard_blue.png')
 
@@ -308,6 +310,7 @@ def gameLoop():
 		gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
 		gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
 		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
+		gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 		if scenarioCardRendered:
