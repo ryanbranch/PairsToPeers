@@ -151,7 +151,8 @@ class Answer:
 	def getCardNum(self):
 		return self.numCard	
 	
-
+	def getText(self):
+		return self.ansText
 		
 
 #This function takes in a one-dimensional array and "shuffles" the contents, ordering them randomly.
@@ -308,6 +309,11 @@ def gameLoop():
 						answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
 						cardSelected = card
 						canPlay = 1
+						hand = player.getHand()
+						cardNum = hand[cardSelected].getCardNum()
+						print(str(cardNum))
+						cardText = hand[cardSelected].getText()
+						print(cardText)
 				if (obj_playCard.rect.collidepoint(x, y) & canPlay == 1):
 					canPlay = -1
 					hand = player.getHand()
