@@ -12,6 +12,7 @@ pygame.init()
 COLOR_RED = (255,0,0)
 COLOR_GREEN = (0,255,0)
 COLOR_BLUE = (0,0,255)
+COLOR_LIGHTPINK = (255,228,255)
 COLOR_WHITE = (255,255,255)
 COLOR_BLACK = (0,0,0)
 GAME_WIDTH = 1024
@@ -30,18 +31,28 @@ POS_ANSWER3 = (460,570)
 POS_ANSWER4 = (595,570)
 POS_ANSWER5 = (730,570)
 POS_SCENARIO = (385, 285)
+POS_SCORE = (750, 25)
+
+
+
+backgroundColor = COLOR_LIGHTPINK
+
+class Object(pygame.sprite.Sprite):
+	def __init__(self, file_name, position):
+		self.image = pygame.image.load(file_name)
+		self.rect = pygame.Rect(position[0], position[1], self.image.get_size()[0], self.image.get_size()[1])
 
 #These two lines create the window in which the game is played, titling it "Pairs to Peers".
 gameDisplay = pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT))
 pygame.display.set_caption("Pairs to Peers")
-
-spr_answerCard1 = pygame.image.load('img/answerCard_blue.png')
-spr_answerCard2 = pygame.image.load('img/answerCard_blue.png')
-spr_answerCard3 = pygame.image.load('img/answerCard_blue.png')
-spr_answerCard4 = pygame.image.load('img/answerCard_blue.png')
-spr_answerCard5 = pygame.image.load('img/answerCard_blue.png')
-answerSpriteArray = [spr_answerCard1, spr_answerCard2, spr_answerCard3, spr_answerCard4, spr_answerCard5]
+obj_answerCard1 = Object("img/answerCard_blue.png", POS_ANSWER1)
+obj_answerCard2 = Object("img/answerCard_blue.png", POS_ANSWER2)
+obj_answerCard3 = Object("img/answerCard_blue.png", POS_ANSWER3)
+obj_answerCard4 = Object("img/answerCard_blue.png", POS_ANSWER4)
+obj_answerCard5 = Object("img/answerCard_blue.png", POS_ANSWER5)
+answerObjArray = [obj_answerCard1, obj_answerCard2, obj_answerCard3, obj_answerCard4, obj_answerCard5]
 spr_scenarioCard = pygame.image.load('img/scenarioCard_blue.png')
+score_display = Object("graphics/button_medium_blue.png", POS_SCORE)
 
 #This class defines the players of the game
 class Player:
@@ -99,7 +110,7 @@ class Scenario:
 	
 	def getGoodCards(self):
 		#initializes a good cards array
-		GoodCards[]
+		GoodCards = []
 		i = 0
 		while(i < len(arrPoints)):
 			if(arrPoints[i] > 6):
@@ -160,12 +171,12 @@ def buildScenarios():
 	scenarios.append(card)
 	card = Scenario("There is a bully, saying mean things, who won't leave you alone.", [0, 8, 10, 0, 5, 0, 0, 4, 4, 4, 0, 0, 5, 0, 0, 9, 0, 0, 8, 5, 0, 0, 0])
 	scenarios.append(card)
-	card = Scenario("You notice that someone in your class has candy and you want some.", [0, 6, 0, 5, 0, 0, 0, 9, 9, 8, 0, 0, 0, 0, 0, 4, 0, 0, 0, 10, 0, 0, 0)
+	card = Scenario("You notice that someone in your class has candy and you want some.", [0, 6, 0, 5, 0, 0, 0, 9, 9, 8, 0, 0, 0, 0, 0, 4, 0, 0, 0, 10, 0, 0, 0])
 	scenarios.append(card)
-	card = Scenario("You are offered candy by a friend.", [0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 8, 7, 0, 0, 0, 0, 5, 0, 0, 9, 10, 0, 0)
+	card = Scenario("You are offered candy by a friend.", [0, 0, 0, 0, 0, 0, 0, 5, 6, 6, 8, 7, 0, 0, 0, 0, 5, 0, 0, 9, 10, 0, 0])
 	scenarios.append(card)
-	card = Scenario("another scenario goes here")
-	scenarios.append(card)
+	#card = Scenario("another scenario goes here")
+	#scenarios.append(card)
 	return scenarios
 
 #This function builds the deck of answer cards.  More lines can be added accordingly whenever more cards are to be added.
@@ -246,6 +257,9 @@ def gameLoop():
 				   pygame.Rect(POS_ANSWER4[0] + 10, POS_ANSWER4[1] + 10, 108, 150),
 				   pygame.Rect(POS_ANSWER5[0] + 10, POS_ANSWER5[1] + 10, 108, 150)]
 	scenarioRect = pygame.Rect(POS_SCENARIO[0] + 20, POS_SCENARIO[1] + 20, 300, 216)
+	#scoreRect = pygame.Rect(POS_SCORE[0] + 20, POS_SCORE[1] + 20, 300, 216)
+
+	cardSelected = -1
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
 	player = Player('Ryan', 1, True)
@@ -258,8 +272,8 @@ def gameLoop():
 	while gameRun: #Continues to execute until gameRun is set to false
 
 	#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
-	pointVal = currentScenario.getPointVal(Answer.getCardNum())
-	Player.addPoints(pointVal)
+	#pointVal = currentScenario.getPointVal(Answer.getCardNum())
+	#Player.addPoints(pointVal)
 	
 		while gameOver: #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
@@ -279,24 +293,37 @@ def gameLoop():
 				gameRun = False #Ends the game if they user attempts to close the window
 			#Handles events when a key is pressed
 			if event.type == pygame.KEYDOWN:
-
 				#This line is just here as a placeholder for future keyboard events to be added
 				if event.key == pygame.K_RETURN:
 					gameOver = True
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				# Set the x, y positions of the mouse click
+				x, y = event.pos
+				for card in range(len(answerObjArray)):
+					if (answerObjArray[card].rect.collidepoint(x, y)):
+						if (cardSelected >= 0):
+							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
+						answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
+						cardSelected = card
 
-		gameDisplay.fill(COLOR_WHITE)
+		gameDisplay.fill(backgroundColor)
 		displayMessage("The game is running.  Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
-		gameDisplay.blit(spr_answerCard1, POS_ANSWER1)
-		gameDisplay.blit(spr_answerCard2, POS_ANSWER2)
-		gameDisplay.blit(spr_answerCard3, POS_ANSWER3)
-		gameDisplay.blit(spr_answerCard4, POS_ANSWER4)
-		gameDisplay.blit(spr_answerCard5, POS_ANSWER5)
+		gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
+		gameDisplay.blit(obj_answerCard2.image, obj_answerCard2.rect)
+		gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
+		gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
+		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
+		gameDisplay.blit(score_display.image, score_display.rect)
 		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
-
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
+		scoreBoxRendered = render_textrect("SCORE: ", ANSWER_CARD_FONT, pygame.Rect(760,35,168,90), COLOR_BLACK, COLOR_BLUE)
+		scoreRendered = render_textrect("46 ", ANSWER_CARD_FONT, pygame.Rect(850,35,138,90), COLOR_BLACK, COLOR_BLUE)
+		if scoreBoxRendered:
+			gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
+			gameDisplay.blit(scoreRendered, pygame.Rect(850,35,168,90).topleft)
 		if scenarioCardRendered:
 			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
-
+#gljdsaldfk
 		for p in playerArray:
 			turnGoing = True
 			if (p.isHuman): #Executes if the current player is a human player
@@ -305,18 +332,16 @@ def gameLoop():
 				for x in xrange(0, (4 - cardsInHand)): #Iterates until the user's hand is full
 					p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 					
-				p.handArray.append(answerArray[])
+				p.handArray.append(answerArray)
 			#while turnGoing:
 				for cardNum in xrange(0,5): #Shows answer cards on the screen
 					answerCardRendered = render_textrect(answerArray[cardNum].ansText, ANSWER_CARD_FONT, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
 					if answerCardRendered:
 						gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
-				print('this is a part of the loop.')
 			else: #Executes if the current player is a computer player
 				print('COMPUTER PLAYER TURN')
 
 		pygame.display.update() #Updates the screen every frame
-		print ('this is also part of the loop')
 
 		clock.tick(FRAMES_PER_SECOND)
 
