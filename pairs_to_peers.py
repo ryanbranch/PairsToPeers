@@ -307,6 +307,8 @@ def gameLoop():
 						canPlay = 1
 				if (obj_playCard.rect.collidepoint(x, y) & canPlay == 1):
 					canPlay = -1
+					pointVal = currentScenario.getPointVal((p.handArray[cardSelected]).getCardNum())
+					Player.addPoints(pointVal)
 					#increment points
 						
 			#INSERT "PLAY CARD" BUTTON HERE
@@ -326,8 +328,8 @@ def gameLoop():
 		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, [191,255,191])
 		
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
-		scoreBoxRendered = render_textrect("SCORE: ", ANSWER_CARD_FONT, pygame.Rect(760,35,168,90), COLOR_BLACK, COLOR_BLUE)
-		scoreRendered = render_textrect("46 ", ANSWER_CARD_FONT, pygame.Rect(850,35,138,90), COLOR_BLACK, COLOR_BLUE)
+		scoreBoxRendered = render_textrect("SCORE: ", ANSWER_CARD_FONT, pygame.Rect(760,35,168,90), COLOR_BLACK, [158,206,255])
+		scoreRendered = render_textrect("46 ", ANSWER_CARD_FONT, pygame.Rect(850,35,138,90), COLOR_BLACK, [158,206,255])
 		if scoreBoxRendered:
 			gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
 			gameDisplay.blit(scoreRendered, pygame.Rect(850,35,168,90).topleft)
