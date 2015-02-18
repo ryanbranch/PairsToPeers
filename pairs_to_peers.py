@@ -303,6 +303,9 @@ def gameLoop():
 						answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
 						cardSelected = card
 						canPlay = 1
+				if (obj_playCard.rect.collidepoint(x, y) & canPlay == 1):
+					canPlay = -1
+					#increment points
 						
 			#INSERT "PLAY CARD" BUTTON HERE
 			#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
@@ -316,14 +319,17 @@ def gameLoop():
 		gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
 		gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
 		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
-		gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
+		
 		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
 		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, [191,255,191])
-		gameDisplay.blit(playCardRendered, playRect.topleft)
+		
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 		if scenarioCardRendered:
 			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
-
+			
+		if canPlay == 1:
+			gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
+			gameDisplay.blit(playCardRendered, playRect.topleft)
 		for p in playerArray:
 			turnGoing = True
 			if (p.isHuman): #Executes if the current player is a human player
