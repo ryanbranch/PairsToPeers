@@ -304,7 +304,11 @@ def gameLoop():
 						cardSelected = card
 						canPlay = 1
 						
-			#INSERT "PLAY CARD" BUTTON HERE
+					if(obj_playCard.rect.collidepoint(x, y) & canPlay == 1):
+						canPlay = -1
+						pointVal = currentScenario.getPointVal(handArray[cardSelected].getCardNum())
+						player.addPoints(pointVal)
+			
 			#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
 			#pointVal = currentScenario.getPointVal(Answer.getCardNum())
 			#Player.addPoints(pointVal)
@@ -316,10 +320,15 @@ def gameLoop():
 		gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
 		gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
 		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
-		gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
 		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, COLOR_GREEN)
-		gameDisplay.blit(playCardRendered, playRect.topleft)
+		print(player.getPoints())
+		
+		
+		if(canPlay == 1):
+			gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
+			gameDisplay.blit(playCardRendered, playRect.topleft)
+			
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 		if scenarioCardRendered:
 			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
