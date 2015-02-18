@@ -311,7 +311,7 @@ def gameLoop():
 				if (obj_playCard.rect.collidepoint(x, y) & canPlay == 1):
 					canPlay = -1
 					hand = player.getHand()
-					pointVal = currentScenario.getPointVal((hand[cardSelected]).getCardNum())
+					pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 					player.addPoints(pointVal)
 					#increment points
 						
@@ -348,7 +348,7 @@ def gameLoop():
 			if (p.isHuman): #Executes if the current player is a human player
 				cardsInHand = len(p.handArray)
 				
-				for x in xrange(0, (4 - cardsInHand)): #Iterates until the user's hand is full
+				for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
 					p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 					
 				p.handArray.append(answerArray)
