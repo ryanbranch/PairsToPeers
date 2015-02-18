@@ -3,9 +3,12 @@
 
 import pygame
 import random
+import pygame.mixer
 from textrect import *
 
 pygame.init()
+pygame.mixer.init()
+sound_blop = pygame.mixer.Sound('sound/Blop-Mark_DiAngelo-79054334_CHOPPED.ogg')
 #In the following section, a number of constants are defined.
 #These variables have self explanatory names, and are referred to throughout the rest of the code but never change in value.
 #Editing these values in the code can change various aspects of the gameplay, like the player's speed.
@@ -313,16 +316,19 @@ def gameLoop():
 						if (cardSelected >= 0):
 							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 						answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
+						sound_blop.play()
 						cardSelected = card
 						canPlay = True
 						hand = player.getHand()
 						cardNum = hand[cardSelected].getCardNum()
-						print(str(cardNum))
+						#print(str(cardNum))
 						cardText = hand[cardSelected].getText()
-						print(cardText)
-						print('POINTS' + str(currentScenario.getPointVal(cardNum)))
+						#print(cardText)
+						#print('POINTS' + str(currentScenario.getPointVal(cardNum)))
 				if ((obj_playCard.rect.collidepoint(x, y)) & (canPlay == True)):
 					canPlay = False
+					sound_blop.play()
+					answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 					hand = player.getHand()
 					pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 					player.addPoints(pointVal)
@@ -381,12 +387,10 @@ def gameLoop():
 		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, [191,255,191])
 		
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
-		scoreBoxRendered = render_textrect("SCORE: ", ANSWER_CARD_FONT, pygame.Rect(760,35,168,90), COLOR_BLACK, [158,206,255])
 		score = str(player.getPoints())
-		scoreRendered = render_textrect(score, ANSWER_CARD_FONT, pygame.Rect(850,35,138,90), COLOR_BLACK, [158,206,255])
+		scoreBoxRendered = render_textrect(("SCORE: " + str(score)), BIG_BOLD_FONT, pygame.Rect(760,35,168,90), COLOR_BLACK, [158,206,255])
 		if scoreBoxRendered:
 			gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
-			gameDisplay.blit(scoreRendered, pygame.Rect(850,35,168,90).topleft)
 		if scenarioCardRendered:
 			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
 			
