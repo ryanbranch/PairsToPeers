@@ -318,7 +318,7 @@ def gameLoop():
 		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
 		gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
-		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, COLOR_GREEN)
+		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, [191,255,191])
 		gameDisplay.blit(playCardRendered, playRect.topleft)
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 		if scenarioCardRendered:
