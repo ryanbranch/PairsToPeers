@@ -317,11 +317,15 @@ def gameLoop():
 						print(str(cardNum))
 						cardText = hand[cardSelected].getText()
 						print(cardText)
-				if (obj_playCard.rect.collidepoint(x, y) & canPlay == 1):
+				if ((obj_playCard.rect.collidepoint(x, y)) & (canPlay == 1)):
 					canPlay = -1
 					hand = player.getHand()
 					pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 					player.addPoints(pointVal)
+					
+					if(player.getPoints() > 119):
+						print('VICTORY')
+						
 					tempScenario = currentScenario
 					currentScenario = scenarioArray.pop()
 					
