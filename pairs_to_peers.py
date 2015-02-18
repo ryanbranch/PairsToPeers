@@ -87,6 +87,9 @@ class Player:
 			#if(Answer.beenDealt == False)
 				#handArray[cardCount] = Answer(randNum)
 				#cardCount = cardCount + 1
+				
+	def getHand(self):
+		return self.handArray
 
 #This class defines the scenario cards, which players consider when playing their corresponding answer card.
 class Scenario:
@@ -307,8 +310,9 @@ def gameLoop():
 						canPlay = 1
 				if (obj_playCard.rect.collidepoint(x, y) & canPlay == 1):
 					canPlay = -1
-					pointVal = currentScenario.getPointVal((p.handArray[cardSelected]).getCardNum())
-					Player.addPoints(pointVal)
+					hand = player.getHand()
+					pointVal = currentScenario.getPointVal((hand[cardSelected]).getCardNum())
+					player.addPoints(pointVal)
 					#increment points
 						
 			#INSERT "PLAY CARD" BUTTON HERE
