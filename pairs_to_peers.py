@@ -90,6 +90,9 @@ class Player:
 				
 	def getHand(self):
 		return self.handArray
+	
+	def clearHand(self):
+		self.handArray = []
 
 #This class defines the scenario cards, which players consider when playing their corresponding answer card.
 class Scenario:
@@ -319,6 +322,25 @@ def gameLoop():
 					hand = player.getHand()
 					pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 					player.addPoints(pointVal)
+					tempScenario = currentScenario
+					currentScenario = scenarioArray.pop()
+					
+					scenarioArray.append(tempScenario)
+					scenarioArray = shuffle(scenarioArray)
+					
+					cards = 0
+					while(cards < 5):
+						answerArray.append(hand[cards])
+						cards = cards + 1
+						
+					answerArray = shuffle(answerArray) 
+					player.clearHand()
+					cardsInHand = len(p.handArray)
+				
+					for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+						p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+					
+					
 					#increment points
 						
 			#INSERT "PLAY CARD" BUTTON HERE
@@ -361,7 +383,7 @@ def gameLoop():
 				p.handArray.append(answerArray)
 			#while turnGoing:
 				for cardNum in xrange(0,5): #Shows answer cards on the screen
-					answerCardRendered = render_textrect(answerArray[cardNum].ansText, ANSWER_CARD_FONT, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
+					answerCardRendered = render_textrect(p.handArray[cardNum].ansText, ANSWER_CARD_FONT, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
 					if answerCardRendered:
 						gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
 			else: #Executes if the current player is a computer player
