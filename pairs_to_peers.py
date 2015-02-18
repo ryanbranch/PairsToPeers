@@ -32,16 +32,6 @@ POS_ANSWER4 = (595,570)
 POS_ANSWER5 = (730,570)
 POS_PLAY = (740, 300)
 POS_SCENARIO = (385, 285)
-POS_SCORE = (750, 25)
-
-
-
-backgroundColor = COLOR_LIGHTPINK
-
-class Object(pygame.sprite.Sprite):
-	def __init__(self, file_name, position):
-		self.image = pygame.image.load(file_name)
-		self.rect = pygame.Rect(position[0], position[1], self.image.get_size()[0], self.image.get_size()[1])
 
 backgroundColor = COLOR_LIGHTPINK
 
@@ -58,13 +48,9 @@ obj_answerCard2 = Object("img/answerCard_blue.png", POS_ANSWER2)
 obj_answerCard3 = Object("img/answerCard_blue.png", POS_ANSWER3)
 obj_answerCard4 = Object("img/answerCard_blue.png", POS_ANSWER4)
 obj_answerCard5 = Object("img/answerCard_blue.png", POS_ANSWER5)
-<<<<<<< HEAD
 obj_playCard = Object("img/button_medium_green.png", POS_PLAY)
-=======
->>>>>>> origin/Point-values-and-scoring
 answerObjArray = [obj_answerCard1, obj_answerCard2, obj_answerCard3, obj_answerCard4, obj_answerCard5]
 spr_scenarioCard = pygame.image.load('img/scenarioCard_blue.png')
-score_display = Object("graphics/button_medium_blue.png", POS_SCORE)
 
 #This class defines the players of the game
 class Player:
@@ -269,16 +255,10 @@ def gameLoop():
 				   pygame.Rect(POS_ANSWER4[0] + 10, POS_ANSWER4[1] + 10, 108, 150),
 				   pygame.Rect(POS_ANSWER5[0] + 10, POS_ANSWER5[1] + 10, 108, 150)]
 	scenarioRect = pygame.Rect(POS_SCENARIO[0] + 20, POS_SCENARIO[1] + 20, 300, 216)
-<<<<<<< HEAD
 	playRect = pygame.Rect(POS_PLAY[0] + 20, POS_PLAY[1] + 20, 200, 100)
 
 	cardSelected = -1
 	canPlay = -1
-=======
-	#scoreRect = pygame.Rect(POS_SCORE[0] + 20, POS_SCORE[1] + 20, 300, 216)
-
-	cardSelected = -1
->>>>>>> origin/Point-values-and-scoring
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
 	player = Player('Ryan', 1, True)
@@ -290,13 +270,7 @@ def gameLoop():
 
 	while gameRun: #Continues to execute until gameRun is set to false
 
-<<<<<<< HEAD
 
-=======
-	#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
-	#pointVal = currentScenario.getPointVal(Answer.getCardNum())
-	#Player.addPoints(pointVal)
->>>>>>> origin/Point-values-and-scoring
 	
 		while gameOver: #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
@@ -328,19 +302,12 @@ def gameLoop():
 							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 						answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
 						cardSelected = card
-<<<<<<< HEAD
 						canPlay = 1
 						
-					if(obj_playCard.rect.collidepoint(x, y) & canPlay == 1):
-						canPlay = -1
-						pointVal = currentScenario.getPointVal(handArray[cardSelected].getCardNum())
-						player.addPoints(pointVal)
-			
+			#INSERT "PLAY CARD" BUTTON HERE
 			#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
 			#pointVal = currentScenario.getPointVal(Answer.getCardNum())
 			#Player.addPoints(pointVal)
-=======
->>>>>>> origin/Point-values-and-scoring
 
 		gameDisplay.fill(backgroundColor)
 		displayMessage("The game is running.  Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
@@ -349,34 +316,14 @@ def gameLoop():
 		gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
 		gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
 		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
-<<<<<<< HEAD
+		gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
-<<<<<<< HEAD
 		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, [191,255,191])
 		gameDisplay.blit(playCardRendered, playRect.topleft)
-=======
-		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, COLOR_GREEN)
-		print(player.getPoints())
-		
-		
-		if(canPlay == 1):
-			gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
-			gameDisplay.blit(playCardRendered, playRect.topleft)
-			
->>>>>>> origin/master
-=======
-		gameDisplay.blit(score_display.image, score_display.rect)
-		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
->>>>>>> origin/Point-values-and-scoring
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
-		scoreBoxRendered = render_textrect("SCORE: ", ANSWER_CARD_FONT, pygame.Rect(760,35,168,90), COLOR_BLACK, COLOR_BLUE)
-		scoreRendered = render_textrect("46 ", ANSWER_CARD_FONT, pygame.Rect(850,35,138,90), COLOR_BLACK, COLOR_BLUE)
-		if scoreBoxRendered:
-			gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
-			gameDisplay.blit(scoreRendered, pygame.Rect(850,35,168,90).topleft)
 		if scenarioCardRendered:
 			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
-#gljdsaldfk
+
 		for p in playerArray:
 			turnGoing = True
 			if (p.isHuman): #Executes if the current player is a human player
