@@ -19,6 +19,7 @@ GAME_WIDTH = 1024
 GAME_HEIGHT = 768
 FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
+GOOD_CARD_POINTS = 6
 FONT = pygame.font.SysFont(None, 25)
 ANSWER_CARD_FONT = pygame.font.Font('fonts/OpenSans-Regular.ttf', 16)
 SCENARIO_CARD_FONT = pygame.font.Font('fonts/OpenSans-Regular.ttf', 32)
@@ -267,7 +268,9 @@ def gameLoop():
 	playRect = pygame.Rect(POS_PLAY[0] + 20, POS_PLAY[1] + 20, 200, 100)
 
 	cardSelected = -1
-	canPlay = -1
+	canPlay = False
+	hasWinningCard = False
+	minPointsHand = 0
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
 	player = Player('Ryan', 1, True)
@@ -311,14 +314,15 @@ def gameLoop():
 							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 						answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
 						cardSelected = card
-						canPlay = 1
+						canPlay = True
 						hand = player.getHand()
 						cardNum = hand[cardSelected].getCardNum()
 						print(str(cardNum))
 						cardText = hand[cardSelected].getText()
 						print(cardText)
-				if ((obj_playCard.rect.collidepoint(x, y)) & (canPlay == 1)):
-					canPlay = -1
+						print('POINTS' + str(currentScenario.getPointVal(cardNum)))
+				if ((obj_playCard.rect.collidepoint(x, y)) & (canPlay == True)):
+					canPlay = False
 					hand = player.getHand()
 					pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 					player.addPoints(pointVal)
@@ -343,7 +347,20 @@ def gameLoop():
 				
 					for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
 						p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-					
+
+					while (not hasWinningCard):
+						print('Attempting to make the user\'s hand have a winning card')
+						answerArray.insert(0, p.handArray.pop())
+						p.handArray.append(answerArray.pop())
+						for card in p.handArray: #Iterates through all 5 cards in the user's hand
+							if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+								minPointsHand = currentScenario.getPointVal(card.getCardNum())
+						if (minPointsHand >= GOOD_CARD_POINTS):
+							p.handArray = shuffle(p.handArray)
+							hasWinningCard = True
+							print('Should have one. minPointsHand = ' + str(minPointsHand))
+					hasWinningCard = False
+					minPointsHand = 0
 					
 					#increment points
 						
@@ -373,7 +390,7 @@ def gameLoop():
 		if scenarioCardRendered:
 			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
 			
-		if canPlay == 1:
+		if canPlay == True:
 			gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 			gameDisplay.blit(playCardRendered, playRect.topleft)
 		for p in playerArray:
