@@ -32,6 +32,7 @@ POS_ANSWER4 = (595,570)
 POS_ANSWER5 = (730,570)
 POS_PLAY = (740, 300)
 POS_SCENARIO = (385, 285)
+POS_SCORE = (750, 25)
 
 backgroundColor = COLOR_LIGHTPINK
 
@@ -51,6 +52,7 @@ obj_answerCard5 = Object("img/answerCard_blue.png", POS_ANSWER5)
 obj_playCard = Object("img/button_medium_green.png", POS_PLAY)
 answerObjArray = [obj_answerCard1, obj_answerCard2, obj_answerCard3, obj_answerCard4, obj_answerCard5]
 spr_scenarioCard = pygame.image.load('img/scenarioCard_blue.png')
+score_display = Object("graphics/button_medium_blue.png", POS_SCORE)
 
 #This class defines the players of the game
 class Player:
@@ -319,11 +321,16 @@ def gameLoop():
 		gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
 		gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
 		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
-		
+		gameDisplay.blit(score_display.image, score_display.rect)
 		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
 		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, [191,255,191])
 		
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
+		scoreBoxRendered = render_textrect("SCORE: ", ANSWER_CARD_FONT, pygame.Rect(760,35,168,90), COLOR_BLACK, COLOR_BLUE)
+		scoreRendered = render_textrect("46 ", ANSWER_CARD_FONT, pygame.Rect(850,35,138,90), COLOR_BLACK, COLOR_BLUE)
+		if scoreBoxRendered:
+			gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
+			gameDisplay.blit(scoreRendered, pygame.Rect(850,35,168,90).topleft)
 		if scenarioCardRendered:
 			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
 			
