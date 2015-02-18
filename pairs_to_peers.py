@@ -333,7 +333,8 @@ def gameLoop():
 		
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 		scoreBoxRendered = render_textrect("SCORE: ", ANSWER_CARD_FONT, pygame.Rect(760,35,168,90), COLOR_BLACK, [158,206,255])
-		scoreRendered = render_textrect("46 ", ANSWER_CARD_FONT, pygame.Rect(850,35,138,90), COLOR_BLACK, [158,206,255])
+		score = str(player.getPoints())
+		scoreRendered = render_textrect(score, ANSWER_CARD_FONT, pygame.Rect(850,35,138,90), COLOR_BLACK, [158,206,255])
 		if scoreBoxRendered:
 			gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
 			gameDisplay.blit(scoreRendered, pygame.Rect(850,35,168,90).topleft)
