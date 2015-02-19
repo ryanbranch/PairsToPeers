@@ -9,6 +9,7 @@ from textrect import *
 pygame.init()
 pygame.mixer.init()
 sound_blop = pygame.mixer.Sound('sound/Blop-Mark_DiAngelo-79054334_CHOPPED.ogg')
+sound_applause = pygame.mixer.Sound('sound/Auditorium_Applause_CHOPPED.ogg')
 #In the following section, a number of constants are defined.
 #These variables have self explanatory names, and are referred to throughout the rest of the code but never change in value.
 #Editing these values in the code can change various aspects of the gameplay, like the player's speed.
@@ -23,6 +24,7 @@ GAME_HEIGHT = 768
 FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
 GOOD_CARD_POINTS = 6
+POINTS_TO_WIN = 120
 FONT = pygame.font.SysFont(None, 25)
 ANSWER_CARD_FONT = pygame.font.Font('fonts/OpenSans-Regular.ttf', 16)
 SCENARIO_CARD_FONT = pygame.font.Font('fonts/OpenSans-Regular.ttf', 32)
@@ -117,17 +119,7 @@ class Scenario:
 
 	def getPointVal(self, cardNum):
 		return self.arrPoints[cardNum]
-	
-	def getGoodCards(self):
-		#initializes a good cards array
-		GoodCards = []
-		i = 0
-		while(i < len(arrPoints)):
-			if(arrPoints[i] > 6):
-				GoodCards.append(i)
-			
-		return GoodCards
-	
+
 class Answer:
 
 	#MEMBER VARIABLES#
@@ -242,8 +234,8 @@ def buildAnswers():
 	return answers
 
 #This function takes a string, a color, and a coordinate as input and displays text on the screen accordingly
-def displayMessage(messageText,messageColor,messageLocation):
-	screen_text = FONT.render(messageText, True, messageColor)
+def displayMessage(messageText,messageColor,messageLocation, font=FONT):
+	screen_text = font.render(messageText, True, messageColor)
 	gameDisplay.blit(screen_text, messageLocation)
 
 #This function takes some text and the coordinates of a button rectangle and places text on the button appropriately.
@@ -273,6 +265,7 @@ def gameLoop():
 	cardSelected = -1
 	canPlay = False
 	hasWinningCard = False
+	gameWon = False
 	minPointsHand = 0
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
@@ -289,7 +282,7 @@ def gameLoop():
 	
 		while gameOver: #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
-			displayMessage("GAME OVER!	Press ENTER to play again, or SPACE to quit.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
+			displayMessage("GAME OVER!  Press ENTER to play again, or SPACE to quit.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
 			pygame.display.update()
 
 			for event in pygame.event.get():
@@ -306,7 +299,7 @@ def gameLoop():
 			#Handles events when a key is pressed
 			if event.type == pygame.KEYDOWN:
 				#This line is just here as a placeholder for future keyboard events to be added
-				if event.key == pygame.K_RETURN:
+				if ((event.key == pygame.K_RETURN) and (gameWon)):
 					gameOver = True
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				# Set the x, y positions of the mouse click
@@ -333,8 +326,10 @@ def gameLoop():
 					pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 					player.addPoints(pointVal)
 					
-					if(player.getPoints() > 119):
-						print('VICTORY')
+					if(player.getPoints() >= POINTS_TO_WIN):
+						gameWon = True
+						canPlay = False
+						sound_applause.play()
 						
 					tempScenario = currentScenario
 					currentScenario = scenarioArray.pop()
@@ -376,7 +371,6 @@ def gameLoop():
 			#Player.addPoints(pointVal)
 
 		gameDisplay.fill(backgroundColor)
-		displayMessage("The game is running.  Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
 		gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
 		gameDisplay.blit(obj_answerCard2.image, obj_answerCard2.rect)
 		gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
@@ -397,6 +391,11 @@ def gameLoop():
 		if canPlay == True:
 			gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 			gameDisplay.blit(playCardRendered, playRect.topleft)
+
+		if gameWon == True:
+			displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],BIG_BOLD_FONT) #Congratulates the user upon winning
+			displayMessage("Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
+
 		for p in playerArray:
 			turnGoing = True
 			if (p.isHuman): #Executes if the current player is a human player
