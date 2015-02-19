@@ -355,7 +355,7 @@ def gameLoop():
 						p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 
 					while (not hasWinningCard):
-						print('Attempting to make the user\'s hand have a winning card')
+						#print('Attempting to make the user\'s hand have a winning card')
 						answerArray.insert(0, p.handArray.pop())
 						p.handArray.append(answerArray.pop())
 						for card in p.handArray: #Iterates through all 5 cards in the user's hand
@@ -364,7 +364,7 @@ def gameLoop():
 						if (minPointsHand >= GOOD_CARD_POINTS):
 							p.handArray = shuffle(p.handArray)
 							hasWinningCard = True
-							print('Should have one. minPointsHand = ' + str(minPointsHand))
+							#print('Should have one. minPointsHand = ' + str(minPointsHand))
 					hasWinningCard = False
 					minPointsHand = 0
 					
@@ -388,7 +388,7 @@ def gameLoop():
 		
 		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 		score = str(player.getPoints())
-		scoreBoxRendered = render_textrect(("SCORE: " + str(score)), BIG_BOLD_FONT, pygame.Rect(760,35,168,90), COLOR_BLACK, [158,206,255])
+		scoreBoxRendered = render_textrect(("SCORE: " + str(score)), BIG_BOLD_FONT, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
 		if scoreBoxRendered:
 			gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
 		if scenarioCardRendered:
