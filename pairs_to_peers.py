@@ -58,7 +58,7 @@ obj_answerCard5 = Object("img/answerCard_blue.png", POS_ANSWER5)
 obj_playCard = Object("img/button_medium_green.png", POS_PLAY)
 answerObjArray = [obj_answerCard1, obj_answerCard2, obj_answerCard3, obj_answerCard4, obj_answerCard5]
 spr_scenarioCard = pygame.image.load('img/scenarioCard_blue.png')
-score_display = Object("graphics/button_medium_blue.png", POS_SCORE)
+score_display = Object("img/button_medium_blue.png", POS_SCORE)
 
 #This class defines the players of the game
 class Player:
