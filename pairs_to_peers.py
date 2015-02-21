@@ -7,9 +7,18 @@ import pygame.mixer
 from textrect import *
 
 pygame.init()
+
+#Loads in all of the fonts used by the game
+font = pygame.font.SysFont(None, 25)
+answer_card_font = pygame.font.Font('fonts/OpenSans-Regular.ttf', 16)
+scenario_card_font = pygame.font.Font('fonts/OpenSans-Regular.ttf', 32)
+big_bold_font = pygame.font.Font('fonts/OpenSans-Bold.ttf', 36)
+
+#Initializes the mixer and loads in all of the sounds used by the game
 pygame.mixer.init()
 sound_blop = pygame.mixer.Sound('sound/Blop-Mark_DiAngelo-79054334_CHOPPED.ogg')
 sound_applause = pygame.mixer.Sound('sound/Auditorium_Applause_CHOPPED.ogg')
+
 #In the following section, a number of constants are defined.
 #These variables have self explanatory names, and are referred to throughout the rest of the code but never change in value.
 #Editing these values in the code can change various aspects of the gameplay, like the player's speed.
@@ -25,12 +34,18 @@ FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
 GOOD_CARD_POINTS = 6
 POINTS_TO_WIN = 120
-FONT = pygame.font.SysFont(None, 25)
-ANSWER_CARD_FONT = pygame.font.Font('fonts/OpenSans-Regular.ttf', 16)
-SCENARIO_CARD_FONT = pygame.font.Font('fonts/OpenSans-Regular.ttf', 32)
-BIG_BOLD_FONT = pygame.font.Font('fonts/OpenSans-Bold.ttf', 36)
 
 #The rest of these constants relate specifically to the locations of images on the game screen.  Tweaking with these could definitely mess up how everything looks.
+
+#Main Menu
+POS_BOTTOMCORNER = (0, 512)
+POS_TOPCORNER = (768, 0)
+POS_LOGO = (150, 100)
+POS_PLAYGAME = (90, 475)
+POS_HOWTOPLAY = (390, 475)
+POS_OPTIONS = (690, 475)
+
+#In-Game Screen
 POS_ANSWER1 = (190,570)
 POS_ANSWER2 = (325,570)
 POS_ANSWER3 = (460,570)
@@ -50,15 +65,27 @@ class Object(pygame.sprite.Sprite):
 #These two lines create the window in which the game is played, titling it "Pairs to Peers".
 gameDisplay = pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT))
 pygame.display.set_caption("Pairs to Peers")
+
+#Loads in all of the objects and sprites necessary for the game
+#Main Menu
+spr_bottomCorner = pygame.image.load('img/corner_blue_bottomleft.png')
+spr_topCorner = pygame.image.load('img/corner_blue_topright.png')
+obj_logo = Object("img/logo.png", POS_LOGO)
+obj_buttonPlayGame = Object("img/button_Play_Game.png", POS_PLAYGAME)
+obj_buttonHowToPlay = Object("img/button_How_To_Play.png", POS_HOWTOPLAY)
+obj_buttonOptions = Object("img/button_Options.png", POS_OPTIONS)
+
+#In-game screen
 obj_answerCard1 = Object("img/answerCard_blue.png", POS_ANSWER1)
 obj_answerCard2 = Object("img/answerCard_blue.png", POS_ANSWER2)
 obj_answerCard3 = Object("img/answerCard_blue.png", POS_ANSWER3)
 obj_answerCard4 = Object("img/answerCard_blue.png", POS_ANSWER4)
 obj_answerCard5 = Object("img/answerCard_blue.png", POS_ANSWER5)
 obj_playCard = Object("img/button_medium_green.png", POS_PLAY)
+obj_scoreDisplay = Object("img/button_medium_blue.png", POS_SCORE)
 answerObjArray = [obj_answerCard1, obj_answerCard2, obj_answerCard3, obj_answerCard4, obj_answerCard5]
 spr_scenarioCard = pygame.image.load('img/scenarioCard_blue.png')
-score_display = Object("img/button_medium_blue.png", POS_SCORE)
+spr_buttonMainMenu = pygame.image.load('img/button_Main_Menu.png')
 
 #This class defines the players of the game
 class Player:
@@ -234,7 +261,7 @@ def buildAnswers():
 	return answers
 
 #This function takes a string, a color, and a coordinate as input and displays text on the screen accordingly
-def displayMessage(messageText,messageColor,messageLocation, font=FONT):
+def displayMessage(messageText,messageColor,messageLocation, font=font):
 	screen_text = font.render(messageText, True, messageColor)
 	gameDisplay.blit(screen_text, messageLocation)
 
@@ -246,7 +273,6 @@ def buttonText(text, color, xPos, yPos, width, height, size):
 def gameLoop():
 	gameRun = True #Boolean that stores whether the game should be running
 	playersIn = False #Boolean that stores whether all of the player information has been input
-	gameOver = False #Boolean that stores whether the player has lost
 	clock = pygame.time.Clock()
 	playerArray = []#Initializes the array that will eventually store the players of the game
 	scenarioArray = []#Initializes the array that will eventually store the scenario cards
@@ -268,6 +294,17 @@ def gameLoop():
 	gameWon = False
 	minPointsHand = 0
 
+	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
+	#The following key describes the screen to which each individual integer corresponds
+	#1 = About
+	#2 = Main Menu
+	#3 = Instructions
+	#4 = Gameplay
+	#5 = Endgame
+	#6 = Player selection
+	#7 = Customization
+	gameScreen = 2
+
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
 	player = Player('Ryan', 1, True)
 	playerArray.append(player)
@@ -278,12 +315,164 @@ def gameLoop():
 
 	while gameRun: #Continues to execute until gameRun is set to false
 
+		while (gameScreen == 1 and gameRun):
+			gameDisplay.fill(backgroundColor)
+			displayMessage("This is the ABOUT screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+			pygame.display.update() #Updates the screen every frame
+			clock.tick(FRAMES_PER_SECOND)
 
-	
-		while gameOver: #Executes after the game has ended
+		while (gameScreen == 2 and gameRun):
+			gameDisplay.fill(backgroundColor)
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+			gameDisplay.blit(obj_logo.image, obj_logo.rect)
+			gameDisplay.blit(obj_buttonPlayGame.image, obj_buttonPlayGame.rect)
+			gameDisplay.blit(obj_buttonHowToPlay.image,obj_buttonHowToPlay.rect)
+			gameDisplay.blit(obj_buttonOptions.image, obj_buttonOptions.rect)
+			gameDisplay.blit(spr_bottomCorner, POS_BOTTOMCORNER)
+			gameDisplay.blit(spr_topCorner, POS_TOPCORNER)
+			pygame.display.update() #Updates the screen every frame
+			clock.tick(FRAMES_PER_SECOND)
+
+		while (gameScreen == 3 and gameRun):
+			gameDisplay.fill(backgroundColor)
+			displayMessage("This is the INSTRUCTIONS screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+			pygame.display.update() #Updates the screen every frame
+			clock.tick(FRAMES_PER_SECOND)
+
+		while (gameScreen == 4 and gameRun):
+			for event in pygame.event.get():
+				#Handles events when a key is pressed
+				if event.type == pygame.KEYDOWN:
+					#This line is just here as a placeholder for future keyboard events to be added
+					if ((event.key == pygame.K_RETURN) and (gameWon)):
+						gameScreen = 5
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					# Set the x, y positions of the mouse click
+					x, y = event.pos
+					for card in range(len(answerObjArray)):
+						if (answerObjArray[card].rect.collidepoint(x, y)):
+							if (cardSelected >= 0):
+								answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
+							answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
+							sound_blop.play()
+							cardSelected = card
+							canPlay = True
+							hand = player.getHand()
+							cardNum = hand[cardSelected].getCardNum()
+							#print(str(cardNum))
+							cardText = hand[cardSelected].getText()
+							#print(cardText)
+							#print('POINTS' + str(currentScenario.getPointVal(cardNum)))
+					if ((obj_playCard.rect.collidepoint(x, y)) & (canPlay == True)):
+						canPlay = False
+						sound_blop.play()
+						answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
+						hand = player.getHand()
+						pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
+						player.addPoints(pointVal)
+
+						if(player.getPoints() >= POINTS_TO_WIN):
+							gameWon = True
+							canPlay = False
+							sound_applause.play()
+
+						tempScenario = currentScenario
+						currentScenario = scenarioArray.pop()
+
+						scenarioArray.append(tempScenario)
+						scenarioArray = shuffle(scenarioArray)
+
+						cards = 0
+						while(cards < 5):
+							answerArray.append(hand[cards])
+							cards = cards + 1
+
+						answerArray = shuffle(answerArray)
+						player.clearHand()
+						cardsInHand = len(p.handArray)
+
+						for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+							p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+
+						while (not hasWinningCard):
+							#print('Attempting to make the user\'s hand have a winning card')
+							answerArray.insert(0, p.handArray.pop())
+							p.handArray.append(answerArray.pop())
+							for card in p.handArray: #Iterates through all 5 cards in the user's hand
+								if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+									minPointsHand = currentScenario.getPointVal(card.getCardNum())
+							if (minPointsHand >= GOOD_CARD_POINTS):
+								p.handArray = shuffle(p.handArray)
+								hasWinningCard = True
+								#print('Should have one. minPointsHand = ' + str(minPointsHand))
+						hasWinningCard = False
+						minPointsHand = 0
+
+						#increment points
+
+				#INSERT "PLAY CARD" BUTTON HERE
+				#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
+				#pointVal = currentScenario.getPointVal(Answer.getCardNum())
+				#Player.addPoints(pointVal)
+
+			gameDisplay.fill(backgroundColor)
+			gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
+			gameDisplay.blit(obj_answerCard2.image, obj_answerCard2.rect)
+			gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
+			gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
+			gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
+			gameDisplay.blit(obj_scoreDisplay.image, obj_scoreDisplay.rect)
+			gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
+			playCardRendered = render_textrect("Play Card", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
+			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
+			score = str(player.getPoints())
+			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
+			if scoreBoxRendered:
+				gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
+			if scenarioCardRendered:
+				gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
+
+			if canPlay == True:
+				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
+				gameDisplay.blit(playCardRendered, playRect.topleft)
+
+			if gameWon == True:
+				displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],big_bold_font) #Congratulates the user upon winning
+				displayMessage("Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
+
+			for p in playerArray:
+				turnGoing = True
+				if (p.isHuman): #Executes if the current player is a human player
+					cardsInHand = len(p.handArray)
+
+					for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+						p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+
+					p.handArray.append(answerArray)
+				#while turnGoing:
+					for cardNum in xrange(0,5): #Shows answer cards on the screen
+						answerCardRendered = render_textrect(p.handArray[cardNum].ansText, answer_card_font, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
+						if answerCardRendered:
+							gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
+				else: #Executes if the current player is a computer player
+					print('COMPUTER PLAYER TURN')
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+			pygame.display.update() #Updates the screen every frame
+			clock.tick(FRAMES_PER_SECOND)
+
+		while (gameScreen == 5 and gameRun): #Executes after the game has ended
 			gameDisplay.fill(COLOR_BLACK)
 			displayMessage("GAME OVER!  Press ENTER to play again, or SPACE to quit.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
-			pygame.display.update()
 
 			for event in pygame.event.get():
 				if event.type == pygame.KEYDOWN:
@@ -291,131 +480,29 @@ def gameLoop():
 						gameLoop() #Restarts the game if the player presses the ENTER key
 					if event.key == pygame.K_SPACE:
 						gameRun = False #Closes the game if the player presses the SPACE key
-						gameOver = False
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+			pygame.display.update() #Updates the screen every frame
+			clock.tick(FRAMES_PER_SECOND)
 
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				gameRun = False #Ends the game if they user attempts to close the window
-			#Handles events when a key is pressed
-			if event.type == pygame.KEYDOWN:
-				#This line is just here as a placeholder for future keyboard events to be added
-				if ((event.key == pygame.K_RETURN) and (gameWon)):
-					gameOver = True
-			if event.type == pygame.MOUSEBUTTONDOWN:
-				# Set the x, y positions of the mouse click
-				x, y = event.pos
-				for card in range(len(answerObjArray)):
-					if (answerObjArray[card].rect.collidepoint(x, y)):
-						if (cardSelected >= 0):
-							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
-						answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
-						sound_blop.play()
-						cardSelected = card
-						canPlay = True
-						hand = player.getHand()
-						cardNum = hand[cardSelected].getCardNum()
-						#print(str(cardNum))
-						cardText = hand[cardSelected].getText()
-						#print(cardText)
-						#print('POINTS' + str(currentScenario.getPointVal(cardNum)))
-				if ((obj_playCard.rect.collidepoint(x, y)) & (canPlay == True)):
-					canPlay = False
-					sound_blop.play()
-					answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
-					hand = player.getHand()
-					pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
-					player.addPoints(pointVal)
-					
-					if(player.getPoints() >= POINTS_TO_WIN):
-						gameWon = True
-						canPlay = False
-						sound_applause.play()
-						
-					tempScenario = currentScenario
-					currentScenario = scenarioArray.pop()
-					
-					scenarioArray.append(tempScenario)
-					scenarioArray = shuffle(scenarioArray)
-					
-					cards = 0
-					while(cards < 5):
-						answerArray.append(hand[cards])
-						cards = cards + 1
-						
-					answerArray = shuffle(answerArray) 
-					player.clearHand()
-					cardsInHand = len(p.handArray)
-				
-					for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-						p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+		while (gameScreen == 6 and gameRun):
+			gameDisplay.fill(backgroundColor)
+			displayMessage("This is the PLAYER SELECTION screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+			pygame.display.update() #Updates the screen every frame
+			clock.tick(FRAMES_PER_SECOND)
 
-					while (not hasWinningCard):
-						#print('Attempting to make the user\'s hand have a winning card')
-						answerArray.insert(0, p.handArray.pop())
-						p.handArray.append(answerArray.pop())
-						for card in p.handArray: #Iterates through all 5 cards in the user's hand
-							if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-								minPointsHand = currentScenario.getPointVal(card.getCardNum())
-						if (minPointsHand >= GOOD_CARD_POINTS):
-							p.handArray = shuffle(p.handArray)
-							hasWinningCard = True
-							#print('Should have one. minPointsHand = ' + str(minPointsHand))
-					hasWinningCard = False
-					minPointsHand = 0
-					
-					#increment points
-						
-			#INSERT "PLAY CARD" BUTTON HERE
-			#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
-			#pointVal = currentScenario.getPointVal(Answer.getCardNum())
-			#Player.addPoints(pointVal)
-
-		gameDisplay.fill(backgroundColor)
-		gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
-		gameDisplay.blit(obj_answerCard2.image, obj_answerCard2.rect)
-		gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
-		gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
-		gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
-		gameDisplay.blit(score_display.image, score_display.rect)
-		gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
-		playCardRendered = render_textrect("Play Card", SCENARIO_CARD_FONT, playRect, COLOR_BLACK, [191,255,191])
-		
-		scenarioCardRendered = render_textrect(currentScenario.scenarioText, SCENARIO_CARD_FONT, scenarioRect, COLOR_BLACK, COLOR_WHITE)
-		score = str(player.getPoints())
-		scoreBoxRendered = render_textrect(("SCORE: " + str(score)), BIG_BOLD_FONT, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
-		if scoreBoxRendered:
-			gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
-		if scenarioCardRendered:
-			gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
-			
-		if canPlay == True:
-			gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
-			gameDisplay.blit(playCardRendered, playRect.topleft)
-
-		if gameWon == True:
-			displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],BIG_BOLD_FONT) #Congratulates the user upon winning
-			displayMessage("Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
-
-		for p in playerArray:
-			turnGoing = True
-			if (p.isHuman): #Executes if the current player is a human player
-				cardsInHand = len(p.handArray)
-				
-				for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-					p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-					
-				p.handArray.append(answerArray)
-			#while turnGoing:
-				for cardNum in xrange(0,5): #Shows answer cards on the screen
-					answerCardRendered = render_textrect(p.handArray[cardNum].ansText, ANSWER_CARD_FONT, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
-					if answerCardRendered:
-						gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
-			else: #Executes if the current player is a computer player
-				print('COMPUTER PLAYER TURN')
-
-		pygame.display.update() #Updates the screen every frame
-
-		clock.tick(FRAMES_PER_SECOND)
+		while (gameScreen == 7 and gameRun):
+			gameDisplay.fill(backgroundColor)
+			displayMessage("This is the CUSTOMIZATION screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+			pygame.display.update() #Updates the screen every frame
+			clock.tick(FRAMES_PER_SECOND)
 
 	pygame.quit()
 	quit()
