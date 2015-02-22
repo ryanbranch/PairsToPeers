@@ -40,10 +40,10 @@ POINTS_TO_WIN = 120
 #Main Menu
 POS_BOTTOMCORNER = (0, 512)
 POS_TOPCORNER = (768, 0)
-POS_LOGO = (150, 100)
-POS_PLAYGAME = (90, 475)
-POS_HOWTOPLAY = (390, 475)
-POS_OPTIONS = (690, 475)
+POS_LOGO = (180, 60)
+POS_PLAYGAME = (90, 450)
+POS_HOWTOPLAY = (390, 450)
+POS_OPTIONS = (690, 450)
 
 #In-Game Screen
 POS_ANSWER1 = (190,570)
@@ -329,6 +329,22 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					# Set the x, y positions of the mouse click
+					x, y = event.pos
+					if ((obj_logo.rect.collidepoint(x, y))):
+						sound_blop.play()
+						gameScreen = 6
+					elif ((obj_buttonPlayGame.rect.collidepoint(x, y))):
+						sound_blop.play()
+						gameScreen = 4
+					elif ((obj_buttonHowToPlay.rect.collidepoint(x, y))):
+						sound_blop.play()
+						gameScreen = 3
+					elif((obj_buttonOptions.rect.collidepoint(x, y))):
+						sound_blop.play()
+						gameScreen = 7
+
 			gameDisplay.blit(obj_logo.image, obj_logo.rect)
 			gameDisplay.blit(obj_buttonPlayGame.image, obj_buttonPlayGame.rect)
 			gameDisplay.blit(obj_buttonHowToPlay.image,obj_buttonHowToPlay.rect)

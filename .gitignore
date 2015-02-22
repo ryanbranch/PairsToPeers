@@ -1,4 +1,4 @@
 .idea/
 graphics/
 audio/
-textrec.pyc
+*.pyc
