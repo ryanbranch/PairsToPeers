@@ -25,7 +25,9 @@ sound_applause = pygame.mixer.Sound('sound/Auditorium_Applause_CHOPPED.ogg')
 COLOR_RED = (255,0,0)
 COLOR_GREEN = (0,255,0)
 COLOR_BLUE = (0,0,255)
-COLOR_LIGHTPINK = (255,228,255)
+COLOR_LIGHTPINK = (255,225,255)
+COLOR_LIGHTGREEN = (204,255,204)
+COLOR_LIGHTBLUE = (204, 225, 255)
 COLOR_WHITE = (255,255,255)
 COLOR_BLACK = (0,0,0)
 GAME_WIDTH = 1024
@@ -53,9 +55,26 @@ POS_ANSWER4 = (595,570)
 POS_ANSWER5 = (730,570)
 POS_PLAY = (740, 300)
 POS_SCENARIO = (385, 285)
+POS_MAINMENU = (0, 0)
 POS_SCORE = (750, 25)
 
-backgroundColor = COLOR_LIGHTPINK
+#Customization
+POS_SQUARE_WHITE = (570, 365)
+POS_SQUARE_LIGHTPINK = (770, 365)
+POS_SQUARE_LIGHTBLUE = (570, 565)
+POS_SQUARE_LIGHTGREEN = (770, 565)
+POS_CARD_CUBES = (70, 365)
+POS_CARD_MARBLE = (215, 365)
+POS_CARD_PINK = (360, 365)
+POS_CARD_STONE = (70, 565)
+POS_CARD_TILE = (215, 565)
+POS_CARD_WOVEN = (360, 565)
+POS_BOX_SOUND = (768, 0)
+POS_SELECT_ARTWORK = (150, 210)
+POS_CHOOSE_BACKGROUND = (630, 210)
+
+backgroundColor = COLOR_WHITE
+soundOn = True
 
 class Object(pygame.sprite.Sprite):
 	def __init__(self, file_name, position):
@@ -68,8 +87,8 @@ pygame.display.set_caption("Pairs to Peers")
 
 #Loads in all of the objects and sprites necessary for the game
 #Main Menu
-spr_bottomCorner = pygame.image.load('img/corner_blue_bottomleft.png')
-spr_topCorner = pygame.image.load('img/corner_blue_topright.png')
+spr_bottomCorner = pygame.image.load("img/corner_blue_bottomleft.png")
+spr_topCorner = pygame.image.load("img/corner_blue_topright.png")
 obj_logo = Object("img/logo.png", POS_LOGO)
 obj_buttonPlayGame = Object("img/button_Play_Game.png", POS_PLAYGAME)
 obj_buttonHowToPlay = Object("img/button_How_To_Play.png", POS_HOWTOPLAY)
@@ -83,9 +102,40 @@ obj_answerCard4 = Object("img/answerCard_blue.png", POS_ANSWER4)
 obj_answerCard5 = Object("img/answerCard_blue.png", POS_ANSWER5)
 obj_playCard = Object("img/button_medium_green.png", POS_PLAY)
 obj_scoreDisplay = Object("img/button_medium_blue.png", POS_SCORE)
+obj_buttonMainMenu = Object("img/button_Main_Menu.png", POS_MAINMENU)
 answerObjArray = [obj_answerCard1, obj_answerCard2, obj_answerCard3, obj_answerCard4, obj_answerCard5]
-spr_scenarioCard = pygame.image.load('img/scenarioCard_blue.png')
-spr_buttonMainMenu = pygame.image.load('img/button_Main_Menu.png')
+spr_scenarioCard = pygame.image.load("img/scenarioCard_blue.png")
+
+
+#Customization screen
+#Due to the nature of the customization in this game, the paths of some of these images are stored as strings in order to save space later on.
+path_white = "square_white"
+path_lightpink = "lightpink"
+path_lightblue = "lightblue"
+path_lightgreen = "lightgreen"
+path_cubes = "cubes"
+path_marble = "marble"
+path_pink = "pink"
+path_stone = "stone"
+path_tile = "tile"
+path_woven = "woven"
+prefix_small = "card_back_small_"
+prefix_small = "card_back_large_"
+suffix_green = "_green"
+suffix_off = "_off"
+obj_square_white = Object("img/square_" + path_square_white + suffix_green + ".png", POS_SQUARE_WHITE)
+obj_square_lightpink = Object("img/square_" + path_square_lightpink + ".png", POS_SQUARE_LIGHTPINK)
+obj_square_lightblue = Object("img/square_" + path_square_lightblue + ".png", POS_SQUARE_LIGHTBLUE)
+obj_square_lightgreen = Object("img/square_" + path_square_lightgreen + ".png", POS_SQUARE_LIGHTGREEN)
+obj_card_cubes = Object("img/" + prefix_small + path_cubes + suffix_ green + ".png", POS_CARD_CUBES)
+obj_card_marble = Object("img/" + prefix_small + path_marble + ".png", POS_CARD_MARBLE)
+obj_card_pink = Object("img/" + prefix_small + path_pink + ".png", POS_CARD_PINK)
+obj_card_stone = Object("img/" + prefix_small + path_stone + ".png", POS_CARD_STONE)
+obj_card_tile = Object("img/" + prefix_small + path_tile + ".png", POS_CARD_TILE)
+obj_card_woven = Object("img/" + prefix_small + path_woven + ".png", POS_CARD_WOVEN)
+obj_box_sound = Object("img/box_sound", POS_BOX_SOUND)
+spr_selectArtwork = pygame.image.load("img/box_select_artwork.png")
+spr_chooseBackground = pygame.image.load("img/box_choose_background.png")
 
 #This class defines the players of the game
 class Player:
@@ -333,16 +383,20 @@ def gameLoop():
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
 					if ((obj_logo.rect.collidepoint(x, y))):
-						sound_blop.play()
+						if soundOn:
+							sound_blop.play()
 						gameScreen = 6
 					elif ((obj_buttonPlayGame.rect.collidepoint(x, y))):
-						sound_blop.play()
+						if soundOn:
+							sound_blop.play()
 						gameScreen = 4
 					elif ((obj_buttonHowToPlay.rect.collidepoint(x, y))):
-						sound_blop.play()
+						if soundOn:
+							sound_blop.play()
 						gameScreen = 3
 					elif((obj_buttonOptions.rect.collidepoint(x, y))):
-						sound_blop.play()
+						if soundOn:
+							sound_blop.play()
 						gameScreen = 7
 
 			gameDisplay.blit(obj_logo.image, obj_logo.rect)
@@ -378,7 +432,8 @@ def gameLoop():
 							if (cardSelected >= 0):
 								answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 							answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
-							sound_blop.play()
+							if soundOn:
+								sound_blop.play()
 							cardSelected = card
 							canPlay = True
 							hand = player.getHand()
@@ -389,7 +444,8 @@ def gameLoop():
 							#print('POINTS' + str(currentScenario.getPointVal(cardNum)))
 					if ((obj_playCard.rect.collidepoint(x, y)) & (canPlay == True)):
 						canPlay = False
-						sound_blop.play()
+						if soundOn:
+							sound_blop.play()
 						answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 						hand = player.getHand()
 						pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
@@ -398,7 +454,8 @@ def gameLoop():
 						if(player.getPoints() >= POINTS_TO_WIN):
 							gameWon = True
 							canPlay = False
-							sound_applause.play()
+							if soundOn:
+								sound_applause.play()
 
 						tempScenario = currentScenario
 						currentScenario = scenarioArray.pop()
