@@ -109,34 +109,22 @@ spr_scenarioCard = pygame.image.load("img/scenarioCard_blue.png")
 
 #Customization screen
 #Due to the nature of the customization in this game, the paths of some of these images are stored as strings in order to save space later on.
-path_white = "white"
-path_lightpink = "lightpink"
-path_lightblue = "lightblue"
-path_lightgreen = "lightgreen"
-path_cubes = "cubes"
-path_marble = "marble"
-path_pink = "pink"
-path_stone = "stone"
-path_tile = "tile"
-path_woven = "woven"
-prefix_small = "card_back_small_"
-prefix_large = "card_back_large_"
-suffix_green = "_green"
-suffix_off = "_off"
-suffix_on = "_on"
-obj_square_white = Object("img/square_" + path_white + suffix_green + ".png", POS_SQUARE_WHITE)
-obj_square_lightpink = Object("img/square_" + path_lightpink + ".png", POS_SQUARE_LIGHTPINK)
-obj_square_lightblue = Object("img/square_" + path_lightblue + ".png", POS_SQUARE_LIGHTBLUE)
-obj_square_lightgreen = Object("img/square_" + path_lightgreen + ".png", POS_SQUARE_LIGHTGREEN)
-obj_card_cubes = Object("img/" + prefix_small + path_cubes + suffix_green + ".png", POS_CARD_CUBES)
-obj_card_marble = Object("img/" + prefix_small + path_marble + ".png", POS_CARD_MARBLE)
-obj_card_pink = Object("img/" + prefix_small + path_pink + ".png", POS_CARD_PINK)
-obj_card_stone = Object("img/" + prefix_small + path_stone + ".png", POS_CARD_STONE)
-obj_card_tile = Object("img/" + prefix_small + path_tile + ".png", POS_CARD_TILE)
-obj_card_woven = Object("img/" + prefix_small + path_woven + ".png", POS_CARD_WOVEN)
-obj_box_sound = Object("img/box_sound" + suffix_on + ".png", POS_BOX_SOUND)
+
+obj_square_white = Object("img/square_white_green.png", POS_SQUARE_WHITE)
+obj_square_lightpink = Object("img/square_lightpink.png", POS_SQUARE_LIGHTPINK)
+obj_square_lightblue = Object("img/square_lightblue.png", POS_SQUARE_LIGHTBLUE)
+obj_square_lightgreen = Object("img/square_lightgreen.png", POS_SQUARE_LIGHTGREEN)
+obj_card_cubes = Object("img/card_back_small_cubes_green.png", POS_CARD_CUBES)
+obj_card_marble = Object("img/card_back_small_marble.png", POS_CARD_MARBLE)
+obj_card_pink = Object("img/card_back_small_pink.png", POS_CARD_PINK)
+obj_card_stone = Object("img/card_back_small_stone.png", POS_CARD_STONE)
+obj_card_tile = Object("img/card_back_small_tile.png", POS_CARD_TILE)
+obj_card_woven = Object("img/card_back_small_woven.png", POS_CARD_WOVEN)
+obj_box_sound = Object("img/box_sound_on.png", POS_BOX_SOUND)
 spr_selectArtwork = pygame.image.load("img/box_select_artwork.png")
 spr_chooseBackground = pygame.image.load("img/box_choose_background.png")
+squareObjArray = [obj_square_white, obj_square_lightpink, obj_square_lightblue, obj_square_lightgreen]
+cardBackObjArray = [obj_card_cubes, obj_card_marble, obj_card_pink, obj_card_stone, obj_card_tile, obj_card_woven, obj_box_sound]
 
 #This class defines the players of the game
 class Player:
@@ -310,6 +298,20 @@ def buildAnswers():
 	card = Answer("another answer goes here", 22)
 	answers.append(card)
 	return answers
+
+def resetSquares():
+	obj_square_white.image = pygame.image.load("img/square_white.png")
+	obj_square_lightpink.image = pygame.image.load("img/square_lightpink.png")
+	obj_square_lightgreen.image = pygame.image.load("img/square_lightgreen.png")
+	obj_square_lightblue.image = pygame.image.load("img/square_lightblue.png")
+
+def resetCardBacks():
+	obj_card_cubes.image = pygame.image.load("img/card_back_small_cubes.png")
+	obj_card_marble.image = pygame.image.load("img/card_back_small_marble.png")
+	obj_card_pink.image = pygame.image.load("img/card_back_small_pink.png")
+	obj_card_stone.image = pygame.image.load("img/card_back_small_stone.png")
+	obj_card_tile.image = pygame.image.load("img/card_back_small_tile.png")
+	obj_card_woven.image = pygame.image.load("img/card_back_small_woven.png")
 
 #This function takes a string, a color, and a coordinate as input and displays text on the screen accordingly
 def displayMessage(messageText,messageColor,messageLocation, font=font):
@@ -589,100 +591,68 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						backgroundColor = COLOR_WHITE
-						obj_square_white.image = pygame.image.load("img/square_" + path_white + suffix_green + ".png")
-						obj_square_lightpink.image = pygame.image.load("img/square_" + path_lightpink + ".png")
-						obj_square_lightgreen.image = pygame.image.load("img/square_" + path_lightgreen + ".png")
-						obj_square_lightblue.image = pygame.image.load("img/square_" + path_lightblue + ".png")
+						resetSquares()
+						obj_square_white.image = pygame.image.load("img/square_white_green.png")
 					elif ((obj_square_lightpink.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						backgroundColor = COLOR_LIGHTPINK
-						obj_square_white.image = pygame.image.load("img/square_" + path_white + ".png")
-						obj_square_lightpink.image = pygame.image.load("img/square_" + path_lightpink + suffix_green + ".png")
-						obj_square_lightgreen.image = pygame.image.load("img/square_" + path_lightgreen + ".png")
-						obj_square_lightblue.image = pygame.image.load("img/square_" + path_lightblue + ".png")
+						resetSquares()
+						obj_square_lightpink.image = pygame.image.load("img/square_lightpink_green.png")
 					elif ((obj_square_lightgreen.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						backgroundColor = COLOR_LIGHTGREEN
-						obj_square_white.image = pygame.image.load("img/square_" + path_white + ".png")
-						obj_square_lightpink.image = pygame.image.load("img/square_" + path_lightpink + ".png")
-						obj_square_lightgreen.image = pygame.image.load("img/square_" + path_lightgreen + suffix_green + ".png")
-						obj_square_lightblue.image = pygame.image.load("img/square_" + path_lightblue + ".png")
+						resetSquares()
+						obj_square_lightgreen.image = pygame.image.load("img/square_lightgreen_green.png")
 					elif((obj_square_lightblue.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						backgroundColor = COLOR_LIGHTBLUE
-						obj_square_white.image = pygame.image.load("img/square_" + path_white + ".png")
-						obj_square_lightpink.image = pygame.image.load("img/square_" + path_lightpink + ".png")
-						obj_square_lightgreen.image = pygame.image.load("img/square_" + path_lightgreen + ".png")
-						obj_square_lightblue.image = pygame.image.load("img/square_" + path_lightblue + suffix_green + ".png")
+						resetSquares()
+						obj_square_lightblue.image = pygame.image.load("img/square_lightblue_green.png")
 					elif ((obj_card_cubes.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						cardArtwork = "cubes"
-						obj_card_cubes.image = pygame.image.load("img/" + prefix_small + path_cubes + suffix_green + ".png")
-						obj_card_marble.image = pygame.image.load("img/" + prefix_small + path_marble + ".png")
-						obj_card_pink.image = pygame.image.load("img/" + prefix_small + path_pink + ".png")
-						obj_card_stone.image = pygame.image.load("img/" + prefix_small + path_stone + ".png")
-						obj_card_tile.image = pygame.image.load("img/" + prefix_small + path_tile + ".png")
-						obj_card_woven.image = pygame.image.load("img/" + prefix_small + path_woven + ".png")
+						resetCardBacks()
+						obj_card_cubes.image = pygame.image.load("img/card_back_small_cubes_green.png")
 					elif ((obj_card_marble.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						cardArtwork = "marble"
-						obj_card_cubes.image = pygame.image.load("img/" + prefix_small + path_cubes + ".png")
-						obj_card_marble.image = pygame.image.load("img/" + prefix_small + path_marble + suffix_green + ".png")
-						obj_card_pink.image = pygame.image.load("img/" + prefix_small + path_pink + ".png")
-						obj_card_stone.image = pygame.image.load("img/" + prefix_small + path_stone + ".png")
-						obj_card_tile.image = pygame.image.load("img/" + prefix_small + path_tile + ".png")
-						obj_card_woven.image = pygame.image.load("img/" + prefix_small + path_woven + ".png")
+						resetCardBacks()
+						obj_card_marble.image = pygame.image.load("img/card_back_small_marble_green.png")
 					elif((obj_card_pink.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						cardArtwork = "pink"
-						obj_card_cubes.image = pygame.image.load("img/" + prefix_small + path_cubes + ".png")
-						obj_card_marble.image = pygame.image.load("img/" + prefix_small + path_marble + ".png")
-						obj_card_pink.image = pygame.image.load("img/" + prefix_small + path_pink + suffix_green + ".png")
-						obj_card_stone.image = pygame.image.load("img/" + prefix_small + path_stone + ".png")
-						obj_card_tile.image = pygame.image.load("img/" + prefix_small + path_tile + ".png")
-						obj_card_woven.image = pygame.image.load("img/" + prefix_small + path_woven + ".png")
+						resetCardBacks()
+						obj_card_pink.image = pygame.image.load("img/card_back_small_pink_green.png")
 					elif ((obj_card_stone.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						cardArtwork = "stone"
-						obj_card_cubes.image = pygame.image.load("img/" + prefix_small + path_cubes + ".png")
-						obj_card_marble.image = pygame.image.load("img/" + prefix_small + path_marble + ".png")
-						obj_card_pink.image = pygame.image.load("img/" + prefix_small + path_pink + ".png")
-						obj_card_stone.image = pygame.image.load("img/" + prefix_small + path_stone + suffix_green + ".png")
-						obj_card_tile.image = pygame.image.load("img/" + prefix_small + path_tile + ".png")
-						obj_card_woven.image = pygame.image.load("img/" + prefix_small + path_woven + ".png")
+						resetCardBacks()
+						obj_card_stone.image = pygame.image.load("img/card_back_small_stone_green.png")
 					elif ((obj_card_tile.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						cardArtwork = "tile"
-						obj_card_cubes.image = pygame.image.load("img/" + prefix_small + path_cubes + ".png")
-						obj_card_marble.image = pygame.image.load("img/" + prefix_small + path_marble + ".png")
-						obj_card_pink.image = pygame.image.load("img/" + prefix_small + path_pink + ".png")
-						obj_card_stone.image = pygame.image.load("img/" + prefix_small + path_stone + ".png")
-						obj_card_tile.image = pygame.image.load("img/" + prefix_small + path_tile + suffix_green + ".png")
-						obj_card_woven.image = pygame.image.load("img/" + prefix_small + path_woven + ".png")
+						resetCardBacks()
+						obj_card_tile.image = pygame.image.load("img/card_back_small_tile_green.png")
 					elif((obj_card_woven.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						cardArtwork = "woven"
-						obj_card_cubes.image = pygame.image.load("img/" + prefix_small + path_cubes + ".png")
-						obj_card_marble.image = pygame.image.load("img/" + prefix_small + path_marble + ".png")
-						obj_card_pink.image = pygame.image.load("img/" + prefix_small + path_pink + ".png")
-						obj_card_stone.image = pygame.image.load("img/" + prefix_small + path_stone + ".png")
-						obj_card_tile.image = pygame.image.load("img/" + prefix_small + path_tile + ".png")
-						obj_card_woven.image = pygame.image.load("img/" + prefix_small + path_woven + suffix_green + ".png")
+						resetCardBacks()
+						obj_card_woven.image = pygame.image.load("img/card_back_small_woven_green.png")
 					elif((obj_box_sound.rect.collidepoint(x, y))):
 						if soundOn:
-							obj_box_sound.image = pygame.image.load("img/box_sound" + suffix_off + ".png")
+							obj_box_sound.image = pygame.image.load("img/box_sound_off.png")
 						elif not(soundOn):
 							sound_blop.play()
-							obj_box_sound.image = pygame.image.load("img/box_sound" + suffix_on + ".png")
+							obj_box_sound.image = pygame.image.load("img/box_sound_on.png")
 						soundOn = not(soundOn)
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(obj_square_white.image, obj_square_white.rect)
