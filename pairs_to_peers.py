@@ -57,6 +57,8 @@ POS_PLAY = (740, 300)
 POS_SCENARIO = (385, 285)
 POS_MAINMENU = (0, 0)
 POS_SCORE = (750, 25)
+POS_SCENARIODECK = (25, 285)
+POS_ANSWERDECK = (45, 570)
 
 #Customization
 POS_SQUARE_WHITE = (570, 365)
@@ -95,6 +97,7 @@ obj_buttonHowToPlay = Object("img/button_How_To_Play.png", POS_HOWTOPLAY)
 obj_buttonOptions = Object("img/button_Options.png", POS_OPTIONS)
 
 #In-game screen
+cardArtwork = "cubes"
 obj_answerCard1 = Object("img/answerCard_blue.png", POS_ANSWER1)
 obj_answerCard2 = Object("img/answerCard_blue.png", POS_ANSWER2)
 obj_answerCard3 = Object("img/answerCard_blue.png", POS_ANSWER3)
@@ -105,7 +108,8 @@ obj_scoreDisplay = Object("img/button_medium_blue.png", POS_SCORE)
 obj_buttonMainMenu = Object("img/button_Main_Menu.png", POS_MAINMENU)
 answerObjArray = [obj_answerCard1, obj_answerCard2, obj_answerCard3, obj_answerCard4, obj_answerCard5]
 spr_scenarioCard = pygame.image.load("img/scenarioCard_blue.png")
-
+spr_backOfAnswerCard = pygame.image.load("img/card_back_small_" + cardArtwork + ".png")
+spr_backOfScenarioCard = pygame.image.load("img/card_back_large_" + cardArtwork + ".png")
 
 #Customization screen
 #Due to the nature of the customization in this game, the paths of some of these images are stored as strings in order to save space later on.
@@ -326,6 +330,7 @@ def buttonText(text, color, xPos, yPos, width, height, size):
 def gameLoop():
 	backgroundColor = COLOR_WHITE #NOTE:  I put this here instead of being like a global variable because I was having runtime errors and this seemed to fix it.  I'm adding this comment here to keep track of it because I'm not sure whether or not this could end up causing more problems down the line
 	soundOn = True #NOTE:  Same with this one.
+	cardArtwork = "cubes" #NOTE: Same with this one.
 
 	gameRun = True #Boolean that stores whether the game should be running
 	playersIn = False #Boolean that stores whether all of the player information has been input
@@ -425,11 +430,6 @@ def gameLoop():
 
 		while (gameScreen == 4 and gameRun):
 			for event in pygame.event.get():
-				#Handles events when a key is pressed
-				if event.type == pygame.KEYDOWN:
-					#This line is just here as a placeholder for future keyboard events to be added
-					if ((event.key == pygame.K_RETURN) and (gameWon)):
-						gameScreen = 5
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
@@ -462,6 +462,7 @@ def gameLoop():
 							canPlay = False
 							if soundOn:
 								sound_applause.play()
+								gameScreen = 5
 
 						tempScenario = currentScenario
 						currentScenario = scenarioArray.pop()
@@ -494,13 +495,10 @@ def gameLoop():
 								#print('Should have one. minPointsHand = ' + str(minPointsHand))
 						hasWinningCard = False
 						minPointsHand = 0
-
-						#increment points
-
-				#INSERT "PLAY CARD" BUTTON HERE
-				#NOTE: following lines of code will increment a players points by the hopefully correct amount and also compute that amount, for use when the "PLAY CARD" is clicked
-				#pointVal = currentScenario.getPointVal(Answer.getCardNum())
-				#Player.addPoints(pointVal)
+					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
+						if (soundOn):
+							sound_blop.play()
+						gameScreen = 2
 
 			gameDisplay.fill(backgroundColor)
 			gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
@@ -509,7 +507,14 @@ def gameLoop():
 			gameDisplay.blit(obj_answerCard4.image, obj_answerCard4.rect)
 			gameDisplay.blit(obj_answerCard5.image, obj_answerCard5.rect)
 			gameDisplay.blit(obj_scoreDisplay.image, obj_scoreDisplay.rect)
+			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
+
+			spr_backOfAnswerCard = pygame.image.load("img/card_back_small_" + cardArtwork + ".png")
+			spr_backOfScenarioCard = pygame.image.load("img/card_back_large_" + cardArtwork + ".png")
+			gameDisplay.blit(spr_backOfScenarioCard, POS_SCENARIODECK)
+			gameDisplay.blit(spr_backOfAnswerCard, POS_ANSWERDECK)
+
 			playCardRendered = render_textrect("Play Card", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 			score = str(player.getPoints())
