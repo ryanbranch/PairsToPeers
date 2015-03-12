@@ -30,6 +30,17 @@ COLOR_LIGHTGREEN = (204,255,204)
 COLOR_LIGHTBLUE = (204, 225, 255)
 COLOR_WHITE = (255,255,255)
 COLOR_BLACK = (0,0,0)
+COLOR_POINTS_0 = (204,0,0)
+COLOR_POINTS_1 = (204,44,0)
+COLOR_POINTS_2 = (204,84,0)
+COLOR_POINTS_3 = (204,124,0)
+COLOR_POINTS_4 = (204,164,0)
+COLOR_POINTS_5 = (204,204,0)
+COLOR_POINTS_6 = (164,204,0)
+COLOR_POINTS_7 = (124,204,0)
+COLOR_POINTS_8 = (84,204,0)
+COLOR_POINTS_9 = (44,204,0)
+COLOR_POINTS_10 = (0,204,0)
 GAME_WIDTH = 1024
 GAME_HEIGHT = 768
 FRAMES_PER_SECOND = 30
@@ -59,6 +70,7 @@ POS_MAINMENU = (0, 0)
 POS_SCORE = (750, 25)
 POS_SCENARIODECK = (25, 285)
 POS_ANSWERDECK = (45, 570)
+POS_POINTVALS = [(240,680),(375,680),(510,680),(645,680),(780,680)]
 
 #Customization
 POS_SQUARE_WHITE = (570, 365)
@@ -331,6 +343,8 @@ def gameLoop():
 	backgroundColor = COLOR_WHITE #NOTE:  I put this here instead of being like a global variable because I was having runtime errors and this seemed to fix it.  I'm adding this comment here to keep track of it because I'm not sure whether or not this could end up causing more problems down the line
 	soundOn = True #NOTE:  Same with this one.
 	cardArtwork = "cubes" #NOTE: Same with this one.
+	pointFeedbackArray = []
+	feedbackTextArray = []
 
 	gameRun = True #Boolean that stores whether the game should be running
 	playersIn = False #Boolean that stores whether all of the player information has been input
@@ -423,16 +437,21 @@ def gameLoop():
 			gameDisplay.fill(backgroundColor)
 			displayMessage("This is the INSTRUCTIONS screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
 			for event in pygame.event.get():
+				print("in this loop")
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 4 and gameRun):
+			gameDisplay.fill(backgroundColor)
 			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
+					print("x and y pos set")
 					for card in range(len(answerObjArray)):
 						if (answerObjArray[card].rect.collidepoint(x, y)):
 							if (cardSelected >= 0):
@@ -456,6 +475,11 @@ def gameLoop():
 						hand = player.getHand()
 						pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 						player.addPoints(pointVal)
+
+						pointFeedbackArray = []
+						feedbackTextArray = []
+						for card in range(5):
+							pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
 
 						if(player.getPoints() >= POINTS_TO_WIN):
 							gameWon = True
@@ -500,7 +524,6 @@ def gameLoop():
 							sound_blop.play()
 						gameScreen = 2
 
-			gameDisplay.fill(backgroundColor)
 			gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
 			gameDisplay.blit(obj_answerCard2.image, obj_answerCard2.rect)
 			gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
@@ -514,6 +537,33 @@ def gameLoop():
 			spr_backOfScenarioCard = pygame.image.load("img/card_back_large_" + cardArtwork + ".png")
 			gameDisplay.blit(spr_backOfScenarioCard, POS_SCENARIODECK)
 			gameDisplay.blit(spr_backOfAnswerCard, POS_ANSWERDECK)
+
+			for i in range(len(pointFeedbackArray)):
+				numPoints = pointFeedbackArray[i]
+				if (numPoints == 0):
+					valColor = COLOR_POINTS_0
+				elif (numPoints == 1):
+					valColor = COLOR_POINTS_1
+				elif (numPoints == 2):
+					valColor = COLOR_POINTS_2
+				elif (numPoints == 3):
+					valColor = COLOR_POINTS_3
+				elif (numPoints == 4):
+					valColor = COLOR_POINTS_4
+				elif (numPoints == 5):
+					valColor = COLOR_POINTS_5
+				elif (numPoints == 6):
+					valColor = COLOR_POINTS_6
+				elif (numPoints == 7):
+					valColor = COLOR_POINTS_7
+				elif (numPoints == 8):
+					valColor = COLOR_POINTS_8
+				elif (numPoints == 9):
+					valColor = COLOR_POINTS_9
+				elif (numPoints == 10):
+					valColor = COLOR_POINTS_10
+				feedbackText = big_bold_font.render(str(numPoints), True, valColor)
+				feedbackTextArray.append(feedbackText)
 
 			playCardRendered = render_textrect("Play Card", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
@@ -548,9 +598,8 @@ def gameLoop():
 							gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
 				else: #Executes if the current player is a computer player
 					print('COMPUTER PLAYER TURN')
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					gameRun = False #Ends the game if they user attempts to close the window
+			for i in range(len(pointFeedbackArray)):
+				gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
