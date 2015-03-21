@@ -67,10 +67,11 @@ POS_ANSWER5 = (730,570)
 POS_PLAY = (740, 300)
 POS_SCENARIO = (385, 285)
 POS_MAINMENU = (0, 0)
-POS_SCORE = (750, 25)
+POS_SCORE = (768, 0)
 POS_SCENARIODECK = (25, 285)
 POS_ANSWERDECK = (45, 570)
 POS_POINTVALS = [(240,680),(375,680),(510,680),(645,680),(780,680)]
+POS_SCORETEXT = (788,10)
 
 #Customization
 POS_SQUARE_WHITE = (570, 365)
@@ -345,6 +346,7 @@ def gameLoop():
 	cardArtwork = "cubes" #NOTE: Same with this one.
 	pointFeedbackArray = []
 	feedbackTextArray = []
+	pointVal = 0
 
 	gameRun = True #Boolean that stores whether the game should be running
 	playersIn = False #Boolean that stores whether all of the player information has been input
@@ -362,6 +364,9 @@ def gameLoop():
 				   pygame.Rect(POS_ANSWER5[0] + 10, POS_ANSWER5[1] + 10, 108, 150)]
 	scenarioRect = pygame.Rect(POS_SCENARIO[0] + 20, POS_SCENARIO[1] + 20, 300, 216)
 	playRect = pygame.Rect(POS_PLAY[0] + 20, POS_PLAY[1] + 20, 200, 100)
+	feedbackTextRect = pygame.Rect(256, 50, 512, 75)
+	feedbackSubtextRect = pygame.Rect(256, 125, 512, 100)
+	scoreTextRect = pygame.Rect(788,10,216,90)
 
 	cardSelected = -1
 	canPlay = False
@@ -494,10 +499,11 @@ def gameLoop():
 						pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 						player.addPoints(pointVal)
 
-						pointFeedbackArray = []
-						feedbackTextArray = []
+						pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
+						feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
 						for card in range(5):
 							pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
+						#pointFeedbackArray.append(pointVal)
 
 						if(player.getPoints() >= POINTS_TO_WIN):
 							gameWon = True
@@ -582,13 +588,25 @@ def gameLoop():
 					valColor = COLOR_POINTS_10
 				feedbackText = big_bold_font.render(str(numPoints), True, valColor)
 				feedbackTextArray.append(feedbackText)
+			if (pointVal == 0):
+				mainFeedbackString = "Sorry, that's incorrect."
+			elif (pointVal <= 5):
+				mainFeedbackString = "Okay, but think about different responses."
+			elif (pointVal <= 10):
+				mainFeedbackString = "Great answer!"
+			#mainFeedbackText = scenario_card_font.render(mainFeedbackString, True, COLOR_BLACK)
+			mainFeedbackTextRendered = render_textrect(mainFeedbackString, scenario_card_font, feedbackTextRect, COLOR_BLACK, COLOR_WHITE, 1)
+			#mainFeedbackSubtext = big_bold_font.render("+ " + str(pointVal) + " points", True, COLOR_BLACK)
+			mainFeedbackSubtextRendered = render_textrect(("+ " + str(pointVal) + " points"), big_bold_font, feedbackSubtextRect, COLOR_BLACK, COLOR_WHITE, 1)
+
+
 
 			playCardRendered = render_textrect("Play Card", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 			score = str(player.getPoints())
-			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
+			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
 			if scoreBoxRendered:
-				gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
+				gameDisplay.blit(scoreBoxRendered, POS_SCORETEXT)
 			if scenarioCardRendered:
 				gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
 
@@ -618,6 +636,8 @@ def gameLoop():
 					print('COMPUTER PLAYER TURN')
 			for i in range(len(pointFeedbackArray)):
 				gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
+			gameDisplay.blit(mainFeedbackTextRendered, feedbackTextRect.topleft)
+			gameDisplay.blit(mainFeedbackSubtextRendered, feedbackSubtextRect.topleft)
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
