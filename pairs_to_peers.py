@@ -378,6 +378,7 @@ def gameLoop():
 	#5 = Endgame
 	#6 = Player selection
 	#7 = Customization
+	#8 = Diagnostics
 	gameScreen = 2
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
@@ -396,6 +397,14 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					# Set the x, y positions of the mouse click
+					x, y = event.pos
+					if ((obj_buttonMainMenu.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						gameScreen = 2
+			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
@@ -410,7 +419,7 @@ def gameLoop():
 					if ((obj_logo.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
-						gameScreen = 6
+						gameScreen = 1
 					elif ((obj_buttonPlayGame.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
@@ -423,6 +432,9 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						gameScreen = 7
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_d:
+						gameScreen = 8
 
 			gameDisplay.blit(obj_logo.image, obj_logo.rect)
 			gameDisplay.blit(obj_buttonPlayGame.image, obj_buttonPlayGame.rect)
@@ -437,9 +449,16 @@ def gameLoop():
 			gameDisplay.fill(backgroundColor)
 			displayMessage("This is the INSTRUCTIONS screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
 			for event in pygame.event.get():
-				print("in this loop")
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					# Set the x, y positions of the mouse click
+					x, y = event.pos
+					if ((obj_buttonMainMenu.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						gameScreen = 2
+			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
@@ -451,7 +470,6 @@ def gameLoop():
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
-					print("x and y pos set")
 					for card in range(len(answerObjArray)):
 						if (answerObjArray[card].rect.collidepoint(x, y)):
 							if (cardSelected >= 0):
@@ -722,6 +740,29 @@ def gameLoop():
 			gameDisplay.blit(obj_box_sound.image, obj_box_sound.rect)
 			gameDisplay.blit(spr_selectArtwork, POS_SELECT_ARTWORK)
 			gameDisplay.blit(spr_chooseBackground, POS_CHOOSE_BACKGROUND)
+			pygame.display.update() #Updates the screen every frame
+			clock.tick(FRAMES_PER_SECOND)
+
+		while (gameScreen == 8 and gameRun):
+			gameDisplay.fill(backgroundColor)
+			displayMessage("This is the DIAGNOSTICS screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
+			displayMessage("Press the 'P' key to save this screen for printing.",COLOR_BLUE,[GAME_WIDTH/3,(GAME_HEIGHT/2) + 100])
+			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
+
+			#NOTE: In order for the output image to correctly contain all elements of the screen, the event handling portion of the while loop needs to come after any drawing that occurs.
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_p:
+						pygame.image.save(gameDisplay, "diagnosticOutput.png") #NOTE: later on, change this so that it outputs the image with a dynamic name based on things like player name.
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					# Set the x, y positions of the mouse click
+					x, y = event.pos
+					if ((obj_buttonMainMenu.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						gameScreen = 2
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
