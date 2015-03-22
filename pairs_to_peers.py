@@ -469,44 +469,44 @@ def gameLoop():
 							#print(cardText)
 							#print('POINTS' + str(currentScenario.getPointVal(cardNum)))
 							
-					if ((obj_playCard.rect.collidepoint(x, y)) and (nextRound == True)): #placeholder for next round button
-						startTime = pygame.time.get_ticks()
-						nextRound = False
-						if soundOn:
-							sound_blop.play()
-						answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
+					# if ((obj_playCard.rect.collidepoint(x, y)) and (nextRound == True)): #placeholder for next round button
+						# startTime = pygame.time.get_ticks()
+						# nextRound = False
+						# if soundOn:
+							# sound_blop.play()
+						# answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 
-						tempScenario = currentScenario
-						currentScenario = scenarioArray.pop()
+						# tempScenario = currentScenario
+						# currentScenario = scenarioArray.pop()
 
-						scenarioArray.append(tempScenario)
-						scenarioArray = shuffle(scenarioArray)
+						# scenarioArray.append(tempScenario)
+						# scenarioArray = shuffle(scenarioArray)
 
-						cards = 0
-						while(cards < 5):
-							answerArray.append(hand[cards])
-							cards = cards + 1
+						# cards = 0
+						# while(cards < 5):
+							# answerArray.append(hand[cards])
+							# cards = cards + 1
 
-						answerArray = shuffle(answerArray)
-						player.clearHand()
-						cardsInHand = len(p.handArray)
+						# answerArray = shuffle(answerArray)
+						# player.clearHand()
+						# cardsInHand = len(p.handArray)
 
-						for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-							p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+						# for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+							# p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 
-						while (not hasWinningCard):
-							#print('Attempting to make the user\'s hand have a winning card')
-							answerArray.insert(0, p.handArray.pop())
-							p.handArray.append(answerArray.pop())
-							for card in p.handArray: #Iterates through all 5 cards in the user's hand
-								if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-									minPointsHand = currentScenario.getPointVal(card.getCardNum())
-							if (minPointsHand >= GOOD_CARD_POINTS):
-								p.handArray = shuffle(p.handArray)
-								hasWinningCard = True
-								#print('Should have one. minPointsHand = ' + str(minPointsHand))
-						hasWinningCard = False
-						minPointsHand = 0
+						# while (not hasWinningCard):
+							# #print('Attempting to make the user\'s hand have a winning card')
+							# answerArray.insert(0, p.handArray.pop())
+							# p.handArray.append(answerArray.pop())
+							# for card in p.handArray: #Iterates through all 5 cards in the user's hand
+								# if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+									# minPointsHand = currentScenario.getPointVal(card.getCardNum())
+							# if (minPointsHand >= GOOD_CARD_POINTS):
+								# p.handArray = shuffle(p.handArray)
+								# hasWinningCard = True
+								# #print('Should have one. minPointsHand = ' + str(minPointsHand))
+						# hasWinningCard = False
+						# minPointsHand = 0
 						
 					if ((obj_playCard.rect.collidepoint(x, y)) and (canPlay == True)):
 						startTime = pygame.time.get_ticks()
