@@ -441,8 +441,8 @@ def gameLoop():
 					
 				if ((pygame.time.get_ticks() - startTime) > TIME_ALLOWED):
 					#display message + no points this round
-					nextRound = False
-					canPlay = True
+					nextRound = True
+					canPlay = False
 					
 			
 					
