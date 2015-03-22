@@ -36,7 +36,7 @@ FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
 GOOD_CARD_POINTS = 6
 POINTS_TO_WIN = 120
-
+startTime = 0
 #The rest of these constants relate specifically to the locations of images on the game screen.  Tweaking with these could definitely mess up how everything looks.
 
 #Main Menu
@@ -351,9 +351,12 @@ def gameLoop():
 
 	cardSelected = -1
 	canPlay = False
+	nextRound = False
 	hasWinningCard = False
 	gameWon = False
 	minPointsHand = 0
+	TIME_ALLOWED = 25000
+	nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
@@ -364,6 +367,7 @@ def gameLoop():
 	#5 = Endgame
 	#6 = Player selection
 	#7 = Customization
+	#8 = Difficulty
 	gameScreen = 2
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
@@ -400,7 +404,9 @@ def gameLoop():
 					elif ((obj_buttonPlayGame.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
+						startTime = pygame.time.get_ticks()
 						gameScreen = 4
+						
 					elif ((obj_buttonHowToPlay.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
@@ -430,6 +436,18 @@ def gameLoop():
 
 		while (gameScreen == 4 and gameRun):
 			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+					
+				if ((pygame.time.get_ticks() - startTime) > TIME_ALLOWED):
+					#display message + no points this round
+					nextRound = True
+					canPlay = False
+					
+				if nextRound == True:
+					gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
+					gameDisplay.blit(nextRoundRendered, playRect.topleft)
+					
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
@@ -441,14 +459,57 @@ def gameLoop():
 							if soundOn:
 								sound_blop.play()
 							cardSelected = card
-							canPlay = True
+							if nextRound == False:
+								canPlay = True
+								
 							hand = player.getHand()
 							cardNum = hand[cardSelected].getCardNum()
 							#print(str(cardNum))
 							cardText = hand[cardSelected].getText()
 							#print(cardText)
 							#print('POINTS' + str(currentScenario.getPointVal(cardNum)))
-					if ((obj_playCard.rect.collidepoint(x, y)) & (canPlay == True)):
+							
+					if ((obj_playCard.rect.collidepoint(x, y)) and (nextRound == True)): #placeholder for next round button
+						startTime = pygame.time.get_ticks()
+						nextRound = False
+						if soundOn:
+							sound_blop.play()
+						answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
+
+						tempScenario = currentScenario
+						currentScenario = scenarioArray.pop()
+
+						scenarioArray.append(tempScenario)
+						scenarioArray = shuffle(scenarioArray)
+
+						cards = 0
+						while(cards < 5):
+							answerArray.append(hand[cards])
+							cards = cards + 1
+
+						answerArray = shuffle(answerArray)
+						player.clearHand()
+						cardsInHand = len(p.handArray)
+
+						for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+							p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+
+						while (not hasWinningCard):
+							#print('Attempting to make the user\'s hand have a winning card')
+							answerArray.insert(0, p.handArray.pop())
+							p.handArray.append(answerArray.pop())
+							for card in p.handArray: #Iterates through all 5 cards in the user's hand
+								if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+									minPointsHand = currentScenario.getPointVal(card.getCardNum())
+							if (minPointsHand >= GOOD_CARD_POINTS):
+								p.handArray = shuffle(p.handArray)
+								hasWinningCard = True
+								#print('Should have one. minPointsHand = ' + str(minPointsHand))
+						hasWinningCard = False
+						minPointsHand = 0
+						
+					if ((obj_playCard.rect.collidepoint(x, y)) and (canPlay == True)):
+						startTime = pygame.time.get_ticks()
 						canPlay = False
 						if soundOn:
 							sound_blop.play()
@@ -516,6 +577,7 @@ def gameLoop():
 			gameDisplay.blit(spr_backOfAnswerCard, POS_ANSWERDECK)
 
 			playCardRendered = render_textrect("Play Card", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
+			nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 			score = str(player.getPoints())
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
@@ -527,6 +589,8 @@ def gameLoop():
 			if canPlay == True:
 				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 				gameDisplay.blit(playCardRendered, playRect.topleft)
+				
+			
 
 			if gameWon == True:
 				displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],big_bold_font) #Congratulates the user upon winning
@@ -548,9 +612,6 @@ def gameLoop():
 							gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
 				else: #Executes if the current player is a computer player
 					print('COMPUTER PLAYER TURN')
-			for event in pygame.event.get():
-				if event.type == pygame.QUIT:
-					gameRun = False #Ends the game if they user attempts to close the window
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
@@ -659,6 +720,7 @@ def gameLoop():
 							sound_blop.play()
 							obj_box_sound.image = pygame.image.load("img/box_sound_on.png")
 						soundOn = not(soundOn)
+						
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(obj_square_white.image, obj_square_white.rect)
 			gameDisplay.blit(obj_square_lightpink.image, obj_square_lightpink.rect)
@@ -675,7 +737,20 @@ def gameLoop():
 			gameDisplay.blit(spr_chooseBackground, POS_CHOOSE_BACKGROUND)
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
-
+			
+		while (gameScreen == 8 and gameRun):
+			#some button here:
+				TIME_ALLOWED = 30000
+				
+			#some button here:
+				TIME_ALLOWED = 20000
+				
+			#some button here:
+				TIME_ALLOWED = 15000
+				
+			#some button here:
+				TIME_ALLOWED = 10000
+				
 	pygame.quit()
 	quit()
 
