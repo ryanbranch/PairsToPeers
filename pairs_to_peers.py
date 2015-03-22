@@ -592,6 +592,14 @@ def gameLoop():
 			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 			score = str(player.getPoints())
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
+			time = ((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 2
+			
+			if time < 0:
+				time = 0 
+			timerRendered = render_textrect("Time: "+ str(time), big_bold_font, pygame.Rect(260,35,216,90), COLOR_BLACK, [158,206,255])	
+			
+			if timerRendered:
+				gameDisplay.blit(timerRendered, pygame.Rect(260,35,108,160).topright)
 			if scoreBoxRendered:
 				gameDisplay.blit(scoreBoxRendered, pygame.Rect(760,35,108,160).topleft)
 			if scenarioCardRendered:
@@ -654,6 +662,9 @@ def gameLoop():
 					gameRun = False #Ends the game if they user attempts to close the window
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
+			timer_event = pygame.USEREVENT + 1
+			pygame.time.set_timer(timer_event, 250)
+			
 
 		while (gameScreen == 7 and gameRun):
 			#NOTE:  The entire "selecting" (changing an image to the green version and making sure the rest are blue when it is clicked on) process could be done a lot more efficiently using pointers.  For now, I don't really know how to do that.  Maybe we could figure out down the line, but it would be a very late game thing since these actions are taken so infrequently that there wouldn't really be a huge difference in efficiency.
