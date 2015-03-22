@@ -355,7 +355,7 @@ def gameLoop():
 	hasWinningCard = False
 	gameWon = False
 	minPointsHand = 0
-	TIME_ALLOWED = 25000
+	TIME_ALLOWED = 5000
 	nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
@@ -441,12 +441,10 @@ def gameLoop():
 					
 				if ((pygame.time.get_ticks() - startTime) > TIME_ALLOWED):
 					#display message + no points this round
-					nextRound = True
-					canPlay = False
+					nextRound = False
+					canPlay = True
 					
-				if nextRound == True:
-					gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
-					gameDisplay.blit(nextRoundRendered, playRect.topleft)
+			
 					
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
@@ -508,16 +506,29 @@ def gameLoop():
 						# hasWinningCard = False
 						# minPointsHand = 0
 						
-					if ((obj_playCard.rect.collidepoint(x, y)) and (canPlay == True)):
+					if ((obj_playCard.rect.collidepoint(x, y)) and ((canPlay == True) or (nextRound == True))):
 						startTime = pygame.time.get_ticks()
-						canPlay = False
+						
+						
 						if soundOn:
 							sound_blop.play()
+							
 						answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 						hand = player.getHand()
-						pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
+						
+						pointVal = 20
+						
+						if canPlay == True:
+							pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
+						
+						if nextRound == True:
+							pointVal = 0
+							
 						player.addPoints(pointVal)
 
+						canPlay = False
+						nextRound = False
+						
 						if(player.getPoints() >= POINTS_TO_WIN):
 							gameWon = True
 							canPlay = False
@@ -586,12 +597,16 @@ def gameLoop():
 			if scenarioCardRendered:
 				gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
 
+			if nextRound == True:
+				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
+				gameDisplay.blit(nextRoundRendered, playRect.topleft)
+				
 			if canPlay == True:
 				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 				gameDisplay.blit(playCardRendered, playRect.topleft)
 				
 			
-
+							
 			if gameWon == True:
 				displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],big_bold_font) #Congratulates the user upon winning
 				displayMessage("Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
