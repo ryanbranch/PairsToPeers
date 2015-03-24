@@ -377,6 +377,7 @@ def gameLoop():
 	minPointsHand = 0
 	TIME_ALLOWED = 5000
 	nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
+	showFeedback = False
 
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
@@ -387,11 +388,8 @@ def gameLoop():
 	#5 = Endgame
 	#6 = Player selection
 	#7 = Customization
-<<<<<<< HEAD
-	#8 = Diagnostics
-=======
 	#8 = Difficulty
->>>>>>> origin/Difficulty
+	#9 = Diagnostics
 	gameScreen = 2
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
@@ -449,7 +447,7 @@ def gameLoop():
 						gameScreen = 7
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_d:
-						gameScreen = 8
+						gameScreen = 9
 
 			gameDisplay.blit(obj_logo.image, obj_logo.rect)
 			gameDisplay.blit(obj_buttonPlayGame.image, obj_buttonPlayGame.rect)
@@ -482,17 +480,12 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
-<<<<<<< HEAD
-=======
-					
 				if ((pygame.time.get_ticks() - startTime) > TIME_ALLOWED):
 					#display message + no points this round
 					nextRound = True
 					canPlay = False
-					
-			
-					
->>>>>>> origin/Difficulty
+					showFeedback = True
+
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
@@ -573,18 +566,16 @@ def gameLoop():
 							
 						player.addPoints(pointVal)
 
-<<<<<<< HEAD
 						pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
 						feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
 						for card in range(5):
 							pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
 						#pointFeedbackArray.append(pointVal)
 
-=======
 						canPlay = False
 						nextRound = False
-						
->>>>>>> origin/Difficulty
+						showFeedback = False
+
 						if(player.getPoints() >= POINTS_TO_WIN):
 							gameWon = True
 							canPlay = False
@@ -627,9 +618,6 @@ def gameLoop():
 						if (soundOn):
 							sound_blop.play()
 						gameScreen = 2
-<<<<<<< HEAD
-
-=======
 						
 			#timer_event = pygame.USEREVENT + 1
 			pygame.time.set_timer(pygame.USEREVENT + 1, 100)
@@ -637,7 +625,6 @@ def gameLoop():
 			
 			
 			gameDisplay.fill(backgroundColor)
->>>>>>> origin/Difficulty
 			gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
 			gameDisplay.blit(obj_answerCard2.image, obj_answerCard2.rect)
 			gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
@@ -695,9 +682,9 @@ def gameLoop():
 			nextRoundRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 			score = str(player.getPoints())
-<<<<<<< HEAD
+
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
-=======
+
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
 			time = int(math.floor(((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
 			
@@ -707,7 +694,7 @@ def gameLoop():
 			
 			if timerRendered:
 				gameDisplay.blit(timerRendered, pygame.Rect(260,35,108,160).topright)
->>>>>>> origin/Difficulty
+
 			if scoreBoxRendered:
 				gameDisplay.blit(scoreBoxRendered, POS_SCORETEXT)
 			if scenarioCardRendered:
@@ -720,6 +707,12 @@ def gameLoop():
 			if canPlay == True:
 				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 				gameDisplay.blit(playCardRendered, playRect.topleft)
+
+			if showFeedback == True:
+				for i in range(len(pointFeedbackArray)):
+					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
+				gameDisplay.blit(mainFeedbackTextRendered, feedbackTextRect.topleft)
+				gameDisplay.blit(mainFeedbackSubtextRendered, feedbackSubtextRect.topleft)
 				
 			
 							
@@ -743,13 +736,7 @@ def gameLoop():
 							gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
 				else: #Executes if the current player is a computer player
 					print('COMPUTER PLAYER TURN')
-<<<<<<< HEAD
-			for i in range(len(pointFeedbackArray)):
-				gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
-			gameDisplay.blit(mainFeedbackTextRendered, feedbackTextRect.topleft)
-			gameDisplay.blit(mainFeedbackSubtextRendered, feedbackSubtextRect.topleft)
-=======
->>>>>>> origin/Difficulty
+
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
@@ -878,7 +865,6 @@ def gameLoop():
 			gameDisplay.blit(spr_chooseBackground, POS_CHOOSE_BACKGROUND)
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
-<<<<<<< HEAD
 
 		while (gameScreen == 8 and gameRun):
 			gameDisplay.fill(backgroundColor)
@@ -902,8 +888,6 @@ def gameLoop():
 						gameScreen = 2
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
-
-=======
 			
 		while (gameScreen == 8 and gameRun):
 			#some button here:
@@ -917,8 +901,7 @@ def gameLoop():
 				
 			#some button here:
 				TIME_ALLOWED = 10000
-				
->>>>>>> origin/Difficulty
+
 	pygame.quit()
 	quit()
 
