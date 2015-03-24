@@ -47,7 +47,7 @@ GAME_HEIGHT = 768
 FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
 GOOD_CARD_POINTS = 6
-POINTS_TO_WIN = 120
+POINTS_TO_WIN = 100
 startTime = 0
 #The rest of these constants relate specifically to the locations of images on the game screen.  Tweaking with these could definitely mess up how everything looks.
 
