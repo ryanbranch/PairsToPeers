@@ -867,8 +867,21 @@ def gameLoop():
 			gameDisplay.blit(spr_chooseBackground, POS_CHOOSE_BACKGROUND)
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
-
+			
 		while (gameScreen == 8 and gameRun):
+			#some button here:
+				TIME_ALLOWED = 30000
+				
+			#some button here:
+				TIME_ALLOWED = 20000
+				
+			#some button here:
+				TIME_ALLOWED = 15000
+				
+			#some button here:
+				TIME_ALLOWED = 10000
+
+		while (gameScreen == 9 and gameRun):
 			gameDisplay.fill(backgroundColor)
 			displayMessage("This is the DIAGNOSTICS screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
 			displayMessage("Press the 'P' key to save this screen for printing.",COLOR_BLUE,[GAME_WIDTH/3,(GAME_HEIGHT/2) + 100])
@@ -890,19 +903,6 @@ def gameLoop():
 						gameScreen = 2
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
-			
-		while (gameScreen == 8 and gameRun):
-			#some button here:
-				TIME_ALLOWED = 30000
-				
-			#some button here:
-				TIME_ALLOWED = 20000
-				
-			#some button here:
-				TIME_ALLOWED = 15000
-				
-			#some button here:
-				TIME_ALLOWED = 10000
 
 	pygame.quit()
 	quit()
