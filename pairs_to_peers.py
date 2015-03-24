@@ -572,7 +572,12 @@ def gameLoop():
 						if (soundOn):
 							sound_blop.play()
 						gameScreen = 2
-
+						
+			#timer_event = pygame.USEREVENT + 1
+			pygame.time.set_timer(pygame.USEREVENT + 1, 500)
+			pygame.event.post(pygame.event.Event(pygame.USEREVENT + 1))
+			
+			
 			gameDisplay.fill(backgroundColor)
 			gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
 			gameDisplay.blit(obj_answerCard2.image, obj_answerCard2.rect)
