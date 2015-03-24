@@ -372,6 +372,8 @@ def gameLoop():
 	cardSelected = -1
 	canPlay = False
 	nextRound = False
+	isReview = False
+	outOfTime = False
 	hasWinningCard = False
 	gameWon = False
 	minPointsHand = 0
@@ -379,6 +381,8 @@ def gameLoop():
 	time = 0
 	nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 	showFeedback = False
+	Timing = True
+	cardsSet = False
 
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
@@ -479,13 +483,61 @@ def gameLoop():
 		while (gameScreen == 4 and gameRun):
 			gameDisplay.fill(backgroundColor)
 			for event in pygame.event.get():
+				
+				if cardsSet == False:
+					hand = player.getHand()
+						
+						#	pointVal = 20
+							
+						#	if canPlay == True:
+						#		pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
+						#	
+						#	if outOfTime == True:
+						#		pointVal = 0
+								
+						#	player.addPoints(pointVal)
+		
+						#if(outOfTime)
+							#say something out of time
+						
+					pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
+					feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
+					for card in range(5):
+						pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
+						#pointFeedbackArray.append(pointVal)
+					cardsSet = True
+					
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
 				if ((pygame.time.get_ticks() - startTime) > TIME_ALLOWED):
 					#display message + no points this round
 					nextRound = True
+					pointVal = 0
+					if outOfTime == False:
+						hand = player.getHand()
+						
+						#	pointVal = 20
+							
+						#	if canPlay == True:
+						#		pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
+						#	
+						#	if outOfTime == True:
+						#		pointVal = 0
+								
+						#	player.addPoints(pointVal)
+		
+						#if(outOfTime)
+							#say something out of time
+						
+						pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
+						feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
+						for card in range(5):
+							pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
+							#pointFeedbackArray.append(pointVal)
+					outOfTime = True
 					canPlay = False
 					showFeedback = True
+										
 
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
@@ -549,77 +601,75 @@ def gameLoop():
 						
 					if ((obj_playCard.rect.collidepoint(x, y)) and ((canPlay == True) or (nextRound == True))):
 						startTime = pygame.time.get_ticks()
-						
-						
-						if soundOn:
-							sound_blop.play()
-							
-						answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
-						hand = player.getHand()
-						
-						pointVal = 20
-						
-						if canPlay == True:
-							pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
-						
-						if nextRound == True:
-							pointVal = 0
-							
-						player.addPoints(pointVal)
-
-						pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
-						feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
-						for card in range(5):
-							pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
-						#pointFeedbackArray.append(pointVal)
-
-						canPlay = False
-						nextRound = False
-						showFeedback = False
-
-						if(player.getPoints() >= POINTS_TO_WIN):
-							gameWon = True
+						if(canPlay == True):
+							showFeedback = True
 							canPlay = False
-							if soundOn:
-								sound_applause.play()
-								gameScreen = 5
-
-						tempScenario = currentScenario
-						currentScenario = scenarioArray.pop()
-
-						scenarioArray.append(tempScenario)
-						scenarioArray = shuffle(scenarioArray)
-
-						cards = 0
-						while(cards < 5):
-							answerArray.append(hand[cards])
-							cards = cards + 1
-
-						answerArray = shuffle(answerArray)
-						player.clearHand()
-						cardsInHand = len(p.handArray)
-
-						for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-							p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-
-						while (not hasWinningCard):
-							#print('Attempting to make the user\'s hand have a winning card')
-							answerArray.insert(0, p.handArray.pop())
-							p.handArray.append(answerArray.pop())
-							for card in p.handArray: #Iterates through all 5 cards in the user's hand
-								if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-									minPointsHand = currentScenario.getPointVal(card.getCardNum())
-							if (minPointsHand >= GOOD_CARD_POINTS):
-								p.handArray = shuffle(p.handArray)
-								hasWinningCard = True
-								#print('Should have one. minPointsHand = ' + str(minPointsHand))
-						hasWinningCard = False
-						minPointsHand = 0
-					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
-						if (soundOn):
-							sound_blop.play()
-						gameScreen = 2
+							nextRound = True
+							Timing = False
+							pointVal = 20
+							pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
+							
+							player.addPoints(pointVal)
 						
+						else:
+						
+							print("Loop happening")					
+							if soundOn:
+								sound_blop.play()
+							
+							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
+							
+		
+							canPlay = False
+							nextRound = False
+							showFeedback = False
+		
+							if(player.getPoints() >= POINTS_TO_WIN):
+								gameWon = True
+								canPlay = False
+								if soundOn:
+									sound_applause.play()
+									gameScreen = 5
+		
+							tempScenario = currentScenario
+							currentScenario = scenarioArray.pop()
+		
+							scenarioArray.append(tempScenario)
+							scenarioArray = shuffle(scenarioArray)
+		
+							cards = 0
+							while(cards < 5):
+								answerArray.append(hand[cards])
+								cards = cards + 1
+		
+							answerArray = shuffle(answerArray)
+							player.clearHand()
+							cardsInHand = len(p.handArray)
+		
+							for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+								p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+		
+							while (not hasWinningCard):
+								#print('Attempting to make the user\'s hand have a winning card')
+								answerArray.insert(0, p.handArray.pop())
+								p.handArray.append(answerArray.pop())
+								for card in p.handArray: #Iterates through all 5 cards in the user's hand
+									if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+										minPointsHand = currentScenario.getPointVal(card.getCardNum())
+								if (minPointsHand >= GOOD_CARD_POINTS):
+									p.handArray = shuffle(p.handArray)
+									hasWinningCard = True
+									#print('Should have one. minPointsHand = ' + str(minPointsHand))
+							hasWinningCard = False
+							
+							minPointsHand = 0
+							Timing = True
+							cardsSet = False
+						if (obj_buttonMainMenu.rect.collidepoint(x, y)):
+							if (soundOn):
+								sound_blop.play()
+							gameScreen = 2
+							
 			#timer_event = pygame.USEREVENT + 1
 			pygame.time.set_timer(pygame.USEREVENT + 1, 100)
 			pygame.event.post(pygame.event.Event(pygame.USEREVENT + 1))
@@ -690,10 +740,13 @@ def gameLoop():
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
 
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
-			time = int(math.floor(((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
 			
-			if time < 0:
-				time = 0 
+			if Timing == True:
+				time = int(math.floor(((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
+				
+				if time < 0:
+					time = 0 
+					
 			timerRendered = render_textrect("Time: "+ str(time), big_bold_font, pygame.Rect(260,35,216,90), COLOR_BLACK, [158,206,255])
 							
 			if gameWon == True:
