@@ -737,9 +737,9 @@ def gameLoop():
 			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 			score = str(player.getPoints())
 
-			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
+			scoreBoxRendered = render_textrect(("Score: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
 
-			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
+			scoreBoxRendered = render_textrect(("Score: " + str(score)), big_bold_font, pygame.Rect(760,35,216,60), COLOR_BLACK, [158,206,255])
 			
 			if Timing == True:
 				time = int(math.floor(((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
@@ -747,7 +747,7 @@ def gameLoop():
 				if time < 0:
 					time = 0 
 					
-			timerRendered = render_textrect("Time: "+ str(time), big_bold_font, pygame.Rect(260,35,216,90), COLOR_BLACK, [158,206,255])
+			timerRendered = render_textrect("Time: "+ str(time), big_bold_font, pygame.Rect(680,70,168,60), COLOR_BLACK, [158,206,255])
 							
 			if gameWon == True:
 				displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],big_bold_font) #Congratulates the user upon winning
@@ -771,7 +771,7 @@ def gameLoop():
 					print('COMPUTER PLAYER TURN')
 
 			if timerRendered:
-				gameDisplay.blit(timerRendered, pygame.Rect(260,35,108,160).topright)
+				gameDisplay.blit(timerRendered, pygame.Rect(610,60,178,160).topright)
 
 			if scoreBoxRendered:
 				gameDisplay.blit(scoreBoxRendered, POS_SCORETEXT)
