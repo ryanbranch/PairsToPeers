@@ -376,6 +376,7 @@ def gameLoop():
 	gameWon = False
 	minPointsHand = 0
 	TIME_ALLOWED = 5000
+	time = 0
 	nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 	showFeedback = False
 
@@ -666,7 +667,10 @@ def gameLoop():
 				feedbackText = big_bold_font.render(str(numPoints), True, valColor)
 				feedbackTextArray.append(feedbackText)
 			if (pointVal == 0):
-				mainFeedbackString = "Sorry, that's incorrect."
+				if (time <= 0):
+					mainFeedbackString = "Sorry, time's up."
+				else:
+					mainFeedbackString = "Sorry, that's incorrect."
 			elif (pointVal <= 5):
 				mainFeedbackString = "Okay, but think about different responses."
 			elif (pointVal <= 10):
