@@ -1,12 +1,16 @@
 #Things marked as important, including those which should potentially be changed down the line, are marked with "#NOTE"
 #Important question:  We should ask about the screen resolutions of the computers that the game will primarily be played on.  Because we could definitely program the game in a dynamic way such that the screenc ould be resized and screen elements would change in size appropriately, but it would be significantly easier to not have to worry about that and instead just have some static screen size to build around.
 
-import pygame
 import random
-import pygame.mixer
 import math
 import datetime
+import time
+
+import pygame
+import pygame.mixer
+
 from textrect import *
+
 
 pygame.init()
 
@@ -92,22 +96,24 @@ POS_CHOOSE_BACKGROUND = (630, 210)
 
 #Diagnostics
 POS_SCREENSHOT = (768, 0)
-POS_MORE_DETAILS = (384, 633) #633 is 50px from the bottom of the screen for an 85px button
+POS_MORE_DETAILS = (220, 640) #633 is 50px from the bottom of the screen for an 85px button
 POS_PLAYER_NAME_REPORT = (180, 140)
 POS_TIMESTAMP_REPORT = (180, 220)
 POS_DETAIL1_REPORT = (80, 320)
 POS_DETAIL2_REPORT = (80, 380)
 POS_DETAIL3_REPORT = (80, 440)
 POS_DETAIL4_REPORT = (80, 500)
-POS_DETAIL5_REPORT = (50, 560)
-POS_BREAKDOWN_TEXT = (592, 320)
-POS_BREAKDOWN_GREAT = (592, 380)
-POS_BREAKDOWN_OK = (742, 380)
-POS_BREAKDOWN_POOR = (592, 530)
-POS_BREAKDOWN_TIMEUP = (742, 530)
+POS_DETAIL5_REPORT = (80, 560)
+POS_BREAKDOWN_TEXT = (595, 300)
+POS_BREAKDOWN_GREAT = (630, 350)
+POS_BREAKDOWN_OK = (770, 350)
+POS_BREAKDOWN_POOR = (630, 530)
+POS_BREAKDOWN_TIMEUP = (770, 530)
 
 backgroundColor = COLOR_WHITE
 soundOn = True
+timeStamp = time.time()
+stringTimeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime('%H:%M:%S %m/%d/%Y ')
 
 class Object(pygame.sprite.Sprite):
 	def __init__(self, file_name, position):
@@ -162,6 +168,7 @@ cardBackObjArray = [obj_card_cubes, obj_card_marble, obj_card_pink, obj_card_sto
 #Diagnostic screen
 obj_buttonScreenshot = Object("img/button_Screenshot.png", POS_SCREENSHOT)
 obj_buttonMoreDetails = Object("img/button_More_Details.png", POS_MORE_DETAILS)
+spr_responseBreakdown = pygame.image.load("img/answerCard_Blue.png")
 
 #This class defines the players of the game
 class Player:
@@ -270,7 +277,7 @@ class Diagnostics:
 		#numMissed - number of rounds unanswered
 		#score - final score
 		#rounds - number of rounds played
-		#time - total time
+		#totalTime - total time
 		#roundInfo - array of all the scenarios and answers they played
 		#playerName - name of player
 		#dateTime - date and time of play
@@ -322,7 +329,6 @@ class Diagnostics:
 	
 	def getDateTime(self):
 		return datetime.datetime.now()
-	
 		
 	#make getDiff
 	
@@ -466,8 +472,8 @@ def gameLoop():
 	hasWinningCard = False
 	gameWon = False
 	minPointsHand = 0
-	TIME_ALLOWED = 5000
-	time = 0
+	TIME_ALLOWED = 15000
+	countdown = 0
 	nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 	showFeedback = False
 
@@ -758,7 +764,7 @@ def gameLoop():
 				feedbackText = big_bold_font.render(str(numPoints), True, valColor)
 				feedbackTextArray.append(feedbackText)
 			if (pointVal == 0):
-				if (time <= 0):
+				if (countdown <= 0):
 					mainFeedbackString = "Sorry, time's up."
 				else:
 					mainFeedbackString = "Sorry, that's incorrect."
@@ -781,11 +787,11 @@ def gameLoop():
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
 
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
-			time = int(math.floor(((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
+			countdown = int(math.floor(((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
 			
-			if time < 0:
-				time = 0 
-			timerRendered = render_textrect("Time: "+ str(time), big_bold_font, pygame.Rect(260,35,216,90), COLOR_BLACK, [158,206,255])
+			if countdown < 0:
+				countdown = 0
+			timerRendered = render_textrect("Time: "+ str(countdown), big_bold_font, pygame.Rect(260,35,216,90), COLOR_BLACK, [158,206,255])
 							
 			if gameWon == True:
 				displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],big_bold_font) #Congratulates the user upon winning
@@ -968,9 +974,6 @@ def gameLoop():
 				
 			#some button here:
 				TIME_ALLOWED = 15000
-				
-			#some button here:
-				TIME_ALLOWED = 10000
 
 		while (gameScreen == 9 and gameRun):
 			#The following values are dummy values that will be made to actually be dynamic later on.
@@ -979,12 +982,52 @@ def gameLoop():
 			finalPoints = 123
 			roundsToComplete = 24
 			totalPlaytime = 695
+			breakdownRectGreatHeading = pygame.Rect(POS_BREAKDOWN_GREAT[0] + 10, POS_BREAKDOWN_GREAT[1] + 10, 108, 150)
+			breakdownRectOkayHeading = pygame.Rect(POS_BREAKDOWN_OK[0] + 10, POS_BREAKDOWN_OK[1] + 10, 108, 150)
+			breakdownRectPoorHeading = pygame.Rect(POS_BREAKDOWN_POOR[0] + 10, POS_BREAKDOWN_POOR[1] + 10, 108, 150)
+			breakdownRectTimeUpHeading = pygame.Rect(POS_BREAKDOWN_TIMEUP[0] + 10, POS_BREAKDOWN_TIMEUP[1] + 10, 108, 150)
+			breakdownGreatHeadingRendered = render_textrect("Great responses:", answer_card_font, breakdownRectGreatHeading, COLOR_BLACK, COLOR_WHITE, 1)
+			breakdownOkayHeadingRendered = render_textrect("Okay responses:", answer_card_font, breakdownRectOkayHeading, COLOR_BLACK, COLOR_WHITE, 1)
+			breakdownPoorHeadingRendered = render_textrect("Poor responses:", answer_card_font, breakdownRectPoorHeading, COLOR_BLACK, COLOR_WHITE, 1)
+			breakdownTimeUpHeadingRendered = render_textrect("Ran out of time:", answer_card_font, breakdownRectTimeUpHeading, COLOR_BLACK, COLOR_WHITE, 1)
+
+
+
+			if (TIME_ALLOWED == 15000):
+				difficultyString = "Hard"
+			elif (TIME_ALLOWED == 20000):
+				difficultyString = "Medium"
+			elif (TIME_ALLOWED == 30000):
+				difficultyString = "Easy"
+			else:
+				difficultyString = "INVALID"
+
+			min, sec = divmod(totalPlaytime, 60)
+			playtimeString = "%02d:%02d" % (min, sec)
 
 			gameDisplay.fill(backgroundColor)
-			displayMessage("This is the DIAGNOSTICS screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
+			displayMessage("Player Name: " + playerName,COLOR_BLACK,POS_PLAYER_NAME_REPORT,big_bold_font)
+			displayMessage(stringTimeStamp,COLOR_BLACK,POS_TIMESTAMP_REPORT,big_bold_font)
+			displayMessage("Average Response Time: " + str(avgResponseTime),COLOR_BLACK,POS_DETAIL1_REPORT,scenario_card_font)
+			displayMessage("Final Points: " + str(finalPoints),COLOR_BLACK,POS_DETAIL2_REPORT,scenario_card_font)
+			displayMessage("Rounds to Complete: " + str(roundsToComplete),COLOR_BLACK,POS_DETAIL3_REPORT,scenario_card_font)
+			displayMessage("Total Playtime: " + playtimeString,COLOR_BLACK,POS_DETAIL4_REPORT,scenario_card_font)
+			displayMessage("Difficulty: " + difficultyString,COLOR_BLACK,POS_DETAIL5_REPORT,scenario_card_font)
+			displayMessage("Response Breakdown:",COLOR_BLACK,POS_BREAKDOWN_TEXT,scenario_card_font)
+			gameDisplay.blit(spr_responseBreakdown, POS_BREAKDOWN_GREAT)
+			gameDisplay.blit(spr_responseBreakdown, POS_BREAKDOWN_OK)
+			gameDisplay.blit(spr_responseBreakdown, POS_BREAKDOWN_POOR)
+			gameDisplay.blit(spr_responseBreakdown, POS_BREAKDOWN_TIMEUP)
+
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(obj_buttonScreenshot.image, obj_buttonScreenshot.rect)
 			gameDisplay.blit(obj_buttonMoreDetails.image, obj_buttonMoreDetails.rect)
+
+			gameDisplay.blit(breakdownGreatHeadingRendered, breakdownRectGreatHeading.topleft)
+			gameDisplay.blit(breakdownOkayHeadingRendered, breakdownRectOkayHeading.topleft)
+			gameDisplay.blit(breakdownPoorHeadingRendered, breakdownRectPoorHeading.topleft)
+			gameDisplay.blit(breakdownTimeUpHeadingRendered, breakdownRectTimeUpHeading.topleft)
+
 
 			#NOTE: In order for the output image to correctly contain all elements of the screen, the event handling portion of the while loop needs to come after any drawing that occurs.
 			for event in pygame.event.get():
