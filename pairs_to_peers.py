@@ -90,6 +90,22 @@ POS_BOX_SOUND = (768, 0)
 POS_SELECT_ARTWORK = (150, 210)
 POS_CHOOSE_BACKGROUND = (630, 210)
 
+#Diagnostics
+POS_SCREENSHOT = (768, 0)
+POS_MORE_DETAILS = (384, 633) #633 is 50px from the bottom of the screen for an 85px button
+POS_PLAYER_NAME_REPORT = (180, 140)
+POS_TIMESTAMP_REPORT = (180, 220)
+POS_DETAIL1_REPORT = (80, 320)
+POS_DETAIL2_REPORT = (80, 380)
+POS_DETAIL3_REPORT = (80, 440)
+POS_DETAIL4_REPORT = (80, 500)
+POS_DETAIL5_REPORT = (50, 560)
+POS_BREAKDOWN_TEXT = (592, 320)
+POS_BREAKDOWN_GREAT = (592, 380)
+POS_BREAKDOWN_OK = (742, 380)
+POS_BREAKDOWN_POOR = (592, 530)
+POS_BREAKDOWN_TIMEUP = (742, 530)
+
 backgroundColor = COLOR_WHITE
 soundOn = True
 
@@ -127,8 +143,6 @@ spr_backOfAnswerCard = pygame.image.load("img/card_back_small_" + cardArtwork + 
 spr_backOfScenarioCard = pygame.image.load("img/card_back_large_" + cardArtwork + ".png")
 
 #Customization screen
-#Due to the nature of the customization in this game, the paths of some of these images are stored as strings in order to save space later on.
-
 obj_square_white = Object("img/square_white_green.png", POS_SQUARE_WHITE)
 obj_square_lightpink = Object("img/square_lightpink.png", POS_SQUARE_LIGHTPINK)
 obj_square_lightblue = Object("img/square_lightblue.png", POS_SQUARE_LIGHTBLUE)
@@ -144,6 +158,10 @@ spr_selectArtwork = pygame.image.load("img/box_select_artwork.png")
 spr_chooseBackground = pygame.image.load("img/box_choose_background.png")
 squareObjArray = [obj_square_white, obj_square_lightpink, obj_square_lightblue, obj_square_lightgreen]
 cardBackObjArray = [obj_card_cubes, obj_card_marble, obj_card_pink, obj_card_stone, obj_card_tile, obj_card_woven, obj_box_sound]
+
+#Diagnostic screen
+obj_buttonScreenshot = Object("img/button_Screenshot.png", POS_SCREENSHOT)
+obj_buttonMoreDetails = Object("img/button_More_Details.png", POS_MORE_DETAILS)
 
 #This class defines the players of the game
 class Player:
@@ -284,10 +302,10 @@ class Diagnostics:
 		self.numMissed = self.numMissed + 1
 		self.rounds = self.rounds + 1
 	#record the amount of time played each round
-	def saveTime(self)
+	def saveTime(self):
 		self.totalTime = self.totalTime + (pygame.time.get_ticks() - startTime)
 	#return the total amount of time played
-	def getTotalTime(self)
+	def getTotalTime(self):
 		return self.totalTime
 	#return the average amount of time for each round
 	def getAvgTime(self):
@@ -955,18 +973,23 @@ def gameLoop():
 				TIME_ALLOWED = 10000
 
 		while (gameScreen == 9 and gameRun):
+			#The following values are dummy values that will be made to actually be dynamic later on.
+			playerName = "PLAYER NAME"
+			avgResponseTime = 4.3
+			finalPoints = 123
+			roundsToComplete = 24
+			totalPlaytime = 695
+
 			gameDisplay.fill(backgroundColor)
 			displayMessage("This is the DIAGNOSTICS screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
-			displayMessage("Press the 'P' key to save this screen for printing.",COLOR_BLUE,[GAME_WIDTH/3,(GAME_HEIGHT/2) + 100])
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
+			gameDisplay.blit(obj_buttonScreenshot.image, obj_buttonScreenshot.rect)
+			gameDisplay.blit(obj_buttonMoreDetails.image, obj_buttonMoreDetails.rect)
 
 			#NOTE: In order for the output image to correctly contain all elements of the screen, the event handling portion of the while loop needs to come after any drawing that occurs.
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
-				if event.type == pygame.KEYDOWN:
-					if event.key == pygame.K_p:
-						pygame.image.save(gameDisplay, "diagnosticOutput.png") #NOTE: later on, change this so that it outputs the image with a dynamic name based on things like player name.
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
@@ -974,6 +997,10 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						gameScreen = 2
+					if ((obj_buttonScreenshot.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						pygame.image.save(gameDisplay, "diagnosticOutput.png") #NOTE: later on, change this so that it outputs the image with a dynamic name based on things like player name.
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
