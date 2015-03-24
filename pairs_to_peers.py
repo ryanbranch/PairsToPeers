@@ -4,6 +4,7 @@
 import pygame
 import random
 import pygame.mixer
+import math
 from textrect import *
 
 pygame.init()
@@ -592,7 +593,7 @@ def gameLoop():
 			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 			score = str(player.getPoints())
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
-			time = ((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 2
+			time = int(math.floor(((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
 			
 			if time < 0:
 				time = 0 
