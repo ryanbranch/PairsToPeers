@@ -2,3 +2,5 @@
 graphics/
 audio/
 *.pyc
+mockups/
+*.db
