@@ -365,8 +365,8 @@ def gameLoop():
 				   pygame.Rect(POS_ANSWER5[0] + 10, POS_ANSWER5[1] + 10, 108, 150)]
 	scenarioRect = pygame.Rect(POS_SCENARIO[0] + 20, POS_SCENARIO[1] + 20, 300, 216)
 	playRect = pygame.Rect(POS_PLAY[0] + 20, POS_PLAY[1] + 20, 200, 100)
-	feedbackTextRect = pygame.Rect(256, 50, 512, 75)
-	feedbackSubtextRect = pygame.Rect(256, 125, 512, 100)
+	feedbackTextRect = pygame.Rect(256, 50, 512, 100)
+	feedbackSubtextRect = pygame.Rect(256, 150, 512, 100)
 	scoreTextRect = pygame.Rect(788,10,216,90)
 
 	cardSelected = -1
@@ -690,31 +690,7 @@ def gameLoop():
 			
 			if time < 0:
 				time = 0 
-			timerRendered = render_textrect("Time: "+ str(time), big_bold_font, pygame.Rect(260,35,216,90), COLOR_BLACK, [158,206,255])	
-			
-			if timerRendered:
-				gameDisplay.blit(timerRendered, pygame.Rect(260,35,108,160).topright)
-
-			if scoreBoxRendered:
-				gameDisplay.blit(scoreBoxRendered, POS_SCORETEXT)
-			if scenarioCardRendered:
-				gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
-
-			if nextRound == True:
-				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
-				gameDisplay.blit(nextRoundRendered, playRect.topleft)
-				
-			if canPlay == True:
-				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
-				gameDisplay.blit(playCardRendered, playRect.topleft)
-
-			if showFeedback == True:
-				for i in range(len(pointFeedbackArray)):
-					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
-				gameDisplay.blit(mainFeedbackTextRendered, feedbackTextRect.topleft)
-				gameDisplay.blit(mainFeedbackSubtextRendered, feedbackSubtextRect.topleft)
-				
-			
+			timerRendered = render_textrect("Time: "+ str(time), big_bold_font, pygame.Rect(260,35,216,90), COLOR_BLACK, [158,206,255])
 							
 			if gameWon == True:
 				displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],big_bold_font) #Congratulates the user upon winning
@@ -736,6 +712,28 @@ def gameLoop():
 							gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
 				else: #Executes if the current player is a computer player
 					print('COMPUTER PLAYER TURN')
+
+			if timerRendered:
+				gameDisplay.blit(timerRendered, pygame.Rect(260,35,108,160).topright)
+
+			if scoreBoxRendered:
+				gameDisplay.blit(scoreBoxRendered, POS_SCORETEXT)
+			if scenarioCardRendered:
+				gameDisplay.blit(scenarioCardRendered, scenarioRect.topleft)
+
+			if nextRound == True:
+				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
+				gameDisplay.blit(nextRoundRendered, playRect.topleft)
+
+			if canPlay == True:
+				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
+				gameDisplay.blit(playCardRendered, playRect.topleft)
+
+			if showFeedback == True:
+				for i in range(len(pointFeedbackArray)):
+					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
+				gameDisplay.blit(mainFeedbackTextRendered, feedbackTextRect.topleft)
+				gameDisplay.blit(mainFeedbackSubtextRendered, feedbackSubtextRect.topleft)
 
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
