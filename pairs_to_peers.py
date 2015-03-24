@@ -574,7 +574,7 @@ def gameLoop():
 						gameScreen = 2
 						
 			#timer_event = pygame.USEREVENT + 1
-			pygame.time.set_timer(pygame.USEREVENT + 1, 500)
+			pygame.time.set_timer(pygame.USEREVENT + 1, 100)
 			pygame.event.post(pygame.event.Event(pygame.USEREVENT + 1))
 			
 			
