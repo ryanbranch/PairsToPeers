@@ -4,3 +4,4 @@ audio/
 *.pyc
 mockups/
 *.db
+diagnosticOutput.png
