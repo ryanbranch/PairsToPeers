@@ -505,8 +505,8 @@ def gameLoop():
 					for card in range(5):
 						pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
 						#pointFeedbackArray.append(pointVal)
-					cardsSet = True
-					
+					cardsSet = True			
+				
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
 				if ((pygame.time.get_ticks() - startTime) > TIME_ALLOWED):
@@ -791,8 +791,12 @@ def gameLoop():
 					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
 				gameDisplay.blit(mainFeedbackTextRendered, feedbackTextRect.topleft)
 				gameDisplay.blit(mainFeedbackSubtextRendered, feedbackSubtextRect.topleft)
-
+			
 			pygame.display.update() #Updates the screen every frame
+			#for event in pygame.event.get():
+			#	if event.type == pygame.KEYDOWN:
+			#			if event.key == pygame.K_p:
+			#				pygame.image.save(gameDisplay, "screenshot.png")
 			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 5 and gameRun): #Executes after the game has ended
