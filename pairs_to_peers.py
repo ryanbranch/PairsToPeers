@@ -5,6 +5,7 @@ import pygame
 import random
 import pygame.mixer
 import math
+import datetime
 from textrect import *
 
 pygame.init()
@@ -238,6 +239,78 @@ class Answer:
 		return self.ansText
 		
 
+#Diagnostics class
+#Contains information from each round
+#Total Score, Average Response Time, Rounds played
+#Number of Good/Acceptable/Bad/No response answers	
+class Diagnostics:
+
+	#Member Variables#
+		#numGood - number of good answers
+		#numAccept - number of acceptable answers
+		#numBad - number of bad answers
+		#numMissed - number of rounds unanswered
+		#score - final score
+		#rounds - number of rounds played
+		#time - total time
+		#roundInfo - array of all the scenarios and answers they played
+		#playerName - name of player
+		#dateTime - date and time of play
+		
+		
+	def __init__(self):
+		self.numGood = 0
+		self.numAccept = 0
+		self.numBad = 0
+		self.numMissed = 0
+		self.score = 0
+		self.rounds = 0
+		self.totalTime = 0
+		self.roundInfo = []
+	#increment Good answers
+	def addGood(self):
+		self.numGood = self.numGood + 1
+		self.rounds = self.rounds + 1
+	#increment Acceptable answers
+	def addAccept(self):
+		self.numAccept = self.numAccept + 1
+		self.round = self.rounds + 1
+	#increment Bad answers
+	def addBad(self):
+		self.numBad	= self.numBad + 1
+		self.rounds = self.rounds + 1
+	#increment Missed answers
+	def addMissed(self):
+		self.numMissed = self.numMissed + 1
+		self.rounds = self.rounds + 1
+	#record the amount of time played each round
+	def saveTime(self)
+		self.totalTime = self.totalTime + (pygame.time.get_ticks() - startTime)
+	#return the total amount of time played
+	def getTotalTime(self)
+		return self.totalTime
+	#return the average amount of time for each round
+	def getAvgTime(self):
+		return self.totalTime/self.rounds
+	#return the number of rounds played
+	def getRounds(self):
+		return self.rounds;
+	#return the final score
+	def getScore(Player):
+		return Player.score
+	
+	def getName(Player):
+		return Player.name
+	
+	def getDateTime(self):
+		return datetime.datetime.now()
+	
+		
+	#make getDiff
+	
+	
+		
+	
 #This function takes in a one-dimensional array and "shuffles" the contents, ordering them randomly.
 #NOTE: I realize that this python's random.shuffle() function makes this an incredibly simple task, but I figure we should have it as a separate function instead of just calling random.shuffle() directly every time, in case there's every any sort of functionality we need to add to shuffling.
 def shuffle(inArray):
