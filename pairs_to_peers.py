@@ -94,6 +94,11 @@ POS_BOX_SOUND = (768, 0)
 POS_SELECT_ARTWORK = (150, 210)
 POS_CHOOSE_BACKGROUND = (630, 210)
 
+#Difficulty
+POS_EASY = (384,100)
+POS_MEDIUM = (384,300)
+POS_HARD = (384,500)
+
 #Diagnostics
 POS_SCREENSHOT = (768, 0)
 POS_MORE_DETAILS = (220, 640) #633 is 50px from the bottom of the screen for an 85px button
@@ -164,6 +169,11 @@ spr_selectArtwork = pygame.image.load("img/box_select_artwork.png")
 spr_chooseBackground = pygame.image.load("img/box_choose_background.png")
 squareObjArray = [obj_square_white, obj_square_lightpink, obj_square_lightblue, obj_square_lightgreen]
 cardBackObjArray = [obj_card_cubes, obj_card_marble, obj_card_pink, obj_card_stone, obj_card_tile, obj_card_woven, obj_box_sound]
+
+#Difficulty screen
+obj_buttonEasy = Object("img/button_Difficulty_Easy.png", POS_EASY)
+obj_buttonMedium = Object("img/button_Difficulty_Medium.png", POS_MEDIUM)
+obj_buttonHard = Object("img/button_Difficulty_Hard.png", POS_HARD)
 
 #Diagnostic screen
 obj_buttonScreenshot = Object("img/button_Screenshot.png", POS_SCREENSHOT)
@@ -472,7 +482,7 @@ def gameLoop():
 	hasWinningCard = False
 	gameWon = False
 	minPointsHand = 0
-	TIME_ALLOWED = 5000
+	timeAllowed = 15000
 	countdown = 0
 	nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 	showFeedback = False
@@ -536,7 +546,7 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						startTime = pygame.time.get_ticks()
-						gameScreen = 4
+						gameScreen = 8
 						
 					elif ((obj_buttonHowToPlay.rect.collidepoint(x, y))):
 						if soundOn:
@@ -581,7 +591,7 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
-				if (((pygame.time.get_ticks() - startTime) > TIME_ALLOWED) and (isPaused == 0)):
+				if (((pygame.time.get_ticks() - startTime) > timeAllowed) and (isPaused == 0)):
 					#display message + no points this round
 					nextRound = True
 					canPlay = False
@@ -769,7 +779,7 @@ def gameLoop():
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
 
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
-			countdown = int(math.floor(((TIME_ALLOWED - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
+			countdown = int(math.floor(((timeAllowed - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
 			
 			if countdown < 0:
 				countdown = 0
@@ -948,14 +958,40 @@ def gameLoop():
 			clock.tick(FRAMES_PER_SECOND)
 			
 		while (gameScreen == 8 and gameRun):
-			#some button here:
-				TIME_ALLOWED = 30000
-				
-			#some button here:
-				TIME_ALLOWED = 20000
-				
-			#some button here:
-				TIME_ALLOWED = 15000
+			gameDisplay.fill(backgroundColor)
+			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
+			gameDisplay.blit(obj_buttonEasy.image, obj_buttonEasy.rect)
+			gameDisplay.blit(obj_buttonMedium.image, obj_buttonMedium.rect)
+			gameDisplay.blit(obj_buttonHard.image, obj_buttonHard.rect)
+
+			#NOTE: In order for the output image to correctly contain all elements of the screen, the event handling portion of the while loop needs to come after any drawing that occurs.
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					# Set the x, y positions of the mouse click
+					x, y = event.pos
+					if ((obj_buttonMainMenu.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						gameScreen = 2
+					if ((obj_buttonEasy.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						timeAllowed = 30000
+						gameScreen = 4
+					if ((obj_buttonMedium.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						timeAllowed = 20000
+						gameScreen = 4
+					if ((obj_buttonHard.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						timeAllowed = 15000
+						gameScreen = 4
+			pygame.display.update() #Updates the screen every frame
+			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 9 and gameRun):
 			#The following values are dummy values that will be made to actually be dynamic later on.
@@ -975,11 +1011,11 @@ def gameLoop():
 
 
 
-			if (TIME_ALLOWED == 15000):
+			if (timeAllowed == 15000):
 				difficultyString = "Hard"
-			elif (TIME_ALLOWED == 20000):
+			elif (timeAllowed == 20000):
 				difficultyString = "Medium"
-			elif (TIME_ALLOWED == 30000):
+			elif (timeAllowed == 30000):
 				difficultyString = "Easy"
 			else:
 				difficultyString = "INVALID"
