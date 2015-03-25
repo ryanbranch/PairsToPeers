@@ -472,10 +472,13 @@ def gameLoop():
 	hasWinningCard = False
 	gameWon = False
 	minPointsHand = 0
-	TIME_ALLOWED = 15000
+	TIME_ALLOWED = 5000
 	countdown = 0
 	nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 	showFeedback = False
+	hasFeedback = False
+	feedbackDone = False
+	isPaused = 0
 
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
@@ -578,12 +581,22 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
-				if ((pygame.time.get_ticks() - startTime) > TIME_ALLOWED):
+				if (((pygame.time.get_ticks() - startTime) > TIME_ALLOWED) and (isPaused == 0)):
 					#display message + no points this round
 					nextRound = True
 					canPlay = False
 					showFeedback = True
+					pointVal = 0
 
+				if (not feedbackDone):
+					hand = player.getHand()
+					pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
+					feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
+					for card in range(5):
+						pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
+					
+					feedbackDone = True
+					
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
@@ -602,116 +615,85 @@ def gameLoop():
 							cardNum = hand[cardSelected].getCardNum()
 							#print(str(cardNum))
 							cardText = hand[cardSelected].getText()
-							#print(cardText)
-							#print('POINTS' + str(currentScenario.getPointVal(cardNum)))
-							
-					# if ((obj_playCard.rect.collidepoint(x, y)) and (nextRound == True)): #placeholder for next round button
-						# startTime = pygame.time.get_ticks()
-						# nextRound = False
-						# if soundOn:
-							# sound_blop.play()
-						# answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
-
-						# tempScenario = currentScenario
-						# currentScenario = scenarioArray.pop()
-
-						# scenarioArray.append(tempScenario)
-						# scenarioArray = shuffle(scenarioArray)
-
-						# cards = 0
-						# while(cards < 5):
-							# answerArray.append(hand[cards])
-							# cards = cards + 1
-
-						# answerArray = shuffle(answerArray)
-						# player.clearHand()
-						# cardsInHand = len(p.handArray)
-
-						# for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-							# p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-
-						# while (not hasWinningCard):
-							# #print('Attempting to make the user\'s hand have a winning card')
-							# answerArray.insert(0, p.handArray.pop())
-							# p.handArray.append(answerArray.pop())
-							# for card in p.handArray: #Iterates through all 5 cards in the user's hand
-								# if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-									# minPointsHand = currentScenario.getPointVal(card.getCardNum())
-							# if (minPointsHand >= GOOD_CARD_POINTS):
-								# p.handArray = shuffle(p.handArray)
-								# hasWinningCard = True
-								# #print('Should have one. minPointsHand = ' + str(minPointsHand))
-						# hasWinningCard = False
-						# minPointsHand = 0
-						
+													
 					if ((obj_playCard.rect.collidepoint(x, y)) and ((canPlay == True) or (nextRound == True))):
-						startTime = pygame.time.get_ticks()
-						
-						
 						if soundOn:
 							sound_blop.play()
 							
-						answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
-						hand = player.getHand()
-						
-						pointVal = 20
-						
 						if canPlay == True:
-							pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
-						
-						if nextRound == True:
-							pointVal = 0
-							
-						player.addPoints(pointVal)
-
-						pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
-						feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
-						for card in range(5):
-							pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
-						#pointFeedbackArray.append(pointVal)
-
-						canPlay = False
-						nextRound = False
-						showFeedback = False
-
-						if(player.getPoints() >= POINTS_TO_WIN):
-							gameWon = True
 							canPlay = False
-							if soundOn:
-								sound_applause.play()
-								gameScreen = 5
-
-						tempScenario = currentScenario
-						currentScenario = scenarioArray.pop()
-
-						scenarioArray.append(tempScenario)
-						scenarioArray = shuffle(scenarioArray)
-
-						cards = 0
-						while(cards < 5):
-							answerArray.append(hand[cards])
-							cards = cards + 1
-
-						answerArray = shuffle(answerArray)
-						player.clearHand()
-						cardsInHand = len(p.handArray)
-
-						for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-							p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-
-						while (not hasWinningCard):
-							#print('Attempting to make the user\'s hand have a winning card')
-							answerArray.insert(0, p.handArray.pop())
-							p.handArray.append(answerArray.pop())
-							for card in p.handArray: #Iterates through all 5 cards in the user's hand
-								if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-									minPointsHand = currentScenario.getPointVal(card.getCardNum())
-							if (minPointsHand >= GOOD_CARD_POINTS):
-								p.handArray = shuffle(p.handArray)
-								hasWinningCard = True
-								#print('Should have one. minPointsHand = ' + str(minPointsHand))
-						hasWinningCard = False
-						minPointsHand = 0
+							nextRound = True
+							isPaused = 1
+							
+							hand = player.getHand()
+							pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
+							player.addPoints(pointVal)
+							showFeedback = True
+							
+						
+						else:
+							
+							
+							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
+						
+							hand = player.getHand()
+							pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
+							feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
+							for card in range(5):
+								pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
+							#pointFeedbackArray.append(pointVal)
+	
+							canPlay = False
+							nextRound = False
+							showFeedback = False
+	
+							if(player.getPoints() >= POINTS_TO_WIN):
+								gameWon = True
+								canPlay = False
+								if soundOn:
+									sound_applause.play()
+									gameScreen = 5
+	
+							tempScenario = currentScenario
+							currentScenario = scenarioArray.pop()
+	
+							scenarioArray.append(tempScenario)
+							scenarioArray = shuffle(scenarioArray)
+	
+							cards = 0
+							while(cards < 5):
+								answerArray.append(hand[cards])
+								cards = cards + 1
+	
+							answerArray = shuffle(answerArray)
+							player.clearHand()
+							cardsInHand = len(p.handArray)
+	
+							for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+								p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+	
+							while (not hasWinningCard):
+								#print('Attempting to make the user\'s hand have a winning card')
+								answerArray.insert(0, p.handArray.pop())
+								p.handArray.append(answerArray.pop())
+								for card in p.handArray: #Iterates through all 5 cards in the user's hand
+									if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+										minPointsHand = currentScenario.getPointVal(card.getCardNum())
+								if (minPointsHand >= GOOD_CARD_POINTS):
+									p.handArray = shuffle(p.handArray)
+									hasWinningCard = True
+									#print('Should have one. minPointsHand = ' + str(minPointsHand))
+							hand = p.getHand()
+							hasWinningCard = False
+							pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
+							feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
+							for card in range(5):
+								pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
+							#pointFeedbackArray.append(pointVal)
+							minPointsHand = 0
+							startTime = pygame.time.get_ticks()
+							isPaused = 0
+							
 					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
 						if (soundOn):
 							sound_blop.play()
