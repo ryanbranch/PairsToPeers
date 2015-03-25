@@ -52,7 +52,7 @@ GAME_HEIGHT = 768
 FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
 GOOD_CARD_POINTS = 6
-POINTS_TO_WIN = 120
+POINTS_TO_WIN = 100
 startTime = 0
 #The rest of these constants relate specifically to the locations of images on the game screen.  Tweaking with these could definitely mess up how everything looks.
 
@@ -118,7 +118,7 @@ POS_BREAKDOWN_TIMEUP = (770, 530)
 backgroundColor = COLOR_WHITE
 soundOn = True
 timeStamp = time.time()
-stringTimeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime('%H:%M:%S %m/%d/%Y ')
+stringTimeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime('%H:%M %m/%d/%Y ')
 
 class Object(pygame.sprite.Sprite):
 	def __init__(self, file_name, position):
@@ -228,6 +228,12 @@ class Scenario:
 		# arrPoints - array containing answer point vals
 		# beenPlayed - a boolean that keeps track of whether or not the scenario has already been in play during the current game
 
+	#Default constructor
+	def __init__(self):
+		self.scenarioText = "SCENARIO INITIALIZED WITHOUT TEXT"
+		self.arrPoints = []
+		self.beenPlayed = False
+
 	#Constructor Method
 	def __init__(self, cardText, arrPoints):
 		self.scenarioText = cardText
@@ -249,6 +255,14 @@ class Answer:
 		# beenDealt - a boolean that keeps track of whether or not an answer card has been dealt to a player already
 		# beenPlayed - a boolean that keeps track of whether or not the scenario has already been in play during the current game
 		#NOTE: that beenPlayed may or may not be optional for this since we haven't decided if we want to recycle cards yet
+
+	#Default constructor
+	def __init__(self):
+		self.ansText = "ANSWER INITIALIZED WITHOUT TEXT"
+		self.numCard = -1
+		self.pointVal = -1
+		self.beenDealt = False
+		self.BeenPlayed = False
 
 	#cons
 	def __init__(self, cardText, cardNum):
@@ -274,76 +288,38 @@ class Answer:
 		return self.ansText
 		
 
-#Diagnostics class
-#Contains information from each round
+#Diagnostic class
+#Contains information from each round used to track
 #Total Score, Average Response Time, Rounds played
 #Number of Good/Acceptable/Bad/No response answers	
-class Diagnostics:
+class Diagnostic:
 
 	#Member Variables#
-		#numGood - number of good answers
-		#numAccept - number of acceptable answers
-		#numBad - number of bad answers
-		#numMissed - number of rounds unanswered
-		#score - final score
-		#rounds - number of rounds played
-		#totalTime - total time
-		#roundInfo - array of all the scenarios and answers they played
-		#playerName - name of player
-		#dateTime - date and time of play
-		
-		
+		#pointsRecieved - Integer describing the number of points the user got this round
+		#timeUp - Boolean describing whether the round ended due to time running out
+		#timeToAns - Integer describing the amount of time taken to answer, in milliseconds
+		#timeGiven - Integer describing the maximum amount of time the user could have taken, in milliseconds
+		#scenarioIndex - index of the scenario card that was present during this round
+		#answerIndex - index of the answer card that was present during this round
+
+	#Default constructor
 	def __init__(self):
-		self.numGood = 0
-		self.numAccept = 0
-		self.numBad = 0
-		self.numMissed = 0
-		self.score = 0
-		self.rounds = 0
-		self.totalTime = 0
-		self.roundInfo = []
-	#increment Good answers
-	def addGood(self):
-		self.numGood = self.numGood + 1
-		self.rounds = self.rounds + 1
-	#increment Acceptable answers
-	def addAccept(self):
-		self.numAccept = self.numAccept + 1
-		self.round = self.rounds + 1
-	#increment Bad answers
-	def addBad(self):
-		self.numBad	= self.numBad + 1
-		self.rounds = self.rounds + 1
-	#increment Missed answers
-	def addMissed(self):
-		self.numMissed = self.numMissed + 1
-		self.rounds = self.rounds + 1
-	#record the amount of time played each round
-	def saveTime(self):
-		self.totalTime = self.totalTime + (pygame.time.get_ticks() - startTime)
-	#return the total amount of time played
-	def getTotalTime(self):
-		return self.totalTime
-	#return the average amount of time for each round
-	def getAvgTime(self):
-		return self.totalTime/self.rounds
-	#return the number of rounds played
-	def getRounds(self):
-		return self.rounds;
-	#return the final score
-	def getScore(Player):
-		return Player.score
-	
-	def getName(Player):
-		return Player.name
-	
-	def getDateTime(self):
-		return datetime.datetime.now()
-		
-	#make getDiff
-	
-	
-		
+		self.pointsRecieved = 0
+		self.timeUp = False
+		self.timeToAns = 0
+		self.timeGiven = 0
+		self.scenario = Scenario()
+		self.answerIndex = -1
+
+	#Constructor with inputs
+	def __init__(self, roundPoints, outOfTime, ansTime, givenTime, numScenario, numAnswer):
+		self.pointsRecieved = roundPoints
+		self.timeUp = outOfTime
+		self.timeToAns = ansTime
+		self.timeGiven = givenTime
+		self.scenarioIndex = numScenario
+		self.answerIndex = numAnswer
+
 	
 #This function takes in a one-dimensional array and "shuffles" the contents, ordering them randomly.
 #NOTE: I realize that this python's random.shuffle() function makes this an incredibly simple task, but I figure we should have it as a separate function instead of just calling random.shuffle() directly every time, in case there's every any sort of functionality we need to add to shuffling.
@@ -462,6 +438,7 @@ def gameLoop():
 	clock = pygame.time.Clock()
 	playerArray = []#Initializes the array that will eventually store the players of the game
 	scenarioArray = []#Initializes the array that will eventually store the scenario cards
+	diagnosticArray = [] #Initializes the array that will store the diagnostic information
 	scenarioArray = buildScenarios()
 	answerArray = buildAnswers()
 	scenarioArray = shuffle(scenarioArray)
@@ -602,6 +579,9 @@ def gameLoop():
 					showFeedback = True
 					pointVal = 0
 
+					diagnosticObject = Diagnostic(pointVal, True, 0, timeThisRound, currentScenario, hand[cardSelected].getCardNum())
+					diagnosticArray.append(diagnosticObject)
+
 				if (not feedbackDone):
 					hand = player.getHand()
 					pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
@@ -643,6 +623,10 @@ def gameLoop():
 							pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 							player.addPoints(pointVal)
 
+							diagnosticObject = Diagnostic(pointVal, False, (pygame.time.get_ticks() - startTime), timeThisRound, currentScenario ,hand[cardSelected].getCardNum())
+							diagnosticArray.append(diagnosticObject)
+			# roundPoints, outOfTime, ansTime, givenTime, numScenario, numAnswer
+
 							#This if statement used in the incremental difficulty system.
 							if (pointVal > 0):
 								winningStreak = winningStreak + 1.0
@@ -670,7 +654,7 @@ def gameLoop():
 								canPlay = False
 								if soundOn:
 									sound_applause.play()
-									gameScreen = 5
+									gameScreen = 9
 	
 							tempScenario = currentScenario
 							currentScenario = scenarioArray.pop()
@@ -1003,7 +987,7 @@ def gameLoop():
 			#The following values are dummy values that will be made to actually be dynamic later on.
 			playerName = "PLAYER NAME"
 			avgResponseTime = 4.3
-			finalPoints = 123
+			finalPoints = player.getPoints()
 			roundsToComplete = 24
 			totalPlaytime = 695
 			breakdownRectGreatHeading = pygame.Rect(POS_BREAKDOWN_GREAT[0] + 10, POS_BREAKDOWN_GREAT[1] + 10, 108, 150)
@@ -1015,7 +999,7 @@ def gameLoop():
 			breakdownPoorHeadingRendered = render_textrect("Poor responses:", answer_card_font, breakdownRectPoorHeading, COLOR_BLACK, COLOR_WHITE, 1)
 			breakdownTimeUpHeadingRendered = render_textrect("Ran out of time:", answer_card_font, breakdownRectTimeUpHeading, COLOR_BLACK, COLOR_WHITE, 1)
 
-
+			#print("LENGTH OF DIAGNOSTIC ARRAY: " + str(len(diagnosticArray)))
 
 			if (timeAllowed == 15000):
 				difficultyString = "Hard"
