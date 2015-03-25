@@ -455,6 +455,7 @@ def gameLoop():
 	pointFeedbackArray = []
 	feedbackTextArray = []
 	pointVal = 0
+	winningStreak = 0.0
 
 	gameRun = True #Boolean that stores whether the game should be running
 	playersIn = False #Boolean that stores whether all of the player information has been input
@@ -483,6 +484,7 @@ def gameLoop():
 	gameWon = False
 	minPointsHand = 0
 	timeAllowed = 15000
+	timeThisRound = 0.0
 	countdown = 0
 	nextRoundRendered = playCardRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 	showFeedback = False
@@ -588,10 +590,12 @@ def gameLoop():
 
 		while (gameScreen == 4 and gameRun):
 			gameDisplay.fill(backgroundColor)
+			timeThisRound = timeAllowed / ((winningStreak / 10) + 1) #This is used in the incremental difficulty system
+			#displayMessage("DIFFICULTY MULTIPLIER = " + str(timeThisRound / timeAllowed),COLOR_BLACK,(100,150))
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
-				if (((pygame.time.get_ticks() - startTime) > timeAllowed) and (isPaused == 0)):
+				if (((pygame.time.get_ticks() - startTime) > timeThisRound) and (isPaused == 0)):
 					#display message + no points this round
 					nextRound = True
 					canPlay = False
@@ -638,6 +642,10 @@ def gameLoop():
 							hand = player.getHand()
 							pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
 							player.addPoints(pointVal)
+
+							#This if statement used in the incremental difficulty system.
+							if (pointVal > 0):
+								winningStreak = winningStreak + 1.0
 							showFeedback = True
 							
 						
@@ -712,9 +720,7 @@ def gameLoop():
 			#timer_event = pygame.USEREVENT + 1
 			pygame.time.set_timer(pygame.USEREVENT + 1, 100)
 			pygame.event.post(pygame.event.Event(pygame.USEREVENT + 1))
-			
-			
-			gameDisplay.fill(backgroundColor)
+
 			gameDisplay.blit(obj_answerCard1.image, obj_answerCard1.rect)
 			gameDisplay.blit(obj_answerCard2.image, obj_answerCard2.rect)
 			gameDisplay.blit(obj_answerCard3.image, obj_answerCard3.rect)
@@ -779,7 +785,7 @@ def gameLoop():
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
 
 			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,90), COLOR_BLACK, [158,206,255])
-			countdown = int(math.floor(((timeAllowed - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
+			countdown = int(math.floor(((timeThisRound - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
 			
 			if countdown < 0:
 				countdown = 0
