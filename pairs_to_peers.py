@@ -530,6 +530,8 @@ def gameLoop():
 			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 2 and gameRun):
+			gameWon = False
+			winningStreak = 0.0
 			gameDisplay.fill(backgroundColor)
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
