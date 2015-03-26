@@ -597,8 +597,47 @@ def gameLoop():
 			timeThisRound = timeAllowed / ((winningStreak / 10) + 1) #This is used in the incremental difficulty system
 			#displayMessage("DIFFICULTY MULTIPLIER = " + str(timeThisRound / timeAllowed),COLOR_BLACK,(100,150))
 			for event in pygame.event.get():
+				
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				
+				if not hasDealt:
+					for p in playerArray:
+						turnGoing = True
+						cardsInHand = len(p.handArray)
+						#print(cardsInHand) #NOTE: Uncomment this line to figure out why cardsinhand is going so high later
+						#print(cardNum)
+						#NOTE: GAME CRASHES BEFORE HERE
+						#p.clearHand()
+						#DEALING IN THE FIRST ROUND
+						
+						for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+							p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+							print('USING SECOND ONE')
+							
+		
+						while (not hasWinningCard):
+							#print('Attempting to make the user\'s hand have a winning card')
+							answerArray.insert(0, p.handArray.pop())
+							p.handArray.append(answerArray.pop())
+							for card in p.handArray: #Iterates through all 5 cards in the user's hand
+								if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+									minPointsHand = currentScenario.getPointVal(card.getCardNum())
+							if (minPointsHand >= GOOD_CARD_POINTS):
+								p.handArray = shuffle(p.handArray)
+								hasWinningCard = True
+								print('GIVING GOOD CARD')
+											#print('Should have one. minPointsHand = ' + str(minPointsHand))
+						hand = p.getHand()
+						hasDealt = True
+						p.handArray.append(answerArray)
+						#while turnGoing:
+						for cardNum in xrange(0,5): #Shows answer cards on the screen
+							answerCardRendered = render_textrect(p.handArray[cardNum].ansText, answer_card_font, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
+							if answerCardRendered:
+								print('RENDERING')
+								gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
+				
 				if (((pygame.time.get_ticks() - startTime) > timeThisRound) and (isPaused == 0)):
 					#display message + no points this round
 					nextRound = True
@@ -733,6 +772,7 @@ def gameLoop():
 							startTime = pygame.time.get_ticks()
 							isPaused = 0
 							feedbackDone = False
+							hasDealt = False
 
 					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
 						p.setPoints(0)
@@ -818,44 +858,7 @@ def gameLoop():
 				displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],big_bold_font) #Congratulates the user upon winning
 				displayMessage("Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
 
-			for p in playerArray:
-				turnGoing = True
-				if (p.isHuman): #Executes if the current player is a human player
-					cardsInHand = len(p.handArray)
-					#print(cardsInHand) #NOTE: Uncomment this line to figure out why cardsinhand is going so high later
-					#print(cardNum)
-					#NOTE: GAME CRASHES BEFORE HERE
-					#p.clearHand()
-					#DEALING IN THE FIRST ROUND
-					if not hasDealt:
-						for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-							p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-							print('USING SECOND ONE')
-							hasDealt = True
-
-					while (not hasWinningCard):
-						#print('Attempting to make the user\'s hand have a winning card')
-						answerArray.insert(0, p.handArray.pop())
-						p.handArray.append(answerArray.pop())
-						for card in p.handArray: #Iterates through all 5 cards in the user's hand
-							if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-								minPointsHand = currentScenario.getPointVal(card.getCardNum())
-						if (minPointsHand >= GOOD_CARD_POINTS):
-							p.handArray = shuffle(p.handArray)
-							hasWinningCard = True
-							print('GIVING GOOD CARD')
-									#print('Should have one. minPointsHand = ' + str(minPointsHand))
-					hand = p.getHand()
-							
-					p.handArray.append(answerArray)
-				#while turnGoing:
-					for cardNum in xrange(0,5): #Shows answer cards on the screen
-						answerCardRendered = render_textrect(p.handArray[cardNum].ansText, answer_card_font, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
-						if answerCardRendered:
-							gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
-				else: #Executes if the current player is a computer player
-					print('COMPUTER PLAYER TURN')
-
+				
 			if timerRendered:
 				gameDisplay.blit(timerRendered, pygame.Rect(788,60,178,160))
 
