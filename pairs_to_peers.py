@@ -220,6 +220,9 @@ class Player:
 	def clearHand(self):
 		self.handArray = []
 
+	def getName(self):
+		return self.playerName
+
 #This class defines the scenario cards, which players consider when playing their corresponding answer card.
 class Scenario:
 
@@ -605,7 +608,9 @@ def gameLoop():
 					pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
 					feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
 					for card in range(5):
+						print(len(hand))
 						pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
+						#NOTE: The error is happening around here
 
 					feedbackDone = True
 
@@ -643,7 +648,7 @@ def gameLoop():
 
 							diagnosticObject = Diagnostic(pointVal, False, (pygame.time.get_ticks() - startTime), timeThisRound, currentScenario ,hand[cardSelected].getCardNum())
 							diagnosticArray.append(diagnosticObject)
-			# roundPoints, outOfTime, ansTime, givenTime, numScenario, numAnswer
+							#roundPoints, outOfTime, ansTime, givenTime, numScenario, numAnswer
 
 							#This if statement used in the incremental difficulty system.
 							if (pointVal > 0):
@@ -682,6 +687,7 @@ def gameLoop():
 
 							cards = 0
 							while(cards < 5):
+								print("Appending " + str(cards) + "to answerArray... why?")
 								answerArray.append(hand[cards])
 								cards = cards + 1
 
@@ -801,6 +807,10 @@ def gameLoop():
 				turnGoing = True
 				if (p.isHuman): #Executes if the current player is a human player
 					cardsInHand = len(p.handArray)
+					#print(cardsInHand) #NOTE: Uncomment this line to figure out why cardsinhand is going so high later
+					#print(cardNum)
+					#NOTE: GAME CRASHES BEFORE HERE
+					#p.clearHand()
 
 					for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
 						p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
@@ -1007,7 +1017,7 @@ def gameLoop():
 				endTime = time.time()
 				totalPlaytime = (int(round(endTime - timeStamp)))
 
-				playerName = "Ryan"
+				playerName = playerArray[0].getName()
 				finalPoints = player.getPoints()
 				roundsToComplete = len(diagnosticArray)
 				breakdownRectGreatHeading = pygame.Rect(POS_BREAKDOWN_GREAT[0] + 10, POS_BREAKDOWN_GREAT[1] + 10, 108, 150)
