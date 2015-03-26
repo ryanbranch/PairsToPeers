@@ -714,6 +714,7 @@ def gameLoop():
 								if (minPointsHand >= GOOD_CARD_POINTS):
 									p.handArray = shuffle(p.handArray)
 									hasWinningCard = True
+									print('USING FIRST ONE')
 									#print('Should have one. minPointsHand = ' + str(minPointsHand))
 							hand = p.getHand()
 							hasWinningCard = False
@@ -818,9 +819,10 @@ def gameLoop():
 					#print(cardNum)
 					#NOTE: GAME CRASHES BEFORE HERE
 					#p.clearHand()
-
+					#DEALING IN THE FIRST ROUND
 					for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
 						p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+						print('USING SECOND ONE')
 
 					p.handArray.append(answerArray)
 				#while turnGoing:
