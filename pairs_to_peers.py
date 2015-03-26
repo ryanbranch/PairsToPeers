@@ -453,7 +453,6 @@ def gameLoop():
 	gameRun = True #Boolean that stores whether the game should be running
 	playersIn = False #Boolean that stores whether all of the player information has been input
 	clock = pygame.time.Clock()
-	playerArray = []#Initializes the array that will eventually store the players of the game
 	scenarioArray = []#Initializes the array that will eventually store the scenario cards
 	diagnosticArray = [] #Initializes the array that will store the diagnostic information
 	scenarioArray = buildScenarios()
@@ -508,9 +507,6 @@ def gameLoop():
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
 	player = Player('Ryan', 1, True)
-	playerArray.append(player)
-	#player = Player('Other Player', 2, True)
-	#playerArray.append(player)
 
 	currentScenario = scenarioArray.pop() #Effectively deals a scenario card to the game from the deck
 
@@ -602,35 +598,34 @@ def gameLoop():
 					gameRun = False #Ends the game if they user attempts to close the window
 				
 				if not hasDealt:
-					for p in playerArray:
-						turnGoing = True
-						cardsInHand = len(p.handArray)
-						#print(cardsInHand) #NOTE: Uncomment this line to figure out why cardsinhand is going so high later
-						#print(cardNum)
-						#NOTE: GAME CRASHES BEFORE HERE
-						#p.clearHand()
-						#DEALING IN THE FIRST ROUND
-						
-						for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-							p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-							print('USING SECOND ONE')
-							
-		
-						while (not hasWinningCard):
-							#print('Attempting to make the user\'s hand have a winning card')
-							answerArray.insert(0, p.handArray.pop())
-							p.handArray.append(answerArray.pop())
-							for card in p.handArray: #Iterates through all 5 cards in the user's hand
-								if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-									minPointsHand = currentScenario.getPointVal(card.getCardNum())
-							if (minPointsHand >= GOOD_CARD_POINTS):
-								p.handArray = shuffle(p.handArray)
-								hasWinningCard = True
-								print('GIVING GOOD CARD')
-											#print('Should have one. minPointsHand = ' + str(minPointsHand))
-						hand = p.getHand()
-						hasDealt = True
-						p.handArray.append(answerArray)
+					turnGoing = True
+					cardsInHand = len(player.handArray)
+					#print(cardsInHand) #NOTE: Uncomment this line to figure out why cardsinhand is going so high later
+					#print(cardNum)
+					#NOTE: GAME CRASHES BEFORE HERE
+					#player.clearHand()
+					#DEALING IN THE FIRST ROUND
+
+					for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+						player.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+						print('USING SECOND ONE')
+
+
+					while (not hasWinningCard):
+						#print('Attempting to make the user\'s hand have a winning card')
+						answerArray.insert(0, player.handArray.pop())
+						player.handArray.append(answerArray.pop())
+						for card in player.handArray: #Iterates through all 5 cards in the user's hand
+							if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+								minPointsHand = currentScenario.getPointVal(card.getCardNum())
+						if (minPointsHand >= GOOD_CARD_POINTS):
+							player.handArray = shuffle(player.handArray)
+							hasWinningCard = True
+							print('GIVING GOOD CARD')
+										#print('Should have one. minPointsHand = ' + str(minPointsHand))
+					hand = player.getHand()
+					hasDealt = True
+					player.handArray.append(answerArray)
 				
 				if (((pygame.time.get_ticks() - startTime) > timeThisRound) and (isPaused == 0)):
 					#display message + no points this round
@@ -717,7 +712,7 @@ def gameLoop():
 							if(player.getPoints() >= POINTS_TO_WIN):
 								gameWon = True
 								canPlay = False
-								p.setPoints(0)
+								player.setPoints(0)
 								if soundOn:
 									sound_applause.play()
 									gameScreen = 9
@@ -736,26 +731,26 @@ def gameLoop():
 
 							answerArray = shuffle(answerArray)
 							player.clearHand()
-							cardsInHand = len(p.handArray)
+							cardsInHand = len(player.handArray)
 					
 							
 							for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
 								
-								p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+								player.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 
 							#while (not hasWinningCard):
 								#print('Attempting to make the user\'s hand have a winning card')
-							#	answerArray.insert(0, p.handArray.pop())
-							#	p.handArray.append(answerArray.pop())
-							#	for card in p.handArray: #Iterates through all 5 cards in the user's hand
+							#	answerArray.insert(0, player.handArray.pop())
+							#	player.handArray.append(answerArray.pop())
+							#	for card in player.handArray: #Iterates through all 5 cards in the user's hand
 							#		if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
 							#			minPointsHand = currentScenario.getPointVal(card.getCardNum())
 							#	if (minPointsHand >= GOOD_CARD_POINTS):
-							#		p.handArray = shuffle(p.handArray)
+							#		player.handArray = shuffle(player.handArray)
 							#		hasWinningCard = True
 							#		print('USING FIRST ONE')
 									#print('Should have one. minPointsHand = ' + str(minPointsHand))
-							hand = p.getHand()
+							hand = player.getHand()
 							hasWinningCard = False
 							pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
 							feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
@@ -769,7 +764,7 @@ def gameLoop():
 							hasDealt = False
 
 					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
-						p.setPoints(0)
+						player.setPoints(0)
 						if (soundOn):
 							sound_blop.play()
 						gameScreen = 2
@@ -787,7 +782,7 @@ def gameLoop():
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
 			for cardNum in xrange(0,5): #Shows answer cards on the screen
-				answerCardRendered = render_textrect(p.handArray[cardNum].ansText, answer_card_font, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
+				answerCardRendered = render_textrect(player.handArray[cardNum].ansText, answer_card_font, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
 				if answerCardRendered:
 					gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
 
@@ -1050,7 +1045,7 @@ def gameLoop():
 				endTime = time.time()
 				totalPlaytime = (int(round(endTime - timeStamp)))
 
-				playerName = playerArray[0].getName()
+				playerName = player.getName()
 				finalPoints = player.getPoints()
 				roundsToComplete = len(diagnosticArray)
 				breakdownRectGreatHeading = pygame.Rect(POS_BREAKDOWN_GREAT[0] + 10, POS_BREAKDOWN_GREAT[1] + 10, 108, 150)
