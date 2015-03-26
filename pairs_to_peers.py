@@ -491,6 +491,7 @@ def gameLoop():
 	numOkay = 0
 	numPoor = 0
 	numTimeUp = 0
+	hasDealt = False
 
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
@@ -607,13 +608,16 @@ def gameLoop():
 
 					diagnosticObject = Diagnostic(pointVal, True, 0, timeThisRound, currentScenario, hand[cardSelected].getCardNum())
 					diagnosticArray.append(diagnosticObject)
-
+				
+				#maybe move this down?
 				if (not feedbackDone):
 					hand = player.getHand()
 					pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
 					feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
 					for card in range(5):
-						print(len(hand))
+						#print(len(hand))
+						#perhaps theres a way to set this without calling hand
+						print('ASDFASDFASDF')
 						pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
 						#NOTE: The error is happening around here
 
@@ -706,17 +710,17 @@ def gameLoop():
 								
 								p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 
-							while (not hasWinningCard):
+							#while (not hasWinningCard):
 								#print('Attempting to make the user\'s hand have a winning card')
-								answerArray.insert(0, p.handArray.pop())
-								p.handArray.append(answerArray.pop())
-								for card in p.handArray: #Iterates through all 5 cards in the user's hand
-									if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-										minPointsHand = currentScenario.getPointVal(card.getCardNum())
-								if (minPointsHand >= GOOD_CARD_POINTS):
-									p.handArray = shuffle(p.handArray)
-									hasWinningCard = True
-									print('USING FIRST ONE')
+							#	answerArray.insert(0, p.handArray.pop())
+							#	p.handArray.append(answerArray.pop())
+							#	for card in p.handArray: #Iterates through all 5 cards in the user's hand
+							#		if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+							#			minPointsHand = currentScenario.getPointVal(card.getCardNum())
+							#	if (minPointsHand >= GOOD_CARD_POINTS):
+							#		p.handArray = shuffle(p.handArray)
+							#		hasWinningCard = True
+							#		print('USING FIRST ONE')
 									#print('Should have one. minPointsHand = ' + str(minPointsHand))
 							hand = p.getHand()
 							hasWinningCard = False
@@ -728,6 +732,7 @@ def gameLoop():
 							minPointsHand = 0
 							startTime = pygame.time.get_ticks()
 							isPaused = 0
+							feedbackDone = False
 
 					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
 						p.setPoints(0)
@@ -822,9 +827,11 @@ def gameLoop():
 					#NOTE: GAME CRASHES BEFORE HERE
 					#p.clearHand()
 					#DEALING IN THE FIRST ROUND
-					for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-						p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-						print('USING SECOND ONE')
+					if not hasDealt:
+						for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+							p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+							print('USING SECOND ONE')
+							hasDealt = True
 
 					while (not hasWinningCard):
 						#print('Attempting to make the user\'s hand have a winning card')
@@ -836,8 +843,9 @@ def gameLoop():
 						if (minPointsHand >= GOOD_CARD_POINTS):
 							p.handArray = shuffle(p.handArray)
 							hasWinningCard = True
+							print('GIVING GOOD CARD')
 									#print('Should have one. minPointsHand = ' + str(minPointsHand))
-							hand = p.getHand()
+					hand = p.getHand()
 							
 					p.handArray.append(answerArray)
 				#while turnGoing:
