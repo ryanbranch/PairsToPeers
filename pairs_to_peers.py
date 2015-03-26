@@ -201,6 +201,9 @@ class Player:
 	#This method is used to increase a player's score by a given number of points
 	def addPoints(self, pointsToAdd):
 		self.score += pointsToAdd
+		
+	def setPoints(self, numPoints):
+		self.score = numPoints
 
 	def getPoints(self):
 		return self.score
@@ -531,7 +534,7 @@ def gameLoop():
 
 		while (gameScreen == 2 and gameRun):
 			gameWon = False
-			winningStreak = 0.0
+			winningStreak = 0
 			gameDisplay.fill(backgroundColor)
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -677,6 +680,7 @@ def gameLoop():
 							if(player.getPoints() >= POINTS_TO_WIN):
 								gameWon = True
 								canPlay = False
+								p.setPoints(0)
 								if soundOn:
 									sound_applause.play()
 									gameScreen = 9
@@ -723,6 +727,7 @@ def gameLoop():
 							isPaused = 0
 
 					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
+						p.setPoints(0)
 						if (soundOn):
 							sound_blop.play()
 						gameScreen = 2
