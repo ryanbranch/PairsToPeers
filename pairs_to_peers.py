@@ -799,7 +799,7 @@ def gameLoop():
 
 			#scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
 
-			scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, pygame.Rect(760,35,216,60), COLOR_BLACK, [158,206,255])
+			scoreBoxRendered = render_textrect(("Score: " + str(score)), big_bold_font, pygame.Rect(760,35,216,60), COLOR_BLACK, [158,206,255])
 			countdown = int(math.floor(((timeThisRound - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
 
 			if countdown < 0:
