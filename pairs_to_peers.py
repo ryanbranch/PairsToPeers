@@ -631,12 +631,6 @@ def gameLoop():
 						hand = p.getHand()
 						hasDealt = True
 						p.handArray.append(answerArray)
-						#while turnGoing:
-						for cardNum in xrange(0,5): #Shows answer cards on the screen
-							answerCardRendered = render_textrect(p.handArray[cardNum].ansText, answer_card_font, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
-							if answerCardRendered:
-								print('RENDERING')
-								gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
 				
 				if (((pygame.time.get_ticks() - startTime) > timeThisRound) and (isPaused == 0)):
 					#display message + no points this round
@@ -792,6 +786,10 @@ def gameLoop():
 			gameDisplay.blit(obj_scoreDisplay.image, obj_scoreDisplay.rect)
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
+			for cardNum in xrange(0,5): #Shows answer cards on the screen
+				answerCardRendered = render_textrect(p.handArray[cardNum].ansText, answer_card_font, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
+				if answerCardRendered:
+					gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
 
 			spr_backOfAnswerCard = pygame.image.load("img/card_back_small_" + cardArtwork + ".png")
 			spr_backOfScenarioCard = pygame.image.load("img/card_back_large_" + cardArtwork + ".png")
