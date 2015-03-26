@@ -700,8 +700,10 @@ def gameLoop():
 							answerArray = shuffle(answerArray)
 							player.clearHand()
 							cardsInHand = len(p.handArray)
-
+					
+							
 							for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+								
 								p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 
 							while (not hasWinningCard):
@@ -824,6 +826,19 @@ def gameLoop():
 						p.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 						print('USING SECOND ONE')
 
+					while (not hasWinningCard):
+						#print('Attempting to make the user\'s hand have a winning card')
+						answerArray.insert(0, p.handArray.pop())
+						p.handArray.append(answerArray.pop())
+						for card in p.handArray: #Iterates through all 5 cards in the user's hand
+							if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+								minPointsHand = currentScenario.getPointVal(card.getCardNum())
+						if (minPointsHand >= GOOD_CARD_POINTS):
+							p.handArray = shuffle(p.handArray)
+							hasWinningCard = True
+									#print('Should have one. minPointsHand = ' + str(minPointsHand))
+							hand = p.getHand()
+							
 					p.handArray.append(answerArray)
 				#while turnGoing:
 					for cardNum in xrange(0,5): #Shows answer cards on the screen
