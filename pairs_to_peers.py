@@ -11,6 +11,8 @@ import pygame.mixer
 
 from textrect import *
 
+#TEMPORARY
+answerArray = []
 
 pygame.init()
 
@@ -180,52 +182,6 @@ obj_buttonScreenshot = Object("img/button_Screenshot.png", POS_SCREENSHOT)
 obj_buttonMoreDetails = Object("img/button_More_Details.png", POS_MORE_DETAILS)
 spr_responseBreakdown = pygame.image.load("img/answerCard_Blue.png")
 
-#This class defines the players of the game
-class Player:
-
-	#MEMBER VARIABLES#
-		# isHuman - a boolean denoting whether the player is a human (true) or an AI (false)
-		# playerName - a string of the name of the player
-		# playerNum - the integer value denoting the player's number (1 = Player 1, 2 = Player 2, etc.)
-		# score - the integer value of the player's score
-		# handArray - array that stores the cards in a player's hand
-
-	#Constructor Method
-	def __init__(self, name, number, human):
-		self.isHuman = human
-		self.playerName = name
-		self.playerNum = number
-		self.score = 0 #Players are initialized with 0 points
-		self.handArray = []#Initializes handArray as an empty array
-
-	#This method is used to increase a player's score by a given number of points
-	def addPoints(self, pointsToAdd):
-		self.score += pointsToAdd
-		
-	def setPoints(self, numPoints):
-		self.score = numPoints
-
-	def getPoints(self):
-		return self.score
-
-	def dealAns(self):
-		cardCount = 0
-		#NOTE: Commented out these lines for now until more of a framework is built around this functionality
-		#while(cardCount < 5):
-			#randNum = random.randint(0, totalnumberofcards)
-			#if(Answer.beenDealt == False)
-				#handArray[cardCount] = Answer(randNum)
-				#cardCount = cardCount + 1
-
-	def getHand(self):
-		return self.handArray
-
-	def clearHand(self):
-		self.handArray = []
-
-	def getName(self):
-		return self.playerName
-
 #This class defines the scenario cards, which players consider when playing their corresponding answer card.
 class Scenario:
 
@@ -293,6 +249,53 @@ class Answer:
 	def getText(self):
 		return self.ansText
 
+#This class defines the players of the game
+class Player:
+
+	#MEMBER VARIABLES#
+		# isHuman - a boolean denoting whether the player is a human (true) or an AI (false)
+		# playerName - a string of the name of the player
+		# playerNum - the integer value denoting the player's number (1 = Player 1, 2 = Player 2, etc.)
+		# score - the integer value of the player's score
+		# handArray - array that stores the cards in a player's hand
+
+	#Constructor Method
+	def __init__(self, name, number, human):
+		self.isHuman = human
+		self.playerName = name
+		self.playerNum = number
+		self.score = 0 #Players are initialized with 0 points
+		self.handArray = []#Initializes handArray as an empty array
+
+	#This method is used to increase a player's score by a given number of points
+	def addPoints(self, pointsToAdd):
+		self.score += pointsToAdd
+
+	def setPoints(self, numPoints):
+		self.score = numPoints
+
+	def getPoints(self):
+		return self.score
+
+	def dealAns(self):
+		cardCount = 0
+		#NOTE: Commented out these lines for now until more of a framework is built around this functionality
+		#while(cardCount < 5):
+			#randNum = random.randint(0, totalnumberofcards)
+			#if(Answer.beenDealt == False)
+				#handArray[cardCount] = Answer(randNum)
+				#cardCount = cardCount + 1
+
+	def getHand(self):
+		if (len(self.handArray) == 0):
+			print("handArray is empty!")
+		return self.handArray
+
+	def clearHand(self):
+		self.handArray = []
+
+	def getName(self):
+		return self.playerName
 
 #Diagnostic class
 #Contains information from each round used to track
@@ -596,37 +599,7 @@ def gameLoop():
 				
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
-				
-				if not hasDealt:
-					turnGoing = True
-					cardsInHand = len(player.handArray)
-					#print(cardsInHand) #NOTE: Uncomment this line to figure out why cardsinhand is going so high later
-					#print(cardNum)
-					#NOTE: GAME CRASHES BEFORE HERE
-					#player.clearHand()
-					#DEALING IN THE FIRST ROUND
 
-					for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
-						player.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-						print('USING SECOND ONE')
-
-
-					while (not hasWinningCard):
-						#print('Attempting to make the user\'s hand have a winning card')
-						answerArray.insert(0, player.handArray.pop())
-						player.handArray.append(answerArray.pop())
-						for card in player.handArray: #Iterates through all 5 cards in the user's hand
-							if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-								minPointsHand = currentScenario.getPointVal(card.getCardNum())
-						if (minPointsHand >= GOOD_CARD_POINTS):
-							player.handArray = shuffle(player.handArray)
-							hasWinningCard = True
-							print('GIVING GOOD CARD')
-										#print('Should have one. minPointsHand = ' + str(minPointsHand))
-					hand = player.getHand()
-					hasDealt = True
-					player.handArray.append(answerArray)
-				
 				if (((pygame.time.get_ticks() - startTime) > timeThisRound) and (isPaused == 0)):
 					#display message + no points this round
 					nextRound = True
@@ -636,20 +609,7 @@ def gameLoop():
 
 					diagnosticObject = Diagnostic(pointVal, True, 0, timeThisRound, currentScenario, hand[cardSelected].getCardNum())
 					diagnosticArray.append(diagnosticObject)
-				
-				#maybe move this down?
-				if (not feedbackDone):
-					hand = player.getHand()
-					pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
-					feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
-					for card in range(5):
-						#print(len(hand))
-						#perhaps theres a way to set this without calling hand
-						print('ASDFASDFASDF')
-						pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
-						#NOTE: The error is happening around here
 
-					feedbackDone = True
 
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
@@ -781,8 +741,54 @@ def gameLoop():
 			gameDisplay.blit(obj_scoreDisplay.image, obj_scoreDisplay.rect)
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
+
+			#print("HasDealt = " + str(hasDealt))
+			if not hasDealt:
+				turnGoing = True
+				cardsInHand = len(player.handArray)
+				#print(cardsInHand) #NOTE: Uncomment this line to figure out why cardsinhand is going so high later
+				#print(cardNum)
+				#NOTE: GAME CRASHES BEFORE HERE
+				#player.clearHand()
+				#DEALING IN THE FIRST ROUND
+
+				for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
+					player.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
+					#print('USING SECOND ONE')
+
+				while (not hasWinningCard):
+					#print('Attempting to make the user\'s hand have a winning card')
+					answerArray.insert(0, player.handArray.pop())
+					player.handArray.append(answerArray.pop())
+					for card in player.handArray: #Iterates through all 5 cards in the user's hand
+						if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
+							minPointsHand = currentScenario.getPointVal(card.getCardNum())
+					if (minPointsHand >= GOOD_CARD_POINTS):
+						player.handArray = shuffle(player.handArray)
+						hasWinningCard = True
+						#print('GIVING GOOD CARD')
+									#print('Should have one. minPointsHand = ' + str(minPointsHand))
+				hand = player.getHand()
+				hasDealt = True
+				player.handArray.append(answerArray)
+				#print("Dealt cards!")
+
+			#maybe move this down?
+			if (not feedbackDone):
+				hand = player.getHand()
+				pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
+				feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
+				for card in range(5):
+					#print(len(hand))
+					#perhaps theres a way to set this without calling hand
+					#print('ASDFASDFASDF')
+					pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
+					#NOTE: The error is happening around here
+
+				feedbackDone = True
+
 			for cardNum in xrange(0,5): #Shows answer cards on the screen
-				answerCardRendered = render_textrect(player.handArray[cardNum].ansText, answer_card_font, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
+				answerCardRendered = render_textrect(hand[cardNum].ansText, answer_card_font, answerRects[cardNum], COLOR_BLACK, COLOR_WHITE)
 				if answerCardRendered:
 					gameDisplay.blit(answerCardRendered, answerRects[cardNum].topleft)
 
