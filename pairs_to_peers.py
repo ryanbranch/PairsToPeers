@@ -542,24 +542,25 @@ def gameLoop():
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
-					if ((obj_logo.rect.collidepoint(x, y))):
-						if soundOn:
-							sound_blop.play()
-						gameScreen = 1
-					elif ((obj_buttonPlayGame.rect.collidepoint(x, y))):
+					if ((obj_buttonPlayGame.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						startTime = pygame.time.get_ticks()
 						gameScreen = 8
-
-					elif ((obj_buttonHowToPlay.rect.collidepoint(x, y))):
-						if soundOn:
-							sound_blop.play()
-						gameScreen = 3
 					elif((obj_buttonOptions.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						gameScreen = 7
+					"""  NOTE: THIS IS FOR HAVING A LOGO CLICK TAKE THE USER TO THE ABOUT SCREEN.  ABOUT SCREEN ISN'T MADE YET.  ALSO GETS RID OF INSTRUCTIONS SCREEN BUTTON SINCE WE DON'T HAVE THAT EITHER
+					elif ((obj_logo.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						gameScreen = 1
+					elif ((obj_buttonHowToPlay.rect.collidepoint(x, y))):
+						if soundOn:
+							sound_blop.play()
+						gameScreen = 3
+					"""
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_d:
 						gameScreen = 9
@@ -567,7 +568,7 @@ def gameLoop():
 
 			gameDisplay.blit(obj_logo.image, obj_logo.rect)
 			gameDisplay.blit(obj_buttonPlayGame.image, obj_buttonPlayGame.rect)
-			gameDisplay.blit(obj_buttonHowToPlay.image,obj_buttonHowToPlay.rect)
+			#gameDisplay.blit(obj_buttonHowToPlay.image,obj_buttonHowToPlay.rect) NOTE: Removing so that people don't go to the instructions screen since it's not done
 			gameDisplay.blit(obj_buttonOptions.image, obj_buttonOptions.rect)
 			gameDisplay.blit(spr_bottomCorner, POS_BOTTOMCORNER)
 			gameDisplay.blit(spr_topCorner, POS_TOPCORNER)
