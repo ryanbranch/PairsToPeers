@@ -318,7 +318,7 @@ class Diagnostic:
 		self.timeToAns = 0
 		self.timeGiven = 0
 		self.scenario = Scenario()
-		self.answerIndex = -1
+		self.answerIndex = 0
 
 	#Constructor with inputs
 	def __init__(self, roundPoints, outOfTime, ansTime, givenTime, numScenario, numAnswer):
@@ -496,7 +496,7 @@ def gameLoop():
 	nameBox = eztext.Input(x=400, y=50, font=big_bold_font, maxlength=20, color=COLOR_BLACK, prompt='Name: ')
 
 
-	cardSelected = -1
+	cardSelected = 0 #NOTE:  Channge this to -1 down the line and fix the resulting bug.
 	canPlay = False
 	nextRound = False
 	hasWinningCard = False
@@ -710,7 +710,7 @@ def gameLoop():
 
 							cards = 0
 							while(cards < 5):
-								print("Appending " + str(cards) + "to answerArray... why?")
+								#print("Appending " + str(cards) + "to answerArray... why?")
 								answerArray.append(hand[cards])
 								cards = cards + 1
 
