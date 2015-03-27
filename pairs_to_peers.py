@@ -1143,7 +1143,7 @@ def gameLoop():
 			displayMessage("Player Name: " + playerName,COLOR_BLACK,POS_PLAYER_NAME_REPORT,big_bold_font)
 			displayMessage(stringTimeStamp,COLOR_BLACK,POS_TIMESTAMP_REPORT,big_bold_font)
 			displayMessage("Average Response Time: " + str(avgResponseTime) + " seconds",COLOR_BLACK,POS_DETAIL1_REPORT,scenario_card_font)
-			displayMessage("Final Points: " + str(finalPoints),COLOR_BLACK,POS_DETAIL2_REPORT,scenario_card_font)
+			#displayMessage("Final Points: " + str(finalPoints),COLOR_BLACK,POS_DETAIL2_REPORT,scenario_card_font)
 			displayMessage("Rounds to Complete: " + str(roundsToComplete),COLOR_BLACK,POS_DETAIL3_REPORT,scenario_card_font)
 			displayMessage("Total Playtime: " + playtimeString,COLOR_BLACK,POS_DETAIL4_REPORT,scenario_card_font)
 			displayMessage("Difficulty: " + difficultyString,COLOR_BLACK,POS_DETAIL5_REPORT,scenario_card_font)
