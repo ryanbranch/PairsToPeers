@@ -96,6 +96,17 @@ POS_BOX_SOUND = (768, 0)
 POS_SELECT_ARTWORK = (150, 210)
 POS_CHOOSE_BACKGROUND = (630, 210)
 
+#About
+POS_DESCRIPTION = (90, 130)
+RECT_DESCRIPTION = pygame.Rect(90, 180, 754, 90)
+POS_CREATORS = (90, 270)
+RECT_CREATORS = pygame.Rect(90, 320, 754, 130)
+POS_THANKS = (90,450)
+RECT_THANKS = pygame.Rect(90, 500, 754, 90)
+stringDescription = "Pairs to Peers is a game designed to help children who suffer from an Autism Spectrum disorder.  Through responsive card-based gameplay it allows a child to learn how to recognize and respond to various social stimuli."
+stringCreators = 'Created by Edgar Hu, Ryan Branch, Austin Trieu and Derek Xia.\nThis game was made as our semester project for the "Gaming for the Greater Good" section of ENGR100 at the University of Michigan College of Engineering.\nThe GitHub repository for the game can be found at http://github.com/rjbranch/PairsToPeers/'
+stringThanks = "David Clark, for creating the TextRect module\nJerome Rasky, for creating the EzText module, and Bryant Sell for their improvements of it\nMark DiAngelo and SoundBible.com user Thore for their recordings of the sounds used in this game"
+
 #Difficulty
 POS_EASY = (384,100)
 POS_MEDIUM = (384,300)
@@ -539,8 +550,10 @@ def gameLoop():
 	while gameRun: #Continues to execute until gameRun is set to false
 
 		while (gameScreen == 1 and gameRun):
+			descriptionRendered = render_textrect(stringDescription, answer_card_font, RECT_DESCRIPTION, COLOR_BLACK, backgroundColor)
+			creatorsRendered = render_textrect(stringCreators, answer_card_font, RECT_CREATORS, COLOR_BLACK, backgroundColor)
+			thanksRendered = render_textrect(stringThanks, answer_card_font, RECT_DESCRIPTION, COLOR_BLACK, backgroundColor)
 			gameDisplay.fill(backgroundColor)
-			displayMessage("This is the ABOUT screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
@@ -551,7 +564,13 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						gameScreen = 2
+			displayMessage("Description:", COLOR_BLACK, POS_DESCRIPTION, big_bold_font)
+			displayMessage("The Project", COLOR_BLACK, POS_CREATORS, big_bold_font)
+			displayMessage("Thanks to:", COLOR_BLACK, POS_THANKS, big_bold_font)
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
+			gameDisplay.blit(descriptionRendered, RECT_DESCRIPTION.topleft)
+			gameDisplay.blit(creatorsRendered, RECT_CREATORS.topleft)
+			gameDisplay.blit(thanksRendered, RECT_THANKS.topleft)
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
@@ -574,7 +593,6 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						gameScreen = 7
-					"""  NOTE: THIS IS FOR HAVING A LOGO CLICK TAKE THE USER TO THE ABOUT SCREEN.  ABOUT SCREEN ISN'T MADE YET.  ALSO GETS RID OF INSTRUCTIONS SCREEN BUTTON SINCE WE DON'T HAVE THAT EITHER
 					elif ((obj_logo.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
@@ -583,7 +601,6 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						gameScreen = 3
-					"""
 				#NOTE: Developer setting, uncomment to access diagnostics from pressing "D" at main menu
 				#if event.type == pygame.KEYDOWN:
 				#	if event.key == pygame.K_d:
@@ -592,7 +609,7 @@ def gameLoop():
 
 			gameDisplay.blit(obj_logo.image, obj_logo.rect)
 			gameDisplay.blit(obj_buttonPlayGame.image, obj_buttonPlayGame.rect)
-			#gameDisplay.blit(obj_buttonHowToPlay.image,obj_buttonHowToPlay.rect) NOTE: Removing so that people don't go to the instructions screen since it's not done
+			gameDisplay.blit(obj_buttonHowToPlay.image,obj_buttonHowToPlay.rect)
 			gameDisplay.blit(obj_buttonOptions.image, obj_buttonOptions.rect)
 			gameDisplay.blit(spr_bottomCorner, POS_BOTTOMCORNER)
 			gameDisplay.blit(spr_topCorner, POS_TOPCORNER)
