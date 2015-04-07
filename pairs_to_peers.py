@@ -875,9 +875,9 @@ def gameLoop():
 			elif (pointVal <= 10):
 				mainFeedbackString = "Great answer!"
 			#mainFeedbackText = scenario_card_font.render(mainFeedbackString, True, COLOR_BLACK)
-			mainFeedbackTextRendered = render_textrect(mainFeedbackString, scenario_card_font, feedbackTextRect, COLOR_BLACK, COLOR_WHITE, 1)
+			mainFeedbackTextRendered = render_textrect(mainFeedbackString, scenario_card_font, feedbackTextRect, COLOR_BLACK, backgroundColor, 1)
 			#mainFeedbackSubtext = big_bold_font.render("+ " + str(pointVal) + " points", True, COLOR_BLACK)
-			mainFeedbackSubtextRendered = render_textrect(("+ " + str(pointVal) + " points"), big_bold_font, feedbackSubtextRect, COLOR_BLACK, COLOR_WHITE, 1)
+			mainFeedbackSubtextRendered = render_textrect(("+ " + str(pointVal) + " points"), big_bold_font, feedbackSubtextRect, COLOR_BLACK, backgroundColor, 1)
 
 
 
