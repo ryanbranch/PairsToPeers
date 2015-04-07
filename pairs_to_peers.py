@@ -527,6 +527,7 @@ def gameLoop():
 	numOkay = 0
 	numPoor = 0
 	numTimeUp = 0
+	fullscreen = False
 	hasDealt = False
 	counting = True
 
@@ -602,6 +603,14 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						gameScreen = 3
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_F11:
+						if fullscreen == True:
+							pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT))
+							fullscreen = False
+						elif fullscreen == False:
+							pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT), pygame.FULLSCREEN)
+							fullscreen = True
 				#NOTE: Developer setting, uncomment to access diagnostics from pressing "D" at main menu
 				#if event.type == pygame.KEYDOWN:
 				#	if event.key == pygame.K_d:
