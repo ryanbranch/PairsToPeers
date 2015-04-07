@@ -139,7 +139,7 @@ class Object(pygame.sprite.Sprite):
 		self.rect = pygame.Rect(position[0], position[1], self.image.get_size()[0], self.image.get_size()[1])
 
 #These two lines create the window in which the game is played, titling it "Pairs to Peers".
-gameDisplay = pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT))
+gameDisplay = pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Pairs to Peers")
 
 #Loads in all of the objects and sprites necessary for the game
