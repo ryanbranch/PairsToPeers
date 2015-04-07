@@ -717,7 +717,7 @@ def gameLoop():
 								player.setPoints(0)
 								if soundOn:
 									sound_applause.play()
-									gameScreen = 9
+								gameScreen = 9
 
 							tempScenario = currentScenario
 							currentScenario = scenarioArray.pop()
