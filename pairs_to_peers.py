@@ -528,6 +528,7 @@ def gameLoop():
 	numPoor = 0
 	numTimeUp = 0
 	hasDealt = False
+	counting = True
 
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
@@ -680,6 +681,7 @@ def gameLoop():
 							canPlay = False
 							nextRound = True
 							isPaused = 1
+							counting = False
 
 							hand = player.getHand()
 							pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
@@ -764,6 +766,7 @@ def gameLoop():
 							isPaused = 0
 							feedbackDone = False
 							hasDealt = False
+							counting = True
 
 					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
 						player.setPoints(0)
@@ -889,7 +892,8 @@ def gameLoop():
 			#scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
 
 			scoreBoxRendered = render_textrect(("Score: " + str(score)), big_bold_font, pygame.Rect(760,35,216,60), COLOR_BLACK, [158,206,255])
-			countdown = int(math.floor(((timeThisRound - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
+			if counting:
+				countdown = int(math.floor(((timeThisRound - pygame.time.get_ticks())/1000 + startTime/1000) + 1.9))
 
 			if countdown < 0:
 				countdown = 0
