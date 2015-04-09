@@ -559,6 +559,9 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						gameRun = False
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
@@ -611,6 +614,8 @@ def gameLoop():
 						elif fullscreen == False:
 							pygame.display.set_mode((GAME_WIDTH,GAME_HEIGHT), pygame.FULLSCREEN)
 							fullscreen = True
+					if event.key == pygame.K_ESCAPE:
+						gameRun = False
 				#NOTE: Developer setting, uncomment to access diagnostics from pressing "D" at main menu
 				#if event.type == pygame.KEYDOWN:
 				#	if event.key == pygame.K_d:
@@ -632,6 +637,9 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						gameRun = False
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
@@ -651,6 +659,9 @@ def gameLoop():
 				
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						gameRun = False
 
 				if (((pygame.time.get_ticks() - startTime) > timeThisRound) and (isPaused == 0)):
 					#display message + no points this round
@@ -948,6 +959,8 @@ def gameLoop():
 						gameLoop() #Restarts the game if the player presses the ENTER key
 					if event.key == pygame.K_SPACE:
 						gameRun = False #Closes the game if the player presses the SPACE key
+					if event.key == pygame.K_ESCAPE:
+						gameRun = False
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
@@ -960,6 +973,9 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						gameRun = False
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 			timer_event = pygame.USEREVENT + 1
@@ -972,6 +988,9 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						gameRun = False
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
@@ -1076,6 +1095,9 @@ def gameLoop():
 			for event in events:
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						gameRun = False
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
@@ -1202,6 +1224,9 @@ def gameLoop():
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						gameRun = False
 				if event.type == pygame.MOUSEBUTTONDOWN:
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
