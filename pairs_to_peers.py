@@ -530,7 +530,7 @@ def gameLoop():
 	fullscreen = False
 	hasDealt = False
 	counting = True
-    cheating = False
+	cheating = False
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
 	#1 = About
