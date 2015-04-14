@@ -890,10 +890,10 @@ def gameLoop():
 				feedbackText = big_bold_font.render(str(numPoints), True, valColor)
 				feedbackTextArray.append(feedbackText)
 			if (pointVal == 0):
-				if (countdown <= 0):
-					mainFeedbackString = "Sorry, time's up."
-				else:
+				if (countdown > 0):
 					mainFeedbackString = "Sorry, that's incorrect."
+				else:
+					mainFeedbackString = "Sorry, time's up."
 			elif (pointVal <= 5):
 				mainFeedbackString = "Okay, but think about different responses."
 			elif (pointVal <= 10):
