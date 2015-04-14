@@ -790,6 +790,7 @@ def gameLoop():
 
 					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
 						player.setPoints(0)
+						showFeedback = False #Ensures previous game's feedback won't be shown when new game is started
 						if (soundOn):
 							sound_blop.play()
 						gameScreen = 2
