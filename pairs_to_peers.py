@@ -530,7 +530,7 @@ def gameLoop():
 	fullscreen = False
 	hasDealt = False
 	counting = True
-
+    cheating = False
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
 	#1 = About
@@ -941,7 +941,7 @@ def gameLoop():
 				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 				gameDisplay.blit(playCardRendered, playRect.topleft)
 
-			if showFeedback == True:
+			if ((showFeedback == True) or (cheating == True)):
 				for i in range(len(pointFeedbackArray)):
 					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
 				gameDisplay.blit(mainFeedbackTextRendered, feedbackTextRect.topleft)
@@ -1093,6 +1093,7 @@ def gameLoop():
 
 			#NOTE: In order for the output image to correctly contain all elements of the screen, the event handling portion of the while loop needs to come after any drawing that occurs.
 			events = pygame.event.get()
+			cheating = False
 			for event in events:
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
