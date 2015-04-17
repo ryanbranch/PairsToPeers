@@ -678,20 +678,21 @@ def gameLoop():
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
 					for card in range(len(answerObjArray)):
-						if (answerObjArray[card].rect.collidepoint(x, y)):
-							if (cardSelected >= 0):
-								answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
-							answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
-							if soundOn:
-								sound_blop.play()
-							cardSelected = card
-							if nextRound == False:
-								canPlay = True
+						if ((canPlay == False) and (nextRound == False)):
+							if (answerObjArray[card].rect.collidepoint(x, y)):
+								if (cardSelected >= 0):
+									answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
+								answerObjArray[card].image = pygame.image.load('img/answerCard_green.png')
+								if soundOn:
+									sound_blop.play()
+								cardSelected = card
+								if nextRound == False:
+									canPlay = True
 
-							hand = player.getHand()
-							cardNum = hand[cardSelected].getCardNum()
-							#print(str(cardNum))
-							cardText = hand[cardSelected].getText()
+						#hand = player.getHand() #Why is this here? NOTE:  Look into this later.  I uncommented it already but this could cause issues maybe?  Doesn't seem to make sense here.
+						#cardNum = hand[cardSelected].getCardNum()
+						##print(str(cardNum))
+						#cardText = hand[cardSelected].getText()
 
 					if ((obj_playCard.rect.collidepoint(x, y)) and ((canPlay == True) or (nextRound == True))):
 						if soundOn:
@@ -702,6 +703,9 @@ def gameLoop():
 							nextRound = True
 							isPaused = 1
 							counting = False
+
+							for card in range(len(answerObjArray)):
+								answerObjArray[card].image = pygame.image.load('img/answerCard_blue.png')
 
 							hand = player.getHand()
 							pointVal = currentScenario.getPointVal(hand[cardSelected].getCardNum())
