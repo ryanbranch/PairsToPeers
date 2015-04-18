@@ -308,6 +308,9 @@ class Player:
 	def getName(self):
 		return self.playerName
 
+	def setName(self, nameIn):
+		self.playerName = nameIn
+
 #Diagnostic class
 #Contains information from each round used to track
 #Total Score, Average Response Time, Rounds played
@@ -531,6 +534,7 @@ def gameLoop():
 	hasDealt = False
 	counting = True
 	cheating = False
+	tempName = "No Name"
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
 	#1 = About
@@ -545,7 +549,7 @@ def gameLoop():
 	gameScreen = 2
 
 	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
-	player = Player('Ryan', 1, True)
+	player = Player('No Name', 1, True)
 
 	currentScenario = scenarioArray.pop() #Effectively deals a scenario card to the game from the deck
 
@@ -678,7 +682,7 @@ def gameLoop():
 					# Set the x, y positions of the mouse click
 					x, y = event.pos
 					for card in range(len(answerObjArray)):
-						if ((canPlay == False) and (nextRound == False)):
+						if ((nextRound == False)):
 							if (answerObjArray[card].rect.collidepoint(x, y)):
 								if (cardSelected >= 0):
 									answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
@@ -1126,9 +1130,12 @@ def gameLoop():
 							sound_blop.play()
 						timeAllowed = 15000
 						gameScreen = 4
-				#if ((event.type == pygame.KEYDOWN) or (event.type == pygame.KEYUP)):
-			#playerName = nameBox.update(events)
-			#nameBox.draw(gameDisplay)
+				if ((event.type == pygame.KEYDOWN) or (event.type == pygame.KEYUP)):
+					tempName = nameBox.update(events)
+					if (isinstance(tempName, basestring)):
+						player.setName(tempName)
+
+			nameBox.draw(gameDisplay)
 
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
@@ -1201,7 +1208,7 @@ def gameLoop():
 			displayMessage("Player Name: " + playerName,COLOR_BLACK,POS_PLAYER_NAME_REPORT,big_bold_font)
 			displayMessage(stringTimeStamp,COLOR_BLACK,POS_TIMESTAMP_REPORT,big_bold_font)
 			displayMessage("Average Response Time: " + str(avgResponseTime) + " seconds",COLOR_BLACK,POS_DETAIL1_REPORT,scenario_card_font)
-			#displayMessage("Final Points: " + str(finalPoints),COLOR_BLACK,POS_DETAIL2_REPORT,scenario_card_font)
+			displayMessage("Final Points: " + str(finalPoints),COLOR_BLACK,POS_DETAIL2_REPORT,scenario_card_font)
 			displayMessage("Rounds to Complete: " + str(roundsToComplete),COLOR_BLACK,POS_DETAIL3_REPORT,scenario_card_font)
 			displayMessage("Total Playtime: " + playtimeString,COLOR_BLACK,POS_DETAIL4_REPORT,scenario_card_font)
 			displayMessage("Difficulty: " + difficultyString,COLOR_BLACK,POS_DETAIL5_REPORT,scenario_card_font)
