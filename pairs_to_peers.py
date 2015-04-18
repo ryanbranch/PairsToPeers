@@ -507,7 +507,8 @@ def gameLoop():
 	feedbackTextRect = pygame.Rect(256, 50, 512, 100)
 	feedbackSubtextRect = pygame.Rect(256, 150, 512, 100)
 	scoreTextRect = pygame.Rect(760,35,216,90)
-	nameBox = eztext.Input(x=400, y=50, font=big_bold_font, maxlength=20, color=COLOR_BLACK, prompt='Name: ')
+	nameColor = COLOR_BLACK
+	nameBox = eztext.Input(x=400, y=50, font=big_bold_font, maxlength=20, color=nameColor, prompt='Name: ')
 
 
 	cardSelected = 0 #NOTE:  Channge this to -1 down the line and fix the resulting bug.
@@ -537,6 +538,7 @@ def gameLoop():
 	hasIncremented = False
 	cheating = True
 	setCheating = False
+	nameString = "'"
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
 	#1 = About
@@ -964,7 +966,7 @@ def gameLoop():
 					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
 
 			pygame.display.update() #Updates the screen every
-			print(str(cheating))
+			#print(str(cheating))
 			#print(player.getPoints())
 			clock.tick(FRAMES_PER_SECOND)
 
@@ -1146,6 +1148,7 @@ def gameLoop():
 					tempName = nameBox.update(events)
 					if (isinstance(tempName, basestring)):
 						player.setName(tempName)
+						nameColor = COLOR_BLUE
 						if ((player.getName() == "Chesney") or (player.getName() == "chesney") or (player.getName() == "CHESNEY")):
 							print("Cheat mode activated.")
 							cheating = True
@@ -1154,7 +1157,13 @@ def gameLoop():
 								print("Cheat mode deactivated.")
 								cheating = False
 
+						nameString = "Name set to " + player.getName() + "."
+					else:
+						nameString = ""
+
 			nameBox.draw(gameDisplay)
+			if ((player.getName() != "No Name") and (player.getName() != "")):
+				displayMessage("Name set to " + player.getName() + ".", COLOR_BLACK, (350, 20), scenario_card_font)
 
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
