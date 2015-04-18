@@ -54,7 +54,7 @@ GAME_HEIGHT = 768
 FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
 GOOD_CARD_POINTS = 6
-POINTS_TO_WIN = 15
+POINTS_TO_WIN = 100
 startTime = 0
 #The rest of these constants relate specifically to the locations of images on the game screen.  Tweaking with these could definitely mess up how everything looks.
 
@@ -533,9 +533,10 @@ def gameLoop():
 	fullscreen = False
 	hasDealt = False
 	counting = True
-	cheating = False
 	tempName = "No Name"
 	hasIncremented = False
+	cheating = True
+	setCheating = False
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
 	#1 = About
@@ -952,13 +953,18 @@ def gameLoop():
 				gameDisplay.blit(obj_playCard.image, obj_playCard.rect)
 				gameDisplay.blit(playCardRendered, playRect.topleft)
 
-			if ((showFeedback == True) or (cheating == True)):
-				for i in range(len(pointFeedbackArray)):
-					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
+			if (showFeedback == True):
 				gameDisplay.blit(mainFeedbackTextRendered, feedbackTextRect.topleft)
 				gameDisplay.blit(mainFeedbackSubtextRendered, feedbackSubtextRect.topleft)
+				for i in range(len(pointFeedbackArray)):
+					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
 
-			pygame.display.update() #Updates the screen every frame
+			if (cheating == True):
+				for i in range(len(pointFeedbackArray)):
+					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
+
+			pygame.display.update() #Updates the screen every
+			print(str(cheating))
 			#print(player.getPoints())
 			clock.tick(FRAMES_PER_SECOND)
 
@@ -1097,6 +1103,9 @@ def gameLoop():
 			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 8 and gameRun):
+			if (setCheating == False):
+				cheating = False
+				setCheating = True
 			gameDisplay.fill(backgroundColor)
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(obj_buttonEasy.image, obj_buttonEasy.rect)
@@ -1105,7 +1114,6 @@ def gameLoop():
 
 			#NOTE: In order for the output image to correctly contain all elements of the screen, the event handling portion of the while loop needs to come after any drawing that occurs.
 			events = pygame.event.get()
-			cheating = False
 			for event in events:
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
@@ -1138,6 +1146,13 @@ def gameLoop():
 					tempName = nameBox.update(events)
 					if (isinstance(tempName, basestring)):
 						player.setName(tempName)
+						if ((player.getName() == "Chesney") or (player.getName() == "chesney") or (player.getName() == "CHESNEY")):
+							print("Cheat mode activated.")
+							cheating = True
+						else:
+							if (cheating == True):
+								print("Cheat mode deactivated.")
+								cheating = False
 
 			nameBox.draw(gameDisplay)
 
