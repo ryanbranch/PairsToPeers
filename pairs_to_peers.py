@@ -54,7 +54,7 @@ GAME_HEIGHT = 768
 FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
 GOOD_CARD_POINTS = 6
-POINTS_TO_WIN = 100
+POINTS_TO_WIN = 15
 startTime = 0
 #The rest of these constants relate specifically to the locations of images on the game screen.  Tweaking with these could definitely mess up how everything looks.
 
@@ -535,6 +535,7 @@ def gameLoop():
 	counting = True
 	cheating = False
 	tempName = "No Name"
+	hasIncremented = False
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
 	#1 = About
@@ -674,8 +675,10 @@ def gameLoop():
 					showFeedback = True
 					pointVal = 0
 
-					diagnosticObject = Diagnostic(pointVal, True, 0, timeThisRound, currentScenario, hand[cardSelected].getCardNum())
-					diagnosticArray.append(diagnosticObject)
+					if (hasIncremented == False):
+						diagnosticObject = Diagnostic(pointVal, True, timeThisRound, timeThisRound, currentScenario, hand[cardSelected].getCardNum())
+						diagnosticArray.append(diagnosticObject)
+						hasIncremented = True
 
 
 				if event.type == pygame.MOUSEBUTTONDOWN:
@@ -740,11 +743,11 @@ def gameLoop():
 							canPlay = False
 							nextRound = False
 							showFeedback = False
+							hasIncremented = False
 
 							if(player.getPoints() >= POINTS_TO_WIN):
 								gameWon = True
 								canPlay = False
-								player.setPoints(0)
 								if soundOn:
 									sound_applause.play()
 								gameScreen = 9
@@ -956,6 +959,7 @@ def gameLoop():
 				gameDisplay.blit(mainFeedbackSubtextRendered, feedbackSubtextRect.topleft)
 
 			pygame.display.update() #Updates the screen every frame
+			#print(player.getPoints())
 			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 5 and gameRun): #Executes after the game has ended
@@ -1152,11 +1156,11 @@ def gameLoop():
 				breakdownRectGreatHeading = pygame.Rect(POS_BREAKDOWN_GREAT[0] + 10, POS_BREAKDOWN_GREAT[1] + 10, 108, 150)
 				breakdownRectOkayHeading = pygame.Rect(POS_BREAKDOWN_OK[0] + 10, POS_BREAKDOWN_OK[1] + 10, 108, 150)
 				breakdownRectPoorHeading = pygame.Rect(POS_BREAKDOWN_POOR[0] + 10, POS_BREAKDOWN_POOR[1] + 10, 108, 150)
-				#breakdownRectTimeUpHeading = pygame.Rect(POS_BREAKDOWN_TIMEUP[0] + 10, POS_BREAKDOWN_TIMEUP[1] + 10, 108, 150)
+				breakdownRectTimeUpHeading = pygame.Rect(POS_BREAKDOWN_TIMEUP[0] + 10, POS_BREAKDOWN_TIMEUP[1] + 10, 108, 150)
 				breakdownGreatHeadingRendered = render_textrect("Great responses:", answer_card_font, breakdownRectGreatHeading, COLOR_BLACK, COLOR_WHITE, 1)
 				breakdownOkayHeadingRendered = render_textrect("Okay responses:", answer_card_font, breakdownRectOkayHeading, COLOR_BLACK, COLOR_WHITE, 1)
 				breakdownPoorHeadingRendered = render_textrect("Poor responses:", answer_card_font, breakdownRectPoorHeading, COLOR_BLACK, COLOR_WHITE, 1)
-				#breakdownTimeUpHeadingRendered = render_textrect("Ran out of time:", answer_card_font, breakdownRectTimeUpHeading, COLOR_BLACK, COLOR_WHITE, 1)
+				breakdownTimeUpHeadingRendered = render_textrect("Ran out of time:", answer_card_font, breakdownRectTimeUpHeading, COLOR_BLACK, COLOR_WHITE, 1)
 
 				if (timeAllowed == 15000):
 					difficultyString = "Hard"
@@ -1183,7 +1187,7 @@ def gameLoop():
 						numOkay = numOkay + 1
 						#print("numOkay++")
 					elif (pointsRound == 0):
-						if (timeRanOut):
+						if (timeRanOut == True):
 							numTimeUp = numTimeUp + 1
 							#print("numTimeUp++")
 						else:
@@ -1199,7 +1203,7 @@ def gameLoop():
 				numGreatText = big_bold_font.render(str(numGreat), True, COLOR_BLACK)
 				numOkayText = big_bold_font.render(str(numOkay), True, COLOR_BLACK)
 				numPoorText = big_bold_font.render(str(numPoor), True, COLOR_BLACK)
-				#numTimeUpText = big_bold_font.render(str(numTimeUp), True, COLOR_BLACK)
+				numTimeUpText = big_bold_font.render(str(numTimeUp), True, COLOR_BLACK)
 				avgResponseTime = int(round((totalResponseTime / roundsToComplete) / 1000))
 				dataProcessed = True
 
@@ -1207,7 +1211,7 @@ def gameLoop():
 			gameDisplay.fill(backgroundColor)
 			displayMessage("Player Name: " + playerName,COLOR_BLACK,POS_PLAYER_NAME_REPORT,big_bold_font)
 			displayMessage(stringTimeStamp,COLOR_BLACK,POS_TIMESTAMP_REPORT,big_bold_font)
-			displayMessage("Average Response Time: " + str(avgResponseTime) + " seconds",COLOR_BLACK,POS_DETAIL1_REPORT,scenario_card_font)
+			displayMessage("Avg. Response Time: " + str(avgResponseTime) + " seconds",COLOR_BLACK,POS_DETAIL1_REPORT,scenario_card_font)
 			displayMessage("Final Points: " + str(finalPoints),COLOR_BLACK,POS_DETAIL2_REPORT,scenario_card_font)
 			displayMessage("Rounds to Complete: " + str(roundsToComplete),COLOR_BLACK,POS_DETAIL3_REPORT,scenario_card_font)
 			displayMessage("Total Playtime: " + playtimeString,COLOR_BLACK,POS_DETAIL4_REPORT,scenario_card_font)
@@ -1216,7 +1220,7 @@ def gameLoop():
 			gameDisplay.blit(spr_responseBreakdown, POS_BREAKDOWN_GREAT)
 			gameDisplay.blit(spr_responseBreakdown, POS_BREAKDOWN_OK)
 			gameDisplay.blit(spr_responseBreakdown, POS_BREAKDOWN_POOR)
-			#gameDisplay.blit(spr_responseBreakdown, POS_BREAKDOWN_TIMEUP)
+			gameDisplay.blit(spr_responseBreakdown, POS_BREAKDOWN_TIMEUP)
 
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(obj_buttonScreenshot.image, obj_buttonScreenshot.rect)
@@ -1225,12 +1229,12 @@ def gameLoop():
 			gameDisplay.blit(breakdownGreatHeadingRendered, breakdownRectGreatHeading.topleft)
 			gameDisplay.blit(breakdownOkayHeadingRendered, breakdownRectOkayHeading.topleft)
 			gameDisplay.blit(breakdownPoorHeadingRendered, breakdownRectPoorHeading.topleft)
-			#gameDisplay.blit(breakdownTimeUpHeadingRendered, breakdownRectTimeUpHeading.topleft)
+			gameDisplay.blit(breakdownTimeUpHeadingRendered, breakdownRectTimeUpHeading.topleft)
 
 			gameDisplay.blit(numGreatText, (POS_BREAKDOWN_GREAT[0] + 50, POS_BREAKDOWN_GREAT[1]+75))
 			gameDisplay.blit(numOkayText, (POS_BREAKDOWN_OK[0] + 50, POS_BREAKDOWN_OK[1]+75))
 			gameDisplay.blit(numPoorText, (POS_BREAKDOWN_POOR[0] + 50, POS_BREAKDOWN_POOR[1]+75))
-			#gameDisplay.blit(numTimeUpText, (POS_BREAKDOWN_TIMEUP[0] + 50, POS_BREAKDOWN_TIMEUP[1]+75))
+			gameDisplay.blit(numTimeUpText, (POS_BREAKDOWN_TIMEUP[0] + 50, POS_BREAKDOWN_TIMEUP[1]+75))
 
 
 		#NOTE: In order for the output image to correctly contain all elements of the screen, the event handling portion of the while loop needs to come after any drawing that occurs.
@@ -1246,6 +1250,7 @@ def gameLoop():
 					if ((obj_buttonMainMenu.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
+						player.setPoints(0)
 						dataProcessed = False
 						gameScreen = 2
 						
