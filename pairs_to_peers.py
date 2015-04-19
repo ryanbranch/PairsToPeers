@@ -385,8 +385,8 @@ def buildScenarios():
 	scenarios.append(card)
 	card = Scenario("Someone asks you for directions.", [6,5,0,0,6,0,0,8,8,10,7,5,0,0,10,4,0,0,0,0,0,4,0,0,0,0,0])
 	scenarios.append(card)
-	card = Scenario("Someone calls you autistic.", [0,10,8,0,0,0,4,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,4,5,0,10,3])
-	scenarios.append(card)
+	#card = Scenario("Someone calls you autistic.", [0,10,8,0,0,0,4,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,4,5,0,10,3])
+	#scenarios.append(card)
 	card = Scenario("Teacher asks you a question.", [2,5,0,0,5,0,0,0,0,0,6,6,0,0,0,0,0,0,6,6,1,0,0,0,5,0,0])
 	scenarios.append(card)
 	card = Scenario("You have you put on your coat.", [0,9,0,0,5,0,0,0,0,0,8,0,0,0,6,0,0,0,4,8,0,0,0,0,6,0,0])
@@ -538,7 +538,8 @@ def gameLoop():
 	hasIncremented = False
 	cheating = True
 	setCheating = False
-	nameString = "'"
+	nameString = ""
+	screenshotTaken = False
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
 	#1 = About
@@ -726,7 +727,7 @@ def gameLoop():
 							#roundPoints, outOfTime, ansTime, givenTime, numScenario, numAnswer
 
 							#This if statement used in the incremental difficulty system.
-							if (pointVal > 0):
+							if (pointVal >= 6):
 								winningStreak = winningStreak + 1.0
 							showFeedback = True
 
@@ -904,10 +905,11 @@ def gameLoop():
 				feedbackText = big_bold_font.render(str(numPoints), True, valColor)
 				feedbackTextArray.append(feedbackText)
 			if (pointVal == 0):
-				if (countdown > 0):
-					mainFeedbackString = "Sorry, that's incorrect."
-				else:
+				winningStreak = 0
+				if (((pygame.time.get_ticks() - startTime) > timeThisRound) and (isPaused == 0)):
 					mainFeedbackString = "Sorry, time's up."
+				else:
+					mainFeedbackString = "Sorry, that's incorrect."
 			elif (pointVal <= 5):
 				mainFeedbackString = "Okay, but think about different responses."
 			elif (pointVal <= 10):
@@ -968,6 +970,7 @@ def gameLoop():
 			pygame.display.update() #Updates the screen every
 			#print(str(cheating))
 			#print(player.getPoints())
+			print(winningStreak)
 			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 5 and gameRun): #Executes after the game has ended
@@ -1150,11 +1153,11 @@ def gameLoop():
 						player.setName(tempName)
 						nameColor = COLOR_BLUE
 						if ((player.getName() == "Chesney") or (player.getName() == "chesney") or (player.getName() == "CHESNEY")):
-							print("Cheat mode activated.")
+							#print("Cheat mode activated.")
 							cheating = True
 						else:
 							if (cheating == True):
-								print("Cheat mode deactivated.")
+								#print("Cheat mode deactivated.")
 								cheating = False
 
 						nameString = "Name set to " + player.getName() + "."
@@ -1163,7 +1166,7 @@ def gameLoop():
 
 			nameBox.draw(gameDisplay)
 			if ((player.getName() != "No Name") and (player.getName() != "")):
-				displayMessage("Name set to " + player.getName() + ".", COLOR_BLACK, (350, 20), scenario_card_font)
+				displayMessage("Name set to " + player.getName() + ".", COLOR_BLACK, (350, 10), scenario_card_font)
 
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
@@ -1233,6 +1236,8 @@ def gameLoop():
 
 
 			gameDisplay.fill(backgroundColor)
+			if (screenshotTaken == True):
+				displayMessage('Screenshot saved as "diagnosticOutput.png" in game directory.', COLOR_BLACK, (40, 720), scenario_card_font)
 			displayMessage("Player Name: " + playerName,COLOR_BLACK,POS_PLAYER_NAME_REPORT,big_bold_font)
 			displayMessage(stringTimeStamp,COLOR_BLACK,POS_TIMESTAMP_REPORT,big_bold_font)
 			displayMessage("Avg. Response Time: " + str(avgResponseTime) + " seconds",COLOR_BLACK,POS_DETAIL1_REPORT,scenario_card_font)
@@ -1276,12 +1281,15 @@ def gameLoop():
 							sound_blop.play()
 						player.setPoints(0)
 						dataProcessed = False
+						screenshotTaken = False
 						gameScreen = 2
 						
 					if ((obj_buttonScreenshot.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
-						pygame.image.save(gameDisplay, "diagnosticOutput.png") #NOTE: later on, change this so that it outputs the image with a dynamic name based on things like player name.
+						if (screenshotTaken == False):
+							pygame.image.save(gameDisplay, "diagnosticOutput.png") #NOTE: later on, change this so that it outputs the image with a dynamic name based on things like player name.
+							screenshotTaken = True
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
