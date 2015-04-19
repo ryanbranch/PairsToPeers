@@ -1165,8 +1165,11 @@ def gameLoop():
 						nameString = ""
 
 			nameBox.draw(gameDisplay)
+
 			if ((player.getName() != "No Name") and (player.getName() != "")):
 				displayMessage("Name set to " + player.getName() + ".", COLOR_BLACK, (350, 10), scenario_card_font)
+			if (cheating == True):
+				displayMessage("Cheat mode activated.", COLOR_BLACK, (350, 720), scenario_card_font)
 
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
