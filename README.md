@@ -4,6 +4,17 @@
 ======
 ###Instructions:
 
+An explanation of the actual gameplay is included in the game itself.  However, there are a few "hidden" features that we'd like to clear up here.
+
+1. The About Screen
+By clicking on the game logo on the main menu screen, the user will be taken to the About Screen, which has some basic information about the game and its creators, as well as some thank-yous for the creators of the modules and sound files that we used.
+
+2. Cheat Codes
+On the difficulty screen, if a user enters their name as "Chesney", "chesney", or "CHESNEY", cheat mode will be activated.  This mode allows the user to see exactly how many points the cards in their answer deck are worth when paired with the given scenario, before they actually play any cards.
+
+3. Dynamic Difficulty
+Our game features a dynamic difficulty system, although it is not incredibly evident as it is designed to smoothly transition over time and to not be too noticeable.  Basically, there is a counter in the game that keeps track of how many "Great" (6 - 10 point) answers the user has played in a row.  The amount of time that a user is given for each round of the game is modified, based on this number.  Upon submitting an "Okay" (1 - 5 point) answer, the streak is not broken, but is not added to either.  Running out of time or submitting a "Poor" (0 point) answer causes the streak to be broken and the amount of time alotted per round to be returned to its initial value.
+
 ======
 ###Explanation of Outside Sources
 
