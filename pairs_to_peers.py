@@ -98,14 +98,14 @@ POS_CHOOSE_BACKGROUND = (630, 210)
 
 #About
 POS_DESCRIPTION = (90, 130)
-RECT_DESCRIPTION = pygame.Rect(90, 180, 754, 90)
-POS_CREATORS = (90, 270)
-RECT_CREATORS = pygame.Rect(90, 320, 754, 130)
-POS_THANKS = (90,450)
-RECT_THANKS = pygame.Rect(90, 500, 754, 90)
+RECT_DESCRIPTION = pygame.Rect(90, 180, 754, 80)
+POS_CREATORS = (90, 250)
+RECT_CREATORS = pygame.Rect(90, 300, 754, 110)
+POS_THANKS = (90,400)
+RECT_THANKS = pygame.Rect(90, 450, 754, 300)
 stringDescription = "Pairs to Peers is a game designed to help children who suffer from an Autism Spectrum disorder.  Through responsive card-based gameplay it allows a child to learn how to recognize and respond to various social stimuli."
 stringCreators = 'Created by Edgar Hu, Ryan Branch, Austin Trieu and Derek Xia.\nThis game was made as our semester project for the "Gaming for the Greater Good" section of ENGR100 at the University of Michigan College of Engineering.\nThe GitHub repository for the game can be found at http://github.com/rjbranch/PairsToPeers/'
-stringThanks = "David Clark, for creating the TextRect module\nJerome Rasky, for creating the EzText module, and Bryant Sell for their improvements of it\nMark DiAngelo and SoundBible.com user Thore for their recordings of the sounds used in this game"
+stringThanks = "David Clark, for creating the TextRect module\nJerome Rasky, for creating the EzText module, and Bryant Sell for their improvements of it\nMark DiAngelo and SoundBible.com user Thore for their recordings of the sounds used in this game\nSteve Matteson, for creating the OpenSans and OpenSans Bold fonts used in this project"
 
 #Difficulty
 POS_EASY = (384,100)
@@ -563,7 +563,7 @@ def gameLoop():
 		while (gameScreen == 1 and gameRun):
 			descriptionRendered = render_textrect(stringDescription, answer_card_font, RECT_DESCRIPTION, COLOR_BLACK, backgroundColor)
 			creatorsRendered = render_textrect(stringCreators, answer_card_font, RECT_CREATORS, COLOR_BLACK, backgroundColor)
-			thanksRendered = render_textrect(stringThanks, answer_card_font, RECT_DESCRIPTION, COLOR_BLACK, backgroundColor)
+			thanksRendered = render_textrect(stringThanks, answer_card_font, RECT_THANKS, COLOR_BLACK, backgroundColor)
 			gameDisplay.fill(backgroundColor)
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
