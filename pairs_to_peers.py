@@ -761,9 +761,7 @@ def gameLoop():
 								winningStreak = winningStreak + 1.0
 							showFeedback = True
 
-
 						else:
-
 
 							answerObjArray[cardSelected].image = pygame.image.load('img/answerCard_blue.png')
 
