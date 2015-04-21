@@ -21,6 +21,7 @@ font = pygame.font.SysFont(None, 25)
 answer_card_font = pygame.font.Font('fonts/OpenSans-Regular.ttf', 16)
 scenario_card_font = pygame.font.Font('fonts/OpenSans-Regular.ttf', 32)
 big_bold_font = pygame.font.Font('fonts/OpenSans-Bold.ttf', 36)
+bigger_bold_font = pygame.font.Font('fonts/OpenSans-Bold.ttf', 48)
 
 #Initializes the mixer and loads in all of the sounds used by the game
 pygame.mixer.init()
@@ -66,6 +67,21 @@ POS_PLAYGAME = (90, 450)
 POS_HOWTOPLAY = (390, 450)
 POS_OPTIONS = (690, 450)
 
+#INSTRUCTIONS
+POS_HEADER_INSTRUCTIONS = (400, 30)
+POS_DESC_SCENARIO = (90, 130)
+RECT_DESC_SCENARIO = pygame.Rect(90, 180, 754, 80)
+POS_DESC_RESPONSE = (90, 250)
+RECT_DESC_RESPONSE = pygame.Rect(90, 300, 754, 110)
+POS_DESC_CHOICE = (90,400)
+RECT_DESC_CHOICE = pygame.Rect(90, 450, 754, 110)
+POS_DESC_SCORE = (90,550)
+RECT_DESC_SCORE = pygame.Rect(90, 600, 754, 110)
+stringDescScenario = "At the start of each turn a scenario, describing a situation you might experience on a daily basis, will be revealed . Your task is to respond to this scenario card using an appropriate response card."
+stringDescResponse = "You will be dealt 5 random response cards every time a scenario card is placed. These cards represent specific reactions to the situation that is presented in the scenario card. Each hand of five dealt cards will contain at least one appropriate response, and your job is to pick the best one."
+stringDescChoice = 'You can use their mouse to select the card that you feel best fits the scenario. Clicking the "Play Card" button to the right of the card will finalize your choice. Make sure to think hard, but be quick! You need to submit your answer before the timer ticks down to 0.'
+stringDescScore = "After playing your card, you will be shown a summary of the number of points each card in your hand would have received when paired with that scenario. Your total score is displayed in the top right corner, and the game ends at 100 points."
+
 #In-Game Screen
 POS_ANSWER1 = (190,570)
 POS_ANSWER2 = (325,570)
@@ -97,6 +113,7 @@ POS_SELECT_ARTWORK = (150, 210)
 POS_CHOOSE_BACKGROUND = (630, 210)
 
 #About
+POS_HEADER_ABOUT = (330, 30)
 POS_DESCRIPTION = (90, 130)
 RECT_DESCRIPTION = pygame.Rect(90, 180, 754, 80)
 POS_CREATORS = (90, 250)
@@ -542,9 +559,9 @@ def gameLoop():
 	screenshotTaken = False
 	#The gameSceen variable is used to set and determine which screen of the game should be currently displayed on the screen.
 	#The following key describes the screen to which each individual integer corresponds
-	#1 = About
+	#1 = Instructions
 	#2 = Main Menu
-	#3 = Instructions
+	#3 = About
 	#4 = Gameplay
 	#5 = Endgame
 	#6 = Player selection
@@ -561,9 +578,10 @@ def gameLoop():
 	while gameRun: #Continues to execute until gameRun is set to false
 
 		while (gameScreen == 1 and gameRun):
-			descriptionRendered = render_textrect(stringDescription, answer_card_font, RECT_DESCRIPTION, COLOR_BLACK, backgroundColor)
-			creatorsRendered = render_textrect(stringCreators, answer_card_font, RECT_CREATORS, COLOR_BLACK, backgroundColor)
-			thanksRendered = render_textrect(stringThanks, answer_card_font, RECT_THANKS, COLOR_BLACK, backgroundColor)
+			descScenarioRendered = render_textrect(stringDescScenario, answer_card_font, RECT_DESC_SCENARIO, COLOR_BLACK, backgroundColor)
+			descResponseRendered = render_textrect(stringDescResponse, answer_card_font, RECT_DESC_RESPONSE, COLOR_BLACK, backgroundColor)
+			descChoiceRendered = render_textrect(stringDescChoice, answer_card_font, RECT_DESC_CHOICE, COLOR_BLACK, backgroundColor)
+			descScoreRendered =  render_textrect(stringDescScore, answer_card_font, RECT_DESC_SCORE, COLOR_BLACK, backgroundColor)
 			gameDisplay.fill(backgroundColor)
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
@@ -578,13 +596,16 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						gameScreen = 2
-			displayMessage("Description:", COLOR_BLACK, POS_DESCRIPTION, big_bold_font)
-			displayMessage("The Project", COLOR_BLACK, POS_CREATORS, big_bold_font)
-			displayMessage("Thanks to:", COLOR_BLACK, POS_THANKS, big_bold_font)
+			displayMessage("Scenario Cards:", COLOR_BLACK, POS_DESC_SCENARIO, big_bold_font)
+			displayMessage("Response Cards:", COLOR_BLACK, POS_DESC_RESPONSE, big_bold_font)
+			displayMessage("Making the Choice:", COLOR_BLACK, POS_DESC_CHOICE, big_bold_font)
+			displayMessage("Feedback and Scoring:", COLOR_BLACK, POS_DESC_SCORE, big_bold_font)
+			displayMessage("How to Play", COLOR_BLACK, POS_HEADER_INSTRUCTIONS, bigger_bold_font)
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
-			gameDisplay.blit(descriptionRendered, RECT_DESCRIPTION.topleft)
-			gameDisplay.blit(creatorsRendered, RECT_CREATORS.topleft)
-			gameDisplay.blit(thanksRendered, RECT_THANKS.topleft)
+			gameDisplay.blit(descScenarioRendered, RECT_DESC_SCENARIO.topleft)
+			gameDisplay.blit(descResponseRendered, RECT_DESC_RESPONSE.topleft)
+			gameDisplay.blit(descChoiceRendered, RECT_DESC_CHOICE.topleft)
+			gameDisplay.blit(descScoreRendered, RECT_DESC_SCORE.topleft)
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
@@ -610,11 +631,11 @@ def gameLoop():
 					elif ((obj_logo.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
-						gameScreen = 1
+						gameScreen = 3
 					elif ((obj_buttonHowToPlay.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
-						gameScreen = 3
+						gameScreen = 1
 				if event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_F11:
 						if fullscreen == True:
@@ -641,8 +662,10 @@ def gameLoop():
 			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 3 and gameRun):
+			descriptionRendered = render_textrect(stringDescription, answer_card_font, RECT_DESCRIPTION, COLOR_BLACK, backgroundColor)
+			creatorsRendered = render_textrect(stringCreators, answer_card_font, RECT_CREATORS, COLOR_BLACK, backgroundColor)
+			thanksRendered = render_textrect(stringThanks, answer_card_font, RECT_THANKS, COLOR_BLACK, backgroundColor)
 			gameDisplay.fill(backgroundColor)
-			displayMessage("This is the INSTRUCTIONS screen.",COLOR_RED,[GAME_WIDTH/3,GAME_HEIGHT/2])
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
 					gameRun = False #Ends the game if they user attempts to close the window
@@ -656,7 +679,14 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						gameScreen = 2
+			displayMessage("Description:", COLOR_BLACK, POS_DESCRIPTION, big_bold_font)
+			displayMessage("The Project", COLOR_BLACK, POS_CREATORS, big_bold_font)
+			displayMessage("Thanks to:", COLOR_BLACK, POS_THANKS, big_bold_font)
+			displayMessage("About our Game", COLOR_BLACK, POS_HEADER_ABOUT, bigger_bold_font)
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
+			gameDisplay.blit(descriptionRendered, RECT_DESCRIPTION.topleft)
+			gameDisplay.blit(creatorsRendered, RECT_CREATORS.topleft)
+			gameDisplay.blit(thanksRendered, RECT_THANKS.topleft)
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
