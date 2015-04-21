@@ -1,5 +1,4 @@
 #Things marked as important, including those which should potentially be changed down the line, are marked with "#NOTE"
-#Important question:  We should ask about the screen resolutions of the computers that the game will primarily be played on.  Because we could definitely program the game in a dynamic way such that the screenc ould be resized and screen elements would change in size appropriately, but it would be significantly easier to not have to worry about that and instead just have some static screen size to build around.
 
 import random
 import math
@@ -10,9 +9,6 @@ import pygame, eztext
 import pygame.mixer
 
 from textrect import *
-
-#TEMPORARY
-answerArray = []
 
 pygame.init()
 
@@ -131,7 +127,6 @@ POS_HARD = (384,500)
 
 #Diagnostics
 POS_SCREENSHOT = (768, 0)
-POS_MORE_DETAILS = (220, 640) #633 is 50px from the bottom of the screen for an 85px button
 POS_PLAYER_NAME_REPORT = (180, 140)
 POS_TIMESTAMP_REPORT = (180, 220)
 POS_DETAIL1_REPORT = (80, 320)
@@ -207,7 +202,6 @@ obj_buttonHard = Object("img/button_Difficulty_Hard.png", POS_HARD)
 
 #Diagnostic screen
 obj_buttonScreenshot = Object("img/button_Screenshot.png", POS_SCREENSHOT)
-obj_buttonMoreDetails = Object("img/button_More_Details.png", POS_MORE_DETAILS)
 spr_responseBreakdown = pygame.image.load("img/answerCard_Blue.png")
 
 #This class defines the scenario cards, which players consider when playing their corresponding answer card.
@@ -244,7 +238,7 @@ class Answer:
 		# pointVal - an int that will keep track of how many points playing this card will give. Changes based on scenario
 		# beenDealt - a boolean that keeps track of whether or not an answer card has been dealt to a player already
 		# beenPlayed - a boolean that keeps track of whether or not the scenario has already been in play during the current game
-		#NOTE: that beenPlayed may or may not be optional for this since we haven't decided if we want to recycle cards yet
+		#NOTE: beenPlayed isn't necessary for the functionality of this game, it simply exists in case someone were to change it later on such that enough cards were added to make recycling cards unwanted/unnecessary
 
 	#Default constructor
 	def __init__(self):
@@ -265,7 +259,7 @@ class Answer:
 	def setPoints(self, points):
 		self.pointVal = points
 
-	#NOTE: Let's add some sort of description for this method.
+	#NOTE: Stores that a card has in fact been played.  This is only useful if we don't want to recycle cards.
 	def playCard(self):
 		self.beenPlayed = True
 		#following line incorrect since scoring system hasn't been started yet
@@ -305,18 +299,7 @@ class Player:
 	def getPoints(self):
 		return self.score
 
-	def dealAns(self):
-		cardCount = 0
-		#NOTE: Commented out these lines for now until more of a framework is built around this functionality
-		#while(cardCount < 5):
-			#randNum = random.randint(0, totalnumberofcards)
-			#if(Answer.beenDealt == False)
-				#handArray[cardCount] = Answer(randNum)
-				#cardCount = cardCount + 1
-
 	def getHand(self):
-		if (len(self.handArray) == 0):
-			print("handArray is empty!")
 		return self.handArray
 
 	def clearHand(self):
@@ -378,7 +361,6 @@ def shuffle(inArray):
 	random.shuffle(inArray)
 	return inArray
 
-#NOTE: Potentially down the line we should have the scenarios and answer cards read in from files instead of having tons of lines in the program to handle it
 #This function builds the deck of scenario cards.  More lines can be added accordingly whenever more cards are to be added.
 def buildScenarios():
 	scenarios = []
@@ -493,13 +475,13 @@ def displayMessage(messageText,messageColor,messageLocation, font=font):
 
 #This function takes some text and the coordinates of a button rectangle and places text on the button appropriately.
 def buttonText(text, color, xPos, yPos, width, height, size):
-	return 0 #Not exactly sure if this is how we want to do it, but if so, add to this later.
+	return 0
 
 #This is the main function of the program.	It handles everything that's going on at each moment of the game
 def gameLoop():
-	backgroundColor = COLOR_WHITE #NOTE:  I put this here instead of being like a global variable because I was having runtime errors and this seemed to fix it.  I'm adding this comment here to keep track of it because I'm not sure whether or not this could end up causing more problems down the line
-	soundOn = True #NOTE:  Same with this one.
-	cardArtwork = "cubes" #NOTE: Same with this one.
+	backgroundColor = COLOR_WHITE
+	soundOn = True
+	cardArtwork = "cubes"
 	pointFeedbackArray = []
 	feedbackTextArray = []
 	pointVal = 0
@@ -509,6 +491,7 @@ def gameLoop():
 	playersIn = False #Boolean that stores whether all of the player information has been input
 	clock = pygame.time.Clock()
 	scenarioArray = []#Initializes the array that will eventually store the scenario cards
+	answerArray = []#Initializes the array that will eventually store the answer cards
 	diagnosticArray = [] #Initializes the array that will store the diagnostic information
 	scenarioArray = buildScenarios()
 	answerArray = buildAnswers()
@@ -527,8 +510,7 @@ def gameLoop():
 	nameColor = COLOR_BLACK
 	nameBox = eztext.Input(x=400, y=50, font=big_bold_font, maxlength=20, color=nameColor, prompt='Name: ')
 
-
-	cardSelected = 0 #NOTE:  Channge this to -1 down the line and fix the resulting bug.
+	cardSelected = 0
 	canPlay = False
 	nextRound = False
 	hasWinningCard = False
@@ -570,7 +552,6 @@ def gameLoop():
 	#9 = Diagnostics
 	gameScreen = 2
 
-	#Creates a temporary fake array of 2 players just for the purposes of testing the game until the player creation screen is written
 	player = Player('No Name', 1, True)
 
 	currentScenario = scenarioArray.pop() #Effectively deals a scenario card to the game from the deck
@@ -731,11 +712,6 @@ def gameLoop():
 								if nextRound == False:
 									canPlay = True
 
-						#hand = player.getHand() #Why is this here? NOTE:  Look into this later.  I uncommented it already but this could cause issues maybe?  Doesn't seem to make sense here.
-						#cardNum = hand[cardSelected].getCardNum()
-						##print(str(cardNum))
-						#cardText = hand[cardSelected].getText()
-
 					if ((obj_playCard.rect.collidepoint(x, y)) and ((canPlay == True) or (nextRound == True))):
 						if soundOn:
 							sound_blop.play()
@@ -755,7 +731,6 @@ def gameLoop():
 
 							diagnosticObject = Diagnostic(pointVal, False, (pygame.time.get_ticks() - startTime), timeThisRound, currentScenario ,hand[cardSelected].getCardNum())
 							diagnosticArray.append(diagnosticObject)
-							#roundPoints, outOfTime, ansTime, givenTime, numScenario, numAnswer
 
 							#This if statement used in the incremental difficulty system.
 							if (pointVal >= 6):
@@ -771,7 +746,6 @@ def gameLoop():
 							feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
 							for card in range(5):
 								pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
-							#pointFeedbackArray.append(pointVal)
 
 							canPlay = False
 							nextRound = False
@@ -793,38 +767,23 @@ def gameLoop():
 
 							cards = 0
 							while(cards < 5):
-								#print("Appending " + str(cards) + "to answerArray... why?")
 								answerArray.append(hand[cards])
 								cards = cards + 1
 
 							answerArray = shuffle(answerArray)
 							player.clearHand()
 							cardsInHand = len(player.handArray)
-					
-							
+
 							for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
 								
 								player.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
 
-							#while (not hasWinningCard):
-								#print('Attempting to make the user\'s hand have a winning card')
-							#	answerArray.insert(0, player.handArray.pop())
-							#	player.handArray.append(answerArray.pop())
-							#	for card in player.handArray: #Iterates through all 5 cards in the user's hand
-							#		if (currentScenario.getPointVal(card.getCardNum()) > minPointsHand):
-							#			minPointsHand = currentScenario.getPointVal(card.getCardNum())
-							#	if (minPointsHand >= GOOD_CARD_POINTS):
-							#		player.handArray = shuffle(player.handArray)
-							#		hasWinningCard = True
-							#		print('USING FIRST ONE')
-									#print('Should have one. minPointsHand = ' + str(minPointsHand))
 							hand = player.getHand()
 							hasWinningCard = False
 							pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
 							feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
 							for card in range(5):
 								pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
-							#pointFeedbackArray.append(pointVal)
 							minPointsHand = 0
 							startTime = pygame.time.get_ticks()
 							isPaused = 0
@@ -847,7 +806,6 @@ def gameLoop():
 							sound_blop.play()
 						gameScreen = 2
 
-			#timer_event = pygame.USEREVENT + 1
 			pygame.time.set_timer(pygame.USEREVENT + 1, 100)
 			pygame.event.post(pygame.event.Event(pygame.USEREVENT + 1))
 
@@ -860,22 +818,15 @@ def gameLoop():
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(spr_scenarioCard, POS_SCENARIO)
 
-			#print("HasDealt = " + str(hasDealt))
 			if not hasDealt:
 				turnGoing = True
 				cardsInHand = len(player.handArray)
-				#print(cardsInHand) #NOTE: Uncomment this line to figure out why cardsinhand is going so high later
-				#print(cardNum)
-				#NOTE: GAME CRASHES BEFORE HERE
-				#player.clearHand()
-				#DEALING IN THE FIRST ROUND
 
 				for x in xrange(0, (5 - cardsInHand)): #Iterates until the user's hand is full
 					player.handArray.append(answerArray.pop()) #This is effectively dealing a card, as it removes the last element from the answer deck and places it in the player's hand
-					#print('USING SECOND ONE')
 
 				while (not hasWinningCard):
-					#print('Attempting to make the user\'s hand have a winning card')
+					#Attempts to make the user's hand have a winning card
 					answerArray.insert(0, player.handArray.pop())
 					player.handArray.append(answerArray.pop())
 					for card in player.handArray: #Iterates through all 5 cards in the user's hand
@@ -884,24 +835,18 @@ def gameLoop():
 					if (minPointsHand >= GOOD_CARD_POINTS):
 						player.handArray = shuffle(player.handArray)
 						hasWinningCard = True
-						#print('GIVING GOOD CARD')
-									#print('Should have one. minPointsHand = ' + str(minPointsHand))
+
 				hand = player.getHand()
 				hasDealt = True
 				player.handArray.append(answerArray)
-				#print("Dealt cards!")
+				#Cards have been dealt
 
-			#maybe move this down?
 			if (not feedbackDone):
 				hand = player.getHand()
 				pointFeedbackArray = [] #Stores the integer value of points that each card is worth in the 0 through 4 positions.
 				feedbackTextArray = [] #Stores the actual text 'objects' of the point values to be played on the screen.  Ordering is just like pointFeedbackArray.
 				for card in range(5):
-					#print(len(hand))
-					#perhaps theres a way to set this without calling hand
-					#print('ASDFASDFASDF')
 					pointFeedbackArray.append(currentScenario.getPointVal(hand[card].getCardNum()))
-					#NOTE: The error is happening around here
 
 				feedbackDone = True
 
@@ -951,19 +896,13 @@ def gameLoop():
 				mainFeedbackString = "Okay, but think about different responses."
 			elif (pointVal <= 10):
 				mainFeedbackString = "Great answer!"
-			#mainFeedbackText = scenario_card_font.render(mainFeedbackString, True, COLOR_BLACK)
 			mainFeedbackTextRendered = render_textrect(mainFeedbackString, scenario_card_font, feedbackTextRect, COLOR_BLACK, backgroundColor, 1)
-			#mainFeedbackSubtext = big_bold_font.render("+ " + str(pointVal) + " points", True, COLOR_BLACK)
 			mainFeedbackSubtextRendered = render_textrect(("+ " + str(pointVal) + " points"), big_bold_font, feedbackSubtextRect, COLOR_BLACK, backgroundColor, 1)
-
-
 
 			playCardRendered = render_textrect("Play Card", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 			nextRoundRendered = render_textrect("Next Round", scenario_card_font, playRect, COLOR_BLACK, [191,255,191])
 			scenarioCardRendered = render_textrect(currentScenario.scenarioText, scenario_card_font, scenarioRect, COLOR_BLACK, COLOR_WHITE)
 			score = str(player.getPoints())
-
-			#scoreBoxRendered = render_textrect(("SCORE: " + str(score)), big_bold_font, scoreTextRect, COLOR_BLACK, [158,206,255])
 
 			scoreBoxRendered = render_textrect(("Score: " + str(score)), big_bold_font, pygame.Rect(760,35,216,60), COLOR_BLACK, [158,206,255])
 			if counting:
@@ -977,7 +916,6 @@ def gameLoop():
 				displayMessage("Congratulations!  You won.",COLOR_BLACK,[278,158],big_bold_font) #Congratulates the user upon winning
 				displayMessage("Press ENTER to go to the Game Over screen.",COLOR_BLACK,[32,32]) #Draws some text
 
-				
 			if timerRendered:
 				gameDisplay.blit(timerRendered, pygame.Rect(788,60,178,160))
 
@@ -1004,10 +942,7 @@ def gameLoop():
 				for i in range(len(pointFeedbackArray)):
 					gameDisplay.blit(feedbackTextArray[i], POS_POINTVALS[i])
 
-			pygame.display.update() #Updates the screen every
-			#print(str(cheating))
-			#print(player.getPoints())
-			#print(winningStreak)
+			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 5 and gameRun): #Executes after the game has ended
@@ -1041,7 +976,6 @@ def gameLoop():
 			clock.tick(FRAMES_PER_SECOND)
 			timer_event = pygame.USEREVENT + 1
 			pygame.time.set_timer(timer_event, 250)
-
 
 		while (gameScreen == 7 and gameRun):
 			#NOTE:  The entire "selecting" (changing an image to the green version and making sure the rest are blue when it is clicked on) process could be done a lot more efficiently using pointers.  For now, I don't really know how to do that.  Maybe we could figure out down the line, but it would be a very late game thing since these actions are taken so infrequently that there wouldn't really be a huge difference in efficiency.
@@ -1257,21 +1191,16 @@ def gameLoop():
 					pointsRound = d.getRoundPoints()
 					timeRanOut = d.getTimeUp()
 					responseTime = d.getTimeToAns()
-					#print(pointsRound)
 					totalResponseTime = totalResponseTime + responseTime
 					if (pointsRound >= 6):
 						numGreat = numGreat + 1
-						#print("numGreat++")
 					elif (pointsRound > 0):
 						numOkay = numOkay + 1
-						#print("numOkay++")
 					elif (pointsRound == 0):
 						if (timeRanOut == True):
 							numTimeUp = numTimeUp + 1
-							#print("numTimeUp++")
 						else:
 							numPoor = numPoor + 1
-							#print("numPoor++")
 
 				numGreatText = big_bold_font.render(str(numGreat), True, COLOR_BLACK)
 				numOkayText = big_bold_font.render(str(numOkay), True, COLOR_BLACK)
@@ -1279,7 +1208,6 @@ def gameLoop():
 				numTimeUpText = big_bold_font.render(str(numTimeUp), True, COLOR_BLACK)
 				avgResponseTime = int(round((totalResponseTime / roundsToComplete) / 1000))
 				dataProcessed = True
-
 
 			gameDisplay.fill(backgroundColor)
 			if (screenshotTaken == True):
@@ -1299,7 +1227,6 @@ def gameLoop():
 
 			gameDisplay.blit(obj_buttonMainMenu.image, obj_buttonMainMenu.rect)
 			gameDisplay.blit(obj_buttonScreenshot.image, obj_buttonScreenshot.rect)
-			#gameDisplay.blit(obj_buttonMoreDetails.image, obj_buttonMoreDetails.rect)
 
 			gameDisplay.blit(breakdownGreatHeadingRendered, breakdownRectGreatHeading.topleft)
 			gameDisplay.blit(breakdownOkayHeadingRendered, breakdownRectOkayHeading.topleft)
@@ -1310,7 +1237,6 @@ def gameLoop():
 			gameDisplay.blit(numOkayText, (POS_BREAKDOWN_OK[0] + 50, POS_BREAKDOWN_OK[1]+75))
 			gameDisplay.blit(numPoorText, (POS_BREAKDOWN_POOR[0] + 50, POS_BREAKDOWN_POOR[1]+75))
 			gameDisplay.blit(numTimeUpText, (POS_BREAKDOWN_TIMEUP[0] + 50, POS_BREAKDOWN_TIMEUP[1]+75))
-
 
 		#NOTE: In order for the output image to correctly contain all elements of the screen, the event handling portion of the while loop needs to come after any drawing that occurs.
 			for event in pygame.event.get():
@@ -1334,7 +1260,7 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						if (screenshotTaken == False):
-							pygame.image.save(gameDisplay, "diagnosticOutput.png") #NOTE: later on, change this so that it outputs the image with a dynamic name based on things like player name.
+							pygame.image.save(gameDisplay, "diagnosticOutput.png")
 							screenshotTaken = True
 			pygame.display.update() #Updates the screen every frame
 			clock.tick(FRAMES_PER_SECOND)
