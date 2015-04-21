@@ -835,7 +835,14 @@ def gameLoop():
 
 					if (obj_buttonMainMenu.rect.collidepoint(x, y)):
 						player.setPoints(0)
+						player.clearHand()
 						showFeedback = False #Ensures previous game's feedback won't be shown when new game is started
+						nextRound = False
+						canPlay = False
+						scenarioArray = shuffle(scenarioArray)
+						currentScenario = scenarioArray.pop()
+						answerArray = shuffle(answerArray)
+						hasDealt = False
 						if (soundOn):
 							sound_blop.play()
 						gameScreen = 2
