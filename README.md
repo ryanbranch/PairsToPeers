@@ -4,6 +4,8 @@
 ======
 ###Instructions:
 
+To play the game, simply run "pairs_to_peers.py" in the main directory of this project.
+
 An explanation of the actual gameplay is included in the game itself.  However, there are a few "hidden" features that we'd like to clear up here.
 
 1. The About Screen
@@ -38,3 +40,12 @@ Matteson, Steve. OpenSans [Font].  Available at https://www.google.com/fonts/spe
 Rasky, Jerome. (2008) EzText. Available at http://pygame.org/project-EzText-920-.html (Accessed 27 March 2015)
 
 Thore. (2009) Auditorium Applause [Sound Recording].  Available at http://soundbible.com/1260-Auditorium-Applause.html (Accessed 18 February 2015)
+
+======
+###Other Information
+
+Pairs to Peers was proposed by Edgar Hu as a project for the "Gaming for the Greater Good" section of ENGR100 at the University of Michigan, the goal being to create a video game that would allow the user to treat or diagnose a symptom of Autism Spectrum Disorder.  It was developed for this course from February 5th 2015 to April 21st 2015, however further development may continue indefinitely.
+
+If you would like to submit a bug, ask a question, or contact the developers of this game for any other reason, please email Ryan at rjbrjb@umich.edu
+
+The GitHub repository for this game is located at http://github.com/rjbranch/PairsToPeers/
