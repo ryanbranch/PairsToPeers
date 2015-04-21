@@ -55,7 +55,7 @@ GAME_HEIGHT = 768
 FRAMES_PER_SECOND = 30
 ANSWERS_PER_PLAYER = 2 #The number of answer cards that each player will have at any given time.  Currently set to 2 just because I don't have many answer cards written.
 GOOD_CARD_POINTS = 6
-POINTS_TO_WIN = 100
+POINTS_TO_WIN = 10
 startTime = 0
 #The rest of these constants relate specifically to the locations of images on the game screen.  Tweaking with these could definitely mess up how everything looks.
 
@@ -384,7 +384,7 @@ def buildScenarios():
 	scenarios = []
 	card = Scenario("A person walks up to you on the first day of school and says hello.", [0,6,0,0,0,7,0,10,10,9,6,0,0,0,0,0,0,0,0,4,0,10,6,0,9,0,0])
 	scenarios.append(card)
-	card = Scenario("Your friend is crying.", [7,9,0,0,5,0,0,4,4,4,0,0,0,0,10,10,8,0,0,0,0,0,4,0,0,0,0])
+	card = Scenario("Your friend is crying.", [7,9,0,0,5,0,0,4,4,4,0,0,0,0,10,10,8,0,0,0,0,0,4,0,0,0,5])
 	scenarios.append(card)
 	card = Scenario("You are hungry.", [0,8,0,10,5,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,2])
 	scenarios.append(card)
@@ -398,13 +398,13 @@ def buildScenarios():
 	scenarios.append(card)
 	card = Scenario("You have a bloody nose.", [0,10,0,0,7,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,8])
 	scenarios.append(card)
-	card = Scenario("You forgot your homework.", [8,8,0,0,6,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+	card = Scenario("You forgot your homework.", [8,8,0,0,8,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
 	scenarios.append(card)
 	card = Scenario("Someone asks you for directions.", [6,5,0,0,6,0,0,8,8,10,7,5,0,0,10,4,0,0,0,0,0,4,0,0,0,0,0])
 	scenarios.append(card)
 	#card = Scenario("Someone calls you autistic.", [0,10,8,0,0,0,4,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,4,5,0,10,3])
 	#scenarios.append(card)
-	card = Scenario("Teacher asks you a question.", [2,5,0,0,5,0,0,0,0,0,6,6,0,0,0,0,0,0,6,6,1,0,0,0,5,0,0])
+	card = Scenario("Teacher asks you a question.", [2,5,0,0,5,0,0,0,0,0,6,6,0,0,0,0,0,0,6,2,0,0,0,0,5,0,0])
 	scenarios.append(card)
 	card = Scenario("You have you put on your coat.", [0,9,0,0,5,0,0,0,0,0,8,0,0,0,6,0,0,0,4,8,0,0,0,0,6,0,0])
 	#card = Scenario("another scenario goes here")
@@ -622,7 +622,8 @@ def gameLoop():
 					if ((obj_buttonPlayGame.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
-						startTime = pygame.time.get_ticks()
+						diagnosticArray = []
+						#startTime = pygame.time.get_ticks()
 						gameScreen = 8
 					elif((obj_buttonOptions.rect.collidepoint(x, y))):
 						if soundOn:
@@ -841,6 +842,7 @@ def gameLoop():
 						currentScenario = scenarioArray.pop()
 						answerArray = shuffle(answerArray)
 						hasDealt = False
+						feedbackDone = False
 						if (soundOn):
 							sound_blop.play()
 						gameScreen = 2
@@ -1005,7 +1007,7 @@ def gameLoop():
 			pygame.display.update() #Updates the screen every
 			#print(str(cheating))
 			#print(player.getPoints())
-			print(winningStreak)
+			#print(winningStreak)
 			clock.tick(FRAMES_PER_SECOND)
 
 		while (gameScreen == 5 and gameRun): #Executes after the game has ended
@@ -1171,16 +1173,25 @@ def gameLoop():
 						if soundOn:
 							sound_blop.play()
 						timeAllowed = 30000
+						timeStamp = time.time()
+						stringTimeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime('%H:%M %m/%d/%Y ')
+						startTime = pygame.time.get_ticks()
 						gameScreen = 4
 					if ((obj_buttonMedium.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						timeAllowed = 20000
+						timeStamp = time.time()
+						stringTimeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime('%H:%M %m/%d/%Y ')
+						startTime = pygame.time.get_ticks()
 						gameScreen = 4
 					if ((obj_buttonHard.rect.collidepoint(x, y))):
 						if soundOn:
 							sound_blop.play()
 						timeAllowed = 15000
+						timeStamp = time.time()
+						stringTimeStamp = datetime.datetime.fromtimestamp(timeStamp).strftime('%H:%M %m/%d/%Y ')
+						startTime = pygame.time.get_ticks()
 						gameScreen = 4
 				if ((event.type == pygame.KEYDOWN) or (event.type == pygame.KEYUP)):
 					tempName = nameBox.update(events)
@@ -1212,9 +1223,12 @@ def gameLoop():
 		while (gameScreen == 9 and gameRun):
 
 			while (dataProcessed == False):
+				numGreat = 0
+				numOkay = 0
+				numPoor = 0
+				numTimeUp = 0
 				endTime = time.time()
 				totalPlaytime = (int(round(endTime - timeStamp)))
-
 				playerName = player.getName()
 				finalPoints = player.getPoints()
 				roundsToComplete = len(diagnosticArray)
@@ -1258,12 +1272,6 @@ def gameLoop():
 						else:
 							numPoor = numPoor + 1
 							#print("numPoor++")
-
-
-				#NOTE: This If-statement is just a catch for when skipping straight to the diagnostic screen for dev/debug purposes.  It shouldn't be necessary later on.
-				if(roundsToComplete == 0):
-					roundsToComplete = 1
-					totalResponseTime = 5.4
 
 				numGreatText = big_bold_font.render(str(numGreat), True, COLOR_BLACK)
 				numOkayText = big_bold_font.render(str(numOkay), True, COLOR_BLACK)
