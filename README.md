@@ -1,8 +1,8 @@
 # PairsToPeers
-####The repository for the creation of the Pairs To Peers game
+#### The repository for the creation of the Pairs To Peers game
 
-======
-###Instructions:
+***
+### Instructions:
 
 To play the game, simply run "pairs_to_peers.py" in the main directory of this project.
 
@@ -17,8 +17,8 @@ On the difficulty screen, if a user enters their name as "Chesney", "chesney", o
 3. Dynamic Difficulty
 Our game features a dynamic difficulty system, although it is not incredibly evident as it is designed to smoothly transition over time and to not be too noticeable.  Basically, there is a counter in the game that keeps track of how many "Great" (6 - 10 point) answers the user has played in a row.  The amount of time that a user is given for each round of the game is modified, based on this number.  Upon submitting an "Okay" (1 - 5 point) answer, the streak is not broken, but is not added to either.  Running out of time or submitting a "Poor" (0 point) answer causes the streak to be broken and the amount of time alotted per round to be returned to its initial value.
 
-======
-###Explanation of Outside Sources
+***
+### Explanation of Outside Sources
 
 This program makes use of the module "TextRect", which is a part of the pygame code repository.  The module, also known as "Word-wrapped text display module", was written by David Clark in 2001 and allows pygame users to render wrapped text, bound by a specified rectangle.
 
@@ -28,8 +28,8 @@ The game also makes use of 2 sound files, all of which are licensed under either
 
 The fonts used in this game are OpenSans and OpenSans Bold, both of which were created by Steve Matteson and are licensed under the Apache 2.0 License. 
 
-======
-###Citations
+***
+### Citations
 
 Clark, David.  (2001) TextRect [Computer Program].  Available at http://www.pygame.org/pcr/text_rect/index.php (Accessed 16 February 2015)
 
@@ -41,8 +41,8 @@ Rasky, Jerome. (2008) EzText. Available at http://pygame.org/project-EzText-920-
 
 Thore. (2009) Auditorium Applause [Sound Recording].  Available at http://soundbible.com/1260-Auditorium-Applause.html (Accessed 18 February 2015)
 
-======
-###Other Information
+***
+### Other Information
 
 Pairs to Peers was proposed by Edgar Hu as a project for the "Gaming for the Greater Good" section of ENGR100 at the University of Michigan, the goal being to create a video game that would allow the user to treat or diagnose a symptom of Autism Spectrum Disorder.  It was developed for this course from February 5th 2015 to April 21st 2015, however further development may continue indefinitely.
 
